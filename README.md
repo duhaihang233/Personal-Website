@@ -35,7 +35,7 @@ python3 -m http.server 8000
 ## 修改内容
 
 1. **个人信息**：在 `index.html` 中搜索 `you@example.com`、`your-username` 并替换。
-2. **作品**：编辑 `js/main.js` 顶部的 `PROJECTS` 数组，截图放进 `assets/projects/`。
+2. **作品**：编辑 `js/main.js` 顶部的 `PROJECTS` 数组，封面图放进 `assets/projects/`。作品以手账本形式展示：每个对开页两个作品，向下滚动翻页；顺序就是数组顺序。
 3. **配色**：修改 `css/style.css` 顶部的 `--red`、`--cyan`、`--ink` 等变量；作品卡片颜色在 `PROJECTS` 的 `color` 字段里选。
 4. **头像 / 简历**：把文件放到 `assets/images/avatar.jpg` 和 `assets/resume.pdf`。
 

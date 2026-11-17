@@ -95,41 +95,153 @@ const PROJECTS = [
   },
 ];
 
-/* ---------- 渲染作品卡片 ---------- */
+/* ---------- 工具 ---------- */
 function escapeHTML(str) {
   return String(str).replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   })[c]);
 }
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-function renderProjects() {
-  const grid = document.getElementById("project-grid");
-  if (!grid) return;
+/* ---------- 手账本：每个对开页放两个作品 ---------- */
+const NOTE_COLORS = ["cyan", "ink", "pink", "lime", "cream"];
+const NOTE_TILT = [-1.6, 1.3, -0.9, 1.8, -1.3, 0.8];
+const TAPES = ["", "tape-cyan", "tape-lime"];
 
-  const palette = ["cyan", "ink", "pink", "lime", "cream"];
-
-  grid.innerHTML = PROJECTS.map((p, i) => {
-    const color = palette.includes(p.color) ? p.color : palette[i % palette.length];
-    const num = String(i + 1).padStart(2, "0");
-    const meta = [p.year, p.duration, p.team].filter(Boolean).map(escapeHTML).join(" · ");
-    const links = (p.links || [])
-      .map((l) => `<a href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(l.text)}</a>`)
-      .join("");
-
-    return `
-      <article class="project-card card-${color}">
-        <span class="card-label">${num}${p.label ? ` — ${escapeHTML(p.label)}` : ""}</span>
+function noteHTML(p, i) {
+  if (!p) {
+    return `<div class="note note-cream note-empty" style="--r:1deg"><span class="tape"></span><p>未完待续…</p></div>`;
+  }
+  const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
+  const num = String(i + 1).padStart(2, "0");
+  const meta = [p.year, p.duration, p.team].filter(Boolean).map(escapeHTML).join(" · ");
+  const links = (p.links || [])
+    .map((l) => `<a href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(l.text)}</a>`)
+    .join("");
+  return `
+    <article class="note note-${color}" style="--r:${NOTE_TILT[i % NOTE_TILT.length]}deg;--pr:${i % 2 ? -1.5 : 1.2}deg">
+      <span class="tape ${TAPES[i % TAPES.length]}" style="--tr:${i % 2 ? 4 : -3}deg"></span>
+      <div class="note-top"><span>No.${num}${p.label ? ` · ${escapeHTML(p.label)}` : ""}</span>${meta ? `<span>${meta}</span>` : ""}</div>
+      <figure class="note-photo"><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}" loading="lazy"
+        onerror="this.onerror=null;this.src='assets/images/placeholder.svg'" /></figure>
+      <div class="note-head">
         <h3>${escapeHTML(p.title)}</h3>
-        ${p.subtitle ? `<p class="card-sub">${escapeHTML(p.subtitle)}</p>` : ""}
-        ${meta ? `<p class="card-meta">${meta}</p>` : ""}
-        <img class="project-thumb" src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}"
-             loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'" />
-        <p class="card-desc">${escapeHTML(p.description)}</p>
-        ${p.field ? `<p class="card-meta">${escapeHTML(p.field)}</p>` : ""}
-        ${p.tags && p.tags.length ? `<ul class="tag-list">${p.tags.map((t) => `<li>${escapeHTML(t)}</li>`).join("")}</ul>` : ""}
-        ${links ? `<div class="project-links">${links}</div>` : ""}
-      </article>`;
-  }).join("");
+        ${p.subtitle ? `<p class="note-sub">${escapeHTML(p.subtitle)}</p>` : ""}
+      </div>
+      <p class="note-desc">${escapeHTML(p.description)}</p>
+      ${p.tags && p.tags.length ? `<ul class="tag-list">${p.tags.map((t) => `<li>${escapeHTML(t)}</li>`).join("")}</ul>` : ""}
+      ${links ? `<div class="note-links">${links}</div>` : ""}
+    </article>`;
+}
+
+// 第 n 页（从 0 开始）：偶数页在 A 侧（左/上），奇数页在 B 侧（右/下）
+function pageHTML(n, extraClass = "") {
+  const side = n % 2 === 0 ? "side-a" : "side-b";
+  return `<div class="page ${side} ${extraClass}" data-page="${n}">
+      ${noteHTML(PROJECTS[n], n)}
+      <span class="page-no">— ${String(n + 1).padStart(2, "0")} —</span>
+    </div>`;
+}
+
+function renderJournal() {
+  const book = document.getElementById("book");
+  if (!book) return null;
+  const spreads = Math.max(1, Math.ceil(PROJECTS.length / 2));
+  const lastPage = spreads * 2 - 1;
+
+  // 底页：第一页（A 侧）和最后一页（B 侧）；中间每张翻页纸：正面是 B 侧，背面是下一个对开的 A 侧
+  let html = pageHTML(0, "page-a base") + pageHTML(lastPage, "page-b base");
+  for (let i = 0; i < spreads - 1; i++) {
+    html += `<div class="leaf" data-leaf="${i}">${pageHTML(2 * i + 1)}${pageHTML(2 * i + 2)}</div>`;
+  }
+  html += `<span class="spine" aria-hidden="true"></span><span class="ribbon" aria-hidden="true"></span>`;
+  book.innerHTML = html;
+  return spreads;
+}
+
+function initJournal() {
+  const spreads = renderJournal();
+  const track = document.getElementById("journal-track");
+  const sticky = track && track.querySelector(".journal-sticky");
+  const nav = document.getElementById("journal-nav");
+  if (!spreads || !track || !sticky) return;
+
+  const leaves = [...document.querySelectorAll(".leaf")];
+  const baseA = document.querySelector(".page-a.base");
+  const baseB = document.querySelector(".page-b.base");
+  const flips = spreads - 1;
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  // 翻页导航：页码点 + 提示
+  nav.innerHTML = `
+    <span class="journal-count" aria-live="polite">01 / ${String(spreads).padStart(2, "0")}</span>
+    <span class="journal-dots">${Array.from({ length: spreads }, (_, k) =>
+      `<button type="button" aria-label="第 ${k + 1} 个对开页"></button>`).join("")}</span>
+    ${flips ? `<span class="journal-hint">向下滚动翻页 ↓</span>` : ""}`;
+  const count = nav.querySelector(".journal-count");
+  const dots = [...nav.querySelectorAll(".journal-dots button")];
+  const hint = nav.querySelector(".journal-hint");
+
+  let seg = 0;
+  function layout() {
+    seg = window.innerHeight * 0.85; // 每翻一页需要滚动的距离
+    const endHold = window.innerHeight * 0.3;
+    track.style.height = `${sticky.offsetHeight + flips * seg + endHold}px`;
+    update();
+  }
+
+  function setInert(el, hidden) {
+    if (!el) return;
+    if (hidden) el.setAttribute("inert", "");
+    else el.removeAttribute("inert");
+  }
+
+  let current = -1;
+  function update() {
+    const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+    const scrolled = stickyTop - track.getBoundingClientRect().top;
+    const raw = Math.min(flips, Math.max(0, scrolled / seg));
+
+    leaves.forEach((leaf, i) => {
+      const u = raw - i;
+      let f = easeInOut(clamp01((u - 0.15) / 0.7));
+      if (reduceMotion.matches) f = u >= 0.5 ? 1 : 0;
+      leaf.style.setProperty("--flip", f.toFixed(4));
+      leaf.style.setProperty("--shade", (Math.sin(Math.PI * f) * 0.28).toFixed(3));
+      leaf.style.zIndex = f < 0.5 ? 100 - i : 100 + i;
+      // 看不到的那一面不能被键盘聚焦
+      setInert(leaf.children[0], f >= 0.5);
+      setInert(leaf.children[1], f < 0.5);
+    });
+    setInert(baseA, leaves.length && parseFloat(leaves[0].style.getPropertyValue("--flip")) >= 0.5);
+    setInert(baseB, leaves.length && parseFloat(leaves[leaves.length - 1].style.getPropertyValue("--flip")) < 0.5);
+
+    const k = Math.round(raw);
+    if (k !== current) {
+      current = k;
+      count.textContent = `${String(k + 1).padStart(2, "0")} / ${String(spreads).padStart(2, "0")}`;
+      dots.forEach((d, j) => d.setAttribute("aria-current", j === k ? "true" : "false"));
+    }
+    if (hint) hint.style.opacity = raw >= flips - 0.05 ? "0" : "1";
+  }
+
+  dots.forEach((d, k) =>
+    d.addEventListener("click", () => {
+      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+      const top = track.getBoundingClientRect().top + window.scrollY - stickyTop + k * seg + 1;
+      window.scrollTo({ top, behavior: reduceMotion.matches ? "auto" : "smooth" });
+    })
+  );
+
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { update(); ticking = false; });
+  }, { passive: true });
+  window.addEventListener("resize", layout);
+  layout();
 }
 
 /* ---------- 移动端菜单 ---------- */
@@ -191,7 +303,7 @@ function initActiveLink() {
 
 /* ---------- 启动 ---------- */
 document.addEventListener("DOMContentLoaded", () => {
-  renderProjects();
+  initJournal();
   initNav();
   initTheme();
   initActiveLink();

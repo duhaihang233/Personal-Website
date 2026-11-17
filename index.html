@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Noto+Serif+SC:wght@400;700&display=swap" />
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Noto+Serif+SC:wght@400;700&display=swap" />
   <link rel="stylesheet" href="css/style.css" />
 
   <!-- 在页面渲染前应用主题，避免闪烁 -->
@@ -81,15 +81,20 @@
     </section>
 
     <!-- ============ 作品 ============ -->
-    <section id="projects" class="section">
+    <section id="projects" class="section journal-section">
       <div class="container">
         <header class="section-head">
           <p class="kicker">精选</p>
           <h2 class="section-title">作品</h2>
         </header>
-        <!-- 卡片由 js/main.js 中的 PROJECTS 数据渲染 -->
-        <div class="project-grid" id="project-grid">
-          <noscript><p>请启用 JavaScript 以查看作品列表。</p></noscript>
+      </div>
+      <!-- 手账本：由 js/main.js 中的 PROJECTS 数据渲染，每个对开页放两个作品，向下滚动翻页 -->
+      <div class="journal-track" id="journal-track">
+        <div class="journal-sticky">
+          <div class="book" id="book">
+            <noscript><p>请启用 JavaScript 以查看作品。</p></noscript>
+          </div>
+          <div class="journal-nav" id="journal-nav" aria-label="翻页"></div>
         </div>
       </div>
     </section>
