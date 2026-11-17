@@ -1,4 +1,6 @@
-# 个人作品集网站
+# Thomas Du · 个人作品集
+
+网站地址：https://thomasdu.me（域名待启用）
 
 用纯 HTML、CSS 和 JavaScript 写成，不需要构建工具和依赖。
 
@@ -32,7 +34,7 @@ python3 -m http.server 8000
 
 ## 修改内容
 
-1. **个人信息**：在 `index.html` 中搜索“你的名字”、`you@example.com`、`your-username` 并替换。
+1. **个人信息**：在 `index.html` 中搜索 `you@example.com`、`your-username` 并替换。
 2. **作品**：编辑 `js/main.js` 顶部的 `PROJECTS` 数组，截图放进 `assets/projects/`。
 3. **配色**：修改 `css/style.css` 顶部的 `--color-primary` 等变量。
 4. **头像 / 简历**：把文件放到 `assets/images/avatar.jpg` 和 `assets/resume.pdf`。
