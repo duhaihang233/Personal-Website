@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你的名字 · 个人作品集</title>
+  <meta name="description" content="你的名字的个人作品集：项目展示、技能与联系方式。" />
+  <meta name="author" content="你的名字" />
+
+  <!-- 社交分享预览（Open Graph） -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="你的名字 · 个人作品集" />
+  <meta property="og:description" content="项目展示、技能与联系方式。" />
+  <meta property="og:image" content="assets/images/og-cover.png" />
+
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- 在页面渲染前应用主题，避免闪烁 -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <!-- ============ 页头 / 导航 ============ -->
+  <header class="site-header">
+    <div class="container nav">
+      <a href="#top" class="logo">你的名字</a>
+
+      <button class="nav-toggle" aria-label="打开菜单" aria-expanded="false" aria-controls="nav-menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav id="nav-menu" class="nav-menu" aria-label="主导航">
+        <a href="#about">关于</a>
+        <a href="#projects">作品</a>
+        <a href="#skills">技能</a>
+        <a href="#contact">联系</a>
+        <button class="theme-toggle" aria-label="切换深色/浅色模式">◐</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ 首屏 ============ -->
+    <section id="top" class="hero">
+      <div class="container">
+        <p class="eyebrow">你好，我是</p>
+        <h1>你的名字</h1>
+        <p class="lead">一句话介绍自己，例如：前端开发者 / 设计师，专注于打造简洁、好用的数字产品。</p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-primary">查看作品</a>
+          <a href="#contact" class="btn btn-ghost">联系我</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 关于 ============ -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2 class="section-title">关于我</h2>
+        <div class="about-grid">
+          <img src="assets/images/avatar.jpg" alt="你的名字的头像" class="avatar" width="240" height="240" loading="lazy"
+               onerror="this.style.display='none'" />
+          <div>
+            <p>在这里写 2–3 段自我介绍：你的背景、正在做的事情、你关心的领域，以及你希望和什么样的人合作。</p>
+            <p>可以附上简历链接：<a href="assets/resume.pdf">下载简历（PDF）</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 作品 ============ -->
+    <section id="projects" class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">精选作品</h2>
+        <!-- 项目卡片由 js/main.js 中的 PROJECTS 数据渲染；JS 不可用时显示下方提示 -->
+        <div class="project-grid" id="project-grid">
+          <noscript><p>请启用 JavaScript 以查看作品列表。</p></noscript>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 技能 ============ -->
+    <section id="skills" class="section">
+      <div class="container">
+        <h2 class="section-title">技能</h2>
+        <ul class="tag-list">
+          <li>HTML / CSS</li>
+          <li>JavaScript</li>
+          <li>React</li>
+          <li>Figma</li>
+          <li>Node.js</li>
+          <li>Git</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 联系 ============ -->
+    <section id="contact" class="section section-alt">
+      <div class="container contact">
+        <h2 class="section-title">联系我</h2>
+        <p>欢迎合作或交流，通过以下方式找到我：</p>
+        <ul class="contact-links">
+          <li><a href="mailto:you@example.com">you@example.com</a></li>
+          <li><a href="https://github.com/your-username" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/your-username" target="_blank" rel="noopener">LinkedIn</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> 你的名字. 保留所有权利。</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+</body>
+</html>
