@@ -49,7 +49,7 @@ function renderProjects() {
     return `
       <article class="project-card">
         <img class="project-thumb" src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)} 截图"
-             loading="lazy" onerror="this.style.visibility='hidden'" />
+             loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'" />
         <div class="project-body">
           <h3>${escapeHTML(p.title)}</h3>
           <p>${escapeHTML(p.description)}</p>
