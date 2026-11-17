@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Caveat:wght@500;700&family=Yellowtail&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Noto+Serif+SC:wght@400;700&display=swap" />
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Noto+Serif+SC:wght@400;700&display=swap" />
   <link rel="stylesheet" href="css/style.css" />
 
   <!-- 在页面渲染前应用主题，避免闪烁 -->
@@ -36,6 +36,10 @@
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要内容</a>
+  <!-- 粗糙边缘滤镜：标题的“手工印刷”质感，全站共用 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" /><feDisplacementMap in="SourceGraphic" scale="5" /></filter>
+  </svg>
 
   <!-- ============ 页头 / 导航 ============ -->
   <header class="site-header">
@@ -64,7 +68,7 @@
       <div class="container hero-inner">
         <div class="hero-text">
         <p class="kicker">你好，我是</p>
-        <h1 class="hero-title">Thomas Du</h1>
+        <h1 class="hero-title rough">Thomas Du</h1>
         <p class="hero-sub">做<em>有用</em>又<em>有趣</em>的东西。</p>
         <p class="lead">一句话介绍自己，例如：前端开发者 / 设计师，专注于打造简洁、好用的数字产品。</p>
         <div class="hero-actions">
@@ -87,9 +91,9 @@
     <!-- ============ 作品 ============ -->
     <section id="projects" class="section journal-section">
       <div class="container">
-        <header class="section-head works-head">
-          <p class="script-title" aria-hidden="true"><span class="flourish"></span>Selected Works<span class="flourish flip"></span></p>
-          <h2 class="section-title">作品</h2>
+        <header class="section-head">
+          <p class="outline-latin" lang="en" aria-hidden="true">Selected Works</p>
+          <h2 class="section-title rough">作品</h2>
         </header>
       </div>
       <!-- 手账本：由 js/main.js 中的 PROJECTS 数据渲染，每个对开页放两个作品，向下滚动翻页 -->
@@ -120,8 +124,8 @@
     <section id="skills" class="section">
       <div class="container">
         <header class="section-head">
-          <p class="kicker">工具箱</p>
-          <h2 class="section-title">技能</h2>
+          <p class="outline-latin" lang="en" aria-hidden="true">Toolbox</p>
+          <h2 class="section-title rough">技能</h2>
         </header>
         <ul class="tag-list">
           <li>HTML / CSS</li>
@@ -136,15 +140,11 @@
 
     <!-- ============ 联系（深蓝色带） ============ -->
     <section id="contact" class="band band-blue contact">
-      <!-- 粗糙描边效果 -->
-      <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-        <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" /><feDisplacementMap in="SourceGraphic" scale="5" /></filter>
-      </svg>
       <div class="container contact-inner">
         <div class="contact-main">
           <p class="micro-line" aria-hidden="true">Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.</p>
           <p class="outline-latin" lang="en">Let's Talk</p>
-          <h2 class="contact-title">一起<em>聊聊</em>？</h2>
+          <h2 class="contact-title rough">一起<em>聊聊</em>？</h2>
           <p class="micro-line" aria-hidden="true">Make.Things.Work.Make.Things.Work.Make.Things.Work.Make.Things.Work.</p>
           <p class="lead">欢迎合作或交流，通过以下方式找到我。</p>
           <ul class="contact-links">

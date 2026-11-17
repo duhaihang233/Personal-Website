@@ -28,12 +28,8 @@
   --yellow: #f2d21b;
   --klein: #1a3cc8;
   --klein-ink: #eef1ff;
-  --gold-hi: #f1d98a;
-  --gold: #b8892e;
-  --gold-lo: #84601d;
 
   --font-hand: "Caveat", "Kaiti SC", "STKaiti", cursive;
-  --font-script: "Yellowtail", "Snell Roundhand", cursive;
   --font-serif: "Newsreader", "Noto Serif SC", "Songti SC", "STSong", Georgia, serif;
   --font-sans: "Archivo", system-ui, -apple-system, "Segoe UI", "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -499,30 +495,6 @@ em {
 }
 .journal-section .section-head {
   margin-bottom: 0;
-}
-/* 金色花体标题 + 卷曲装饰线 */
-.script-title {
-  display: flex;
-  align-items: center;
-  gap: 0.35em;
-  margin: 0 0 0.1rem;
-  font-family: var(--font-script);
-  font-size: clamp(2rem, 4.6vw, 3.3rem);
-  line-height: 1.2;
-  background: linear-gradient(180deg, var(--gold-hi) 0%, var(--gold) 55%, var(--gold-lo) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  padding-right: 0.2em;
-}
-.flourish {
-  width: 2.4em;
-  height: 0.7em;
-  flex: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 36'%3E%3Cpath d='M118 20 C 96 20 82 30 62 26 C 44 22 46 6 60 8 C 70 10 66 22 54 22 C 36 22 24 10 2 18' fill='none' stroke='%23b8892e' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='118' cy='20' r='2.6' fill='%23b8892e'/%3E%3C/svg%3E") center / contain no-repeat;
-}
-.flourish.flip {
-  transform: scaleX(-1);
 }
 .journal-track {
   position: relative;
@@ -1043,17 +1015,31 @@ em {
   overflow: hidden;
   opacity: 0.55;
 }
-/* 英文用描边细线字，中文用实心粗糙字 */
+/* 标题字体设计（全站通用）：
+   英文 .outline-latin —— 细描边、粗糙边缘；中文 .rough —— 实心、粗糙边缘 */
 .outline-latin {
-  margin: 0.2em 0 0;
+  --stroke: var(--ink);
+  margin: 0;
   font-family: var(--font-serif);
-  font-size: clamp(2.8rem, 8vw, 5.6rem);
+  font-size: clamp(2.4rem, 6.5vw, 4.6rem);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.01em;
   color: transparent;
-  -webkit-text-stroke: 1.3px var(--klein-ink);
+  -webkit-text-stroke: 1.3px var(--stroke);
   filter: url(#rough);
+}
+.rough {
+  filter: url(#rough);
+}
+.band-blue .outline-latin {
+  --stroke: var(--klein-ink);
+  margin-top: 0.2em;
+  font-size: clamp(2.8rem, 8vw, 5.6rem);
+}
+.section-head .outline-latin + .section-title {
+  margin-top: 0.1em;
+  letter-spacing: 0.04em;
 }
 .contact-title {
   font-family: var(--font-serif);
@@ -1063,7 +1049,6 @@ em {
   letter-spacing: 0.04em;
   margin: 0 0 0.25em;
   color: var(--klein-ink);
-  filter: url(#rough);
 }
 .band-blue .lead {
   color: var(--klein-ink);
