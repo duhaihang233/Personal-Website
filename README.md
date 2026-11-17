@@ -14,7 +14,7 @@ portfolio/
 ├── js/main.js          # 作品数据（PROJECTS）+ 菜单、主题切换等交互
 ├── assets/
 │   ├── images/         # 头像 avatar.jpg、favicon.svg、分享封面 og-cover.png
-│   ├── projects/       # 作品截图 project-1.jpg …
+│   ├── projects/       # 作品封面图（fitseat.jpg、rhythm-arcade.jpg …）
 │   └── resume.pdf      # （可选）简历
 ├── robots.txt
 └── .gitignore

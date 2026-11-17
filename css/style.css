@@ -516,14 +516,28 @@ em {
   background: currentColor;
 }
 .project-card p {
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
-  line-height: 1.4;
   margin: 0;
+}
+.card-sub {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  line-height: 1.3;
+  margin-top: -0.35rem !important;
+}
+.card-meta {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+.card-desc {
+  font-family: var(--font-serif);
+  font-size: 1.02rem;
+  line-height: 1.55;
 }
 .project-thumb {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 8 / 7;
   object-fit: cover;
   border: 1px solid currentColor;
   margin-top: 0.25rem;
