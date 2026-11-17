@@ -934,9 +934,33 @@ em {
   align-items: center;
 }
 .halftone {
+  position: relative;
   width: 100%;
-  height: auto;
   aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  background: var(--yellow);
+  isolation: isolate;
+}
+.halftone img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* 底层照片：黑白、提亮，再与黄色底正片叠底，变成黄黑双色 */
+.halftone-photo {
+  /* 照片已预先处理成提亮的黑白图 */
+  mix-blend-mode: multiply;
+}
+/* 上层网点：悬停时变淡，露出更多照片 */
+.halftone-dots {
+  mix-blend-mode: multiply;
+  transition: opacity 0.5s ease;
+}
+.halftone:hover .halftone-dots {
+  opacity: 0.45;
 }
 .about-text .about-hello {
   font-family: var(--font-hand);

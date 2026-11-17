@@ -110,7 +110,11 @@
     <!-- ============ 关于（黄色色带 + 网点肖像） ============ -->
     <section id="about" class="band band-yellow">
       <div class="container about-grid">
-        <img src="assets/images/portrait-halftone.png" alt="Thomas Du 的网点肖像" class="halftone" width="720" height="720" loading="lazy" />
+        <!-- 网点肖像：底层是黑白照片（与黄色正片叠底），上面叠一层网点 -->
+        <figure class="halftone" role="img" aria-label="Thomas Du 的网点肖像">
+          <img src="assets/images/portrait-about.jpg" alt="" class="halftone-photo" width="900" height="900" loading="lazy" />
+          <img src="assets/images/portrait-halftone.png" alt="" class="halftone-dots" width="720" height="720" loading="lazy" />
+        </figure>
         <div class="about-text">
           <p class="about-hello">Hi, I'm Thomas</p>
           <h2 class="about-name">HAIHANG DU · THOMAS</h2>
