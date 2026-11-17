@@ -201,17 +201,12 @@ em {
   font-size: 1.6rem;
   letter-spacing: -0.03em;
   text-decoration: none;
-  display: inline-flex;
-  align-items: baseline;
+  white-space: nowrap;
 }
-.logo-dot {
-  width: 0.3em;
-  height: 0.3em;
-  margin: 0 0.12em;
-  border-radius: 50%;
-  background: var(--red);
-  align-self: center;
-  transform: translateY(0.18em);
+/* 姓氏用红色斜体，与全站的红色斜体强调词呼应 */
+.logo em {
+  font-weight: 600;
+  padding-right: 0.06em;
 }
 .nav-menu {
   display: flex;
