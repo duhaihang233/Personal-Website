@@ -10,7 +10,7 @@
 portfolio/
 ├── index.html          # 主页面（首屏 / 关于 / 作品 / 技能 / 联系）
 ├── 404.html            # 404 页面
-├── css/style.css       # 全部样式；顶部 :root 里的变量用来统一调整配色和字体
+├── css/style.css       # 全部样式；顶部 :root 里的变量用来统一调整配色和字体（暖白 + 墨色 + 红色强调）
 ├── js/main.js          # 作品数据（PROJECTS）+ 菜单、主题切换等交互
 ├── assets/
 │   ├── images/         # 头像 avatar.jpg、favicon.svg、分享封面 og-cover.png
@@ -36,7 +36,7 @@ python3 -m http.server 8000
 
 1. **个人信息**：在 `index.html` 中搜索 `you@example.com`、`your-username` 并替换。
 2. **作品**：编辑 `js/main.js` 顶部的 `PROJECTS` 数组，截图放进 `assets/projects/`。
-3. **配色**：修改 `css/style.css` 顶部的 `--color-primary` 等变量。
+3. **配色**：修改 `css/style.css` 顶部的 `--red`、`--cyan`、`--ink` 等变量；作品卡片颜色在 `PROJECTS` 的 `color` 字段里选。
 4. **头像 / 简历**：把文件放到 `assets/images/avatar.jpg` 和 `assets/resume.pdf`。
 
 ## 部署

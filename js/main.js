@@ -1,10 +1,14 @@
 /* =========================================================
    作品数据 —— 新增/修改作品只需编辑这个数组
    image 放在 assets/projects/ 目录下；链接留空则不显示
+   label：卡片左侧的竖排小标签（如 设计 / 开发 / 研究）
+   color：卡片底色，可选 cyan | ink | pink | lime | cream（不填则按顺序轮换）
    ========================================================= */
 const PROJECTS = [
   {
     title: "项目一",
+    label: "Web",
+    color: "cyan",
     description: "一两句话描述这个项目解决了什么问题、你负责了什么。",
     tags: ["React", "TypeScript"],
     image: "assets/projects/project-1.jpg",
@@ -13,6 +17,8 @@ const PROJECTS = [
   },
   {
     title: "项目二",
+    label: "Design",
+    color: "ink",
     description: "一两句话描述这个项目解决了什么问题、你负责了什么。",
     tags: ["Figma", "UI 设计"],
     image: "assets/projects/project-2.jpg",
@@ -21,6 +27,8 @@ const PROJECTS = [
   },
   {
     title: "项目三",
+    label: "Dev",
+    color: "pink",
     description: "一两句话描述这个项目解决了什么问题、你负责了什么。",
     tags: ["Node.js", "API"],
     image: "assets/projects/project-3.jpg",
@@ -40,22 +48,24 @@ function renderProjects() {
   const grid = document.getElementById("project-grid");
   if (!grid) return;
 
-  grid.innerHTML = PROJECTS.map((p) => {
+  const palette = ["cyan", "ink", "pink", "lime", "cream"];
+
+  grid.innerHTML = PROJECTS.map((p, i) => {
+    const color = palette.includes(p.color) ? p.color : palette[i % palette.length];
     const links = [
-      p.demo && `<a href="${escapeHTML(p.demo)}" target="_blank" rel="noopener">在线预览 →</a>`,
+      p.demo && `<a href="${escapeHTML(p.demo)}" target="_blank" rel="noopener">在线预览</a>`,
       p.source && `<a href="${escapeHTML(p.source)}" target="_blank" rel="noopener">源代码</a>`,
     ].filter(Boolean).join("");
 
     return `
-      <article class="project-card">
+      <article class="project-card card-${color}">
+        ${p.label ? `<span class="card-label">${escapeHTML(p.label)}</span>` : ""}
+        <h3>${escapeHTML(p.title)}</h3>
+        <p>${escapeHTML(p.description)}</p>
         <img class="project-thumb" src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)} 截图"
              loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'" />
-        <div class="project-body">
-          <h3>${escapeHTML(p.title)}</h3>
-          <p>${escapeHTML(p.description)}</p>
-          <ul class="tag-list">${p.tags.map((t) => `<li>${escapeHTML(t)}</li>`).join("")}</ul>
-          ${links ? `<div class="project-links">${links}</div>` : ""}
-        </div>
+        <ul class="tag-list">${p.tags.map((t) => `<li>${escapeHTML(t)}</li>`).join("")}</ul>
+        ${links ? `<div class="project-links">${links}</div>` : ""}
       </article>`;
   }).join("");
 }
