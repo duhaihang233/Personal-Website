@@ -440,7 +440,8 @@ em {
   margin-top: 2.25rem;
 }
 
-/* 竖条错位肖像：照片切成 6 条竖条，每条上下错开不同距离，悬停时拼回完整 */
+/* 横条错位肖像：照片切成 6 条横条，每条左右轻微错开；
+   双眼落在同一条横条里，所以眼睛始终在同一水平线上。悬停时拼回完整 */
 .slices {
   --size: min(100%, 460px);
   --n: 6;
@@ -448,26 +449,26 @@ em {
   width: var(--size);
   aspect-ratio: 1;
   display: grid;
-  grid-template-columns: repeat(var(--n), 1fr);
+  grid-template-rows: repeat(var(--n), 1fr);
 }
 .slices span {
   --i: 0;
-  --dy: 0%;
+  --dx: 0%;
   background: url("../assets/images/portrait.jpg") no-repeat;
-  background-size: calc(var(--n) * 100%) 100%;
-  background-position: calc(var(--i) / (var(--n) - 1) * 100%) 0;
+  background-size: 100% calc(var(--n) * 100%);
+  background-position: 0 calc(var(--i) / (var(--n) - 1) * 100%);
   outline: 3px solid var(--paper);
   outline-offset: -1px;
-  transform: translateY(var(--dy));
+  transform: translateX(var(--dx));
   transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   animation: slice-in 1.1s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
-.slices span:nth-child(1) { --i: 0; --dy: 2%; }
-.slices span:nth-child(2) { --i: 1; --dy: -1.5%; }
-.slices span:nth-child(3) { --i: 2; --dy: 1%; }
-.slices span:nth-child(4) { --i: 3; --dy: -2.5%; }
-.slices span:nth-child(5) { --i: 4; --dy: 1.2%; }
-.slices span:nth-child(6) { --i: 5; --dy: -1%; }
+.slices span:nth-child(1) { --i: 0; --dx: 2%; }
+.slices span:nth-child(2) { --i: 1; --dx: -1.5%; }
+.slices span:nth-child(3) { --i: 2; --dx: 1%; }
+.slices span:nth-child(4) { --i: 3; --dx: -2.5%; }
+.slices span:nth-child(5) { --i: 4; --dx: 1.5%; }
+.slices span:nth-child(6) { --i: 5; --dx: -1%; }
 .slices:hover span {
   transform: none;
 }
@@ -482,8 +483,7 @@ em {
     --size: min(82vw, 360px);
     justify-self: center;
     order: -1;
-    /* 给上下错开的竖条留出空间 */
-    margin-block: calc(var(--size) * 0.03);
+    margin-block: 0.5rem;
   }
 }
 
