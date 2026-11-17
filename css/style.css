@@ -105,18 +105,30 @@ h3 {
   margin: 0;
   font-weight: 700;
 }
-/* 强调词：墨色文字 + 红色波浪下划线（SVG 背景，按 em 缩放） */
+/* 强调词：正体墨色文字 + 红色海浪下划线
+   两层浪：前浪（缓升陡落的涌浪）+ 后浪（更细更淡、间距不同），以不同速度向右流动 */
 em {
-  font-family: var(--font-serif);
-  font-style: italic;
+  font-style: normal;
   color: inherit;
-  padding-bottom: 0.14em;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 8'%3E%3Cpath d='M0 4 Q5 0.5 10 4 T20 4' fill='none' stroke='%23eb2a23' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 0.5em 0.2em;
+  /* 浪的尺寸随字号缩放，但在超大标题上封顶，避免浪线过粗 */
+  --wave-w: min(1.1em, 44px);
+  --wave-h: min(0.33em, 13px);
+  --swell-w: min(0.8em, 32px);
+  --swell-h: min(0.23em, 9px);
+  --wave-lift: min(0.1em, 4px);
+  padding-bottom: min(0.3em, 12px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 12'%3E%3Cpath d='M0 9.5 C9 9.5 15 2 24 2.5 C28.5 2.8 30 9.5 40 9.5' fill='none' stroke='%23eb2a23' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 8'%3E%3Cpath d='M0 6 C6 6 10 2 16 2 C19.5 2 21 6 28 6' fill='none' stroke='%23eb2a23' stroke-opacity='0.45' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x, repeat-x;
+  background-size: var(--wave-w) var(--wave-h), var(--swell-w) var(--swell-h);
+  background-position: 0 calc(100% - var(--wave-lift)), 0 100%;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
+  animation: sea 5s linear infinite;
 }
-@keyframes wave-slide {
-  to { background-position-x: 0.5em; }
+@keyframes sea {
+  to {
+    background-position: var(--wave-w) calc(100% - var(--wave-lift)), calc(var(--swell-w) * 2) 100%;
+  }
 }
 :focus-visible {
   outline: 2px solid var(--red);
@@ -213,13 +225,7 @@ em {
 }
 /* 姓氏用红色斜体，与全站的红色斜体强调词呼应 */
 .logo em {
-  font-weight: 600;
-  padding-right: 0.06em;
-  padding-bottom: 0.1em;
-}
-/* 悬停 Logo 时波浪线流动 */
-.logo:hover em {
-  animation: wave-slide 0.6s linear infinite;
+  padding-bottom: 0.25em;
 }
 .nav-menu {
   display: flex;
@@ -646,7 +652,7 @@ em {
   font-size: clamp(3rem, 9vw, 6.5rem);
   line-height: 1;
   letter-spacing: -0.03em;
-  margin-bottom: 1.25rem;
+  margin-bottom: 2rem;
 }
 .contact-links {
   list-style: none;
