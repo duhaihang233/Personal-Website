@@ -680,7 +680,6 @@ function initDetail() {
     busy = true;
     fill(i);
     lockPage(true);
-    scroller.scrollTop = 0;
     sourceNote = note && visible(note) ? note : null;
     root.classList.remove("is-ready", "is-revealing");
 
@@ -689,10 +688,12 @@ function initDetail() {
       sourceNote.classList.add("is-lifted");
       await unfold(st);
       root.hidden = false; // 九块已铺满整屏，详情层（同样的颜色）接上
+      scroller.scrollTop = 0;
       reveal();
       requestAnimationFrame(() => st.layer.remove());
     } else {
       root.hidden = false;
+      scroller.scrollTop = 0;
       await root.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduceMotion.matches ? 1 : 250 }).finished.catch(() => {});
       root.classList.add("is-ready");
     }
