@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thomas Du · 个人作品集</title>
+  <meta name="description" content="Thomas Du 的个人作品集：项目展示、技能与联系方式。" />
+  <meta name="author" content="Thomas Du" />
+
+  <!-- 社交分享预览（Open Graph） -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://thomasdu.me/" />
+  <meta property="og:title" content="Thomas Du · 个人作品集" />
+  <meta property="og:description" content="项目展示、技能与联系方式。" />
+  <meta property="og:image" content="https://thomasdu.me/assets/images/og-cover.png" />
+
+  <link rel="canonical" href="https://thomasdu.me/" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+
+  <!-- 字体：Newsreader（衬线标题）+ Archivo（粗无衬线）+ Noto Serif SC（中文衬线） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Noto+Serif+SC:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- 在页面渲染前应用主题，避免闪烁 -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <!-- 粗糙边缘滤镜：标题的“手工印刷”质感，全站共用 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" /><feDisplacementMap in="SourceGraphic" scale="5" /></filter>
+  </svg>
+
+  <!-- ============ 页头 / 导航 ============ -->
+  <header class="site-header">
+    <div class="container nav">
+      <a href="#top" class="logo" aria-label="Thomas Du 首页">Thomas <em>Du</em></a>
+
+      <nav id="nav-menu" class="nav-menu" aria-label="主导航">
+        <a href="#projects">作品</a>
+        <a href="#about">关于</a>
+        <a href="#skills">技能</a>
+        <a href="#contact">联系</a>
+        <button class="theme-toggle" type="button" aria-label="切换深色/浅色模式">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+      </nav>
+
+      <button class="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="nav-menu">
+        <span></span><span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ 首屏 ============ -->
+    <section id="top" class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+        <p class="kicker">你好，我是</p>
+        <h1 class="hero-title rough">Thomas Du</h1>
+        <p class="hero-sub">做<em>有用</em>又<em>有趣</em>的东西。</p>
+        <p class="lead">一句话介绍自己，例如：前端开发者 / 设计师，专注于打造简洁、好用的数字产品。</p>
+        <div class="hero-actions">
+          <a href="#projects" class="circle-btn" aria-label="向下查看作品">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#contact" class="btn">联系我</a>
+        </div>
+        </div>
+        <!-- 九宫格错位肖像：每行只左右错开，眼睛保持水平；鼠标移上去会拼回完整 -->
+        <div class="slices" role="img" aria-label="Thomas Du 的照片">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============ 作品 ============ -->
+    <section id="projects" class="section journal-section">
+      <div class="container">
+        <header class="section-head">
+          <p class="outline-latin" lang="en" aria-hidden="true">Selected Works</p>
+          <h2 class="section-title rough">作品</h2>
+        </header>
+      </div>
+      <!-- 手账本：由 js/main.js 中的 PROJECTS 数据渲染，每个对开页放两个作品，向下滚动翻页 -->
+      <div class="journal-track" id="journal-track">
+        <div class="journal-sticky">
+          <div class="book" id="book">
+            <noscript><p>请启用 JavaScript 以查看作品。</p></noscript>
+          </div>
+          <div class="journal-nav" id="journal-nav" aria-label="翻页"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 关于（黄色色带 + 网点肖像） ============ -->
+    <section id="about" class="band band-yellow">
+      <div class="container about-grid">
+        <!-- 网点肖像：底层是黑白照片（与黄色正片叠底），上面叠一层网点 -->
+        <figure class="halftone" role="img" aria-label="Thomas Du 的网点肖像">
+          <img src="assets/images/portrait-about.jpg" alt="" class="halftone-photo" width="900" height="900" loading="lazy" />
+          <img src="assets/images/portrait-halftone.png" alt="" class="halftone-dots" width="720" height="720" loading="lazy" />
+        </figure>
+        <div class="about-text">
+          <p class="about-hello">Hi, I'm Thomas</p>
+          <h2 class="about-name">HAIHANG DU · THOMAS</h2>
+          <p>我是一个热爱工业设计的高中生，喜欢把想法变成真正能用的东西。从自适应的人体工学坐垫，到受生物启发的小装置，我把 3D 打印、焊接和一点代码结合起来，再不断迭代，直到它简单、可靠又好玩。</p>
+          <p><a href="assets/resume.pdf" class="link-arrow">下载简历（PDF）</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 技能 ============ -->
+    <section id="skills" class="section">
+      <div class="container">
+        <header class="section-head">
+          <p class="outline-latin" lang="en" aria-hidden="true">Toolbox</p>
+          <h2 class="section-title rough">技能</h2>
+        </header>
+        <ul class="tag-list">
+          <li>HTML / CSS</li>
+          <li>JavaScript</li>
+          <li>React</li>
+          <li>Figma</li>
+          <li>Node.js</li>
+          <li>Git</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 联系（深蓝色带） ============ -->
+    <section id="contact" class="band band-blue contact">
+      <div class="container contact-inner">
+        <div class="contact-main">
+          <p class="micro-line" aria-hidden="true">Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.Thomas.Du.</p>
+          <p class="outline-latin" lang="en">Let's Talk</p>
+          <h2 class="contact-title rough">一起<em>聊聊</em>？</h2>
+          <p class="micro-line" aria-hidden="true">Make.Things.Work.Make.Things.Work.Make.Things.Work.Make.Things.Work.</p>
+          <p class="lead">欢迎合作或交流，通过以下方式找到我。</p>
+          <ul class="contact-links">
+            <li><a href="mailto:you@example.com" class="btn btn-solid">发邮件</a></li>
+            <li><a href="https://github.com/your-username" class="btn" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://www.linkedin.com/in/your-username" class="btn" target="_blank" rel="noopener">LinkedIn</a></li>
+          </ul>
+        </div>
+        <span class="bang" aria-hidden="true"><i></i><b></b></span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 页脚（深色撕纸色带） ============ -->
+  <footer class="band band-ink site-footer">
+    <div class="container footer-inner">
+      <a href="#top" class="logo">Thomas <em>Du</em></a>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="#projects">作品</a>
+        <a href="#about">关于</a>
+        <a href="#skills">技能</a>
+        <a href="#contact">联系</a>
+      </nav>
+      <p class="copyright">© <span id="year"></span> Thomas Du · thomasdu.me</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+</body>
+</html>
