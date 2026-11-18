@@ -24,12 +24,10 @@
         href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Noto+Serif+SC:wght@400;700&display=swap" />
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- 在页面渲染前应用主题，避免闪烁 -->
+  <!-- 在页面渲染前应用语言设置 -->
   <script>
     (function () {
       try {
-        var t = localStorage.getItem("theme");
-        if (t) document.documentElement.setAttribute("data-theme", t);
         var l = localStorage.getItem("lang");
         if (l === "en" || l === "zh") document.documentElement.setAttribute("data-lang", l);
       } catch (e) {}
@@ -56,9 +54,6 @@
         <div class="nav-tools">
           <!-- 中英切换：按钮显示的是“要切换到的语言” -->
           <button class="lang-toggle" type="button" aria-label="Switch to English" data-i18n="langBtn" data-i18n-aria="langAria">EN</button>
-          <button class="theme-toggle" type="button" aria-label="切换深色/浅色模式" data-i18n-aria="theme">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-          </button>
         </div>
       </nav>
 

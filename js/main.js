@@ -163,7 +163,6 @@ const I18N = {
     navContact: "联系",
     langBtn: "EN",
     langAria: "Switch to English",
-    theme: "切换深色/浅色模式",
     menuOpen: "打开菜单",
     menuClose: "关闭菜单",
     heroHello: "你好，我是",
@@ -199,7 +198,6 @@ const I18N = {
     navContact: "Contact",
     langBtn: "中",
     langAria: "切换到中文",
-    theme: "Toggle dark or light mode",
     menuOpen: "Open menu",
     menuClose: "Close menu",
     heroHello: "Hello, I'm",
@@ -455,24 +453,6 @@ function initNav() {
   syncMenuLabel();
 }
 
-/* ---------- 深色/浅色切换（记住用户选择） ---------- */
-function initTheme() {
-  const btn = document.querySelector(".theme-toggle");
-  if (!btn) return;
-
-  btn.addEventListener("click", () => {
-    const root = document.documentElement;
-    const current =
-      root.getAttribute("data-theme") ||
-      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    const next = current === "dark" ? "light" : "dark";
-    root.setAttribute("data-theme", next);
-    try {
-      localStorage.setItem("theme", next);
-    } catch (e) {}
-  });
-}
-
 /* ---------- 滚动时高亮当前导航项 ---------- */
 function initActiveLink() {
   const links = document.querySelectorAll(".nav-menu a[href^='#']");
@@ -500,7 +480,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initLang();
   initJournal();
   initNav();
-  initTheme();
   initActiveLink();
   const year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
