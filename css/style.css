@@ -51,6 +51,7 @@
 }
 html {
   color-scheme: light;
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
   scroll-padding-top: var(--header-h);
   background: var(--paper);
@@ -63,7 +64,8 @@ body {
   color: var(--ink);
   background: var(--paper);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* clip 不会生成滚动容器：既防止横向滚动，又不影响吸顶（sticky）效果 */
+  overflow-x: clip;
   position: relative;
 }
 /* 背景竖向网格线 */
@@ -1156,4 +1158,341 @@ em {
 .band + .site-footer,
 main + .site-footer.band {
   margin-top: 0;
+}
+
+/* =========================================================
+   12. 作品详情页（点击便签后展开）
+   ========================================================= */
+
+/* 便签可点击：整张便签是一个按钮，悬停时微微抬起摆正 */
+.note {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s;
+}
+.note:hover,
+.note:has(.note-open:focus-visible) {
+  transform: rotate(calc(var(--r, 0deg) * 0.3)) translateY(-5px) scale(1.015);
+  box-shadow: 0 2px 2px rgba(31, 28, 6, 0.1), 0 24px 30px -16px rgba(31, 28, 6, 0.6);
+}
+.note-open {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 1.1em 0.85em;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--font-hand);
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+}
+.note-open span {
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.note:hover .note-open span {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+.note-open:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 4px;
+}
+/* 便签里的链接要能单独点击，叠在按钮上面 */
+.note-links a {
+  position: relative;
+  z-index: 2;
+}
+/* 详情页打开时，原来的便签“被揭下”，从本子上消失 */
+.note.is-lifted {
+  visibility: hidden;
+}
+
+html.detail-open {
+  overflow: hidden;
+}
+.detail {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  color: var(--note-text);
+}
+.detail[hidden] {
+  display: none;
+}
+
+/* 动画用的“便签纸”：从便签的位置揭下、展开到全屏 */
+.detail-sheet {
+  position: absolute;
+  inset: 0;
+  background: var(--note-bg, var(--cyan));
+  transform-origin: center;
+  font-size: 16px;
+}
+.detail-sheet .tape {
+  top: -0.6em;
+  transition: opacity 0.2s;
+}
+.detail.is-ready .detail-sheet .tape {
+  opacity: 0;
+}
+/* 展开时的折痕和阴影 */
+.detail-sheet.is-unfolding {
+  box-shadow: 0 30px 60px -20px rgba(31, 28, 6, 0.55);
+}
+.detail-sheet.is-unfolding::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, transparent 49.6%, rgba(31, 28, 6, 0.14) 50%, rgba(255, 255, 255, 0.25) 50.4%, transparent 51%),
+    linear-gradient(to right, transparent 49.7%, rgba(31, 28, 6, 0.1) 50%, transparent 50.3%);
+  pointer-events: none;
+}
+
+.detail-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.detail.is-ready .detail-scroll {
+  opacity: 1;
+  transform: none;
+}
+.detail-close {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top, 0px));
+  left: max(16px, env(safe-area-inset-left, 0px));
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: #1f1c06;
+  color: #fcfcf7;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 18px -8px rgba(31, 28, 6, 0.6);
+  transition: transform 0.2s, background 0.2s;
+}
+.detail-close:hover {
+  background: var(--red);
+  transform: rotate(90deg);
+}
+.detail-close:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 3px;
+}
+
+.detail-inner {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px), 4vw);
+  padding-right: max(16px, env(safe-area-inset-right, 0px), 4vw);
+}
+/* 顶部：便签颜色 */
+.detail-head {
+  background: var(--note-bg);
+  color: var(--note-text);
+  padding-block: clamp(5.5rem, 12vw, 7.5rem) clamp(5rem, 10vw, 7rem);
+}
+.detail-no {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-hand);
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  font-weight: 700;
+}
+.detail-title {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: clamp(2.4rem, 7vw, 5.2rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.detail-sub {
+  margin: 0.6rem 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 2.6vw, 1.9rem);
+  line-height: 1.3;
+}
+.detail-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 1rem 1.5rem;
+  margin: 2.25rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1.5px solid currentColor;
+}
+.detail-meta dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.detail-meta dd {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+/* 内容：点阵纸 */
+.detail-content {
+  max-width: none;
+  padding-left: max(16px, env(safe-area-inset-left, 0px), calc((100% - 980px) / 2 + 4vw));
+  padding-right: max(16px, env(safe-area-inset-right, 0px), calc((100% - 980px) / 2 + 4vw));
+  padding-bottom: 5rem;
+  background-color: var(--sheet);
+  background-image: radial-gradient(var(--sheet-dot) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+  color: #1f1c06;
+}
+.detail-hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0.75rem 0.75rem 2.25rem;
+  background: #fff;
+  transform: translateY(-3.5rem) rotate(-1.2deg);
+  box-shadow: 0 2px 3px rgba(31, 28, 6, 0.1), 0 22px 34px -18px rgba(31, 28, 6, 0.55);
+}
+.detail-hero img {
+  width: 100%;
+  background: #e6e6e4;
+}
+.detail-lead {
+  max-width: 44rem;
+  margin: -1rem 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2.3vw, 1.5rem);
+  line-height: 1.6;
+}
+.detail-links {
+  margin: 1.75rem 0 0;
+}
+.detail-section {
+  margin-top: clamp(3.5rem, 7vw, 5rem);
+}
+.detail-h {
+  font-family: var(--font-serif);
+  font-size: clamp(1.9rem, 4.2vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+.detail-body {
+  max-width: 44rem;
+  margin: 0 0 1rem;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+.detail-points {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  max-width: 44rem;
+  display: grid;
+  gap: 0.55rem;
+}
+.detail-points li {
+  position: relative;
+  padding-left: 1.6rem;
+  font-family: var(--font-serif);
+  font-size: 1.12rem;
+  line-height: 1.55;
+}
+.detail-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.9rem;
+  height: 2px;
+  background: var(--red);
+}
+/* 图片：贴在纸上的拍立得 */
+.detail-figs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 2rem 1.5rem;
+  margin-top: 2rem;
+}
+.detail-figs.single {
+  grid-template-columns: minmax(0, 720px);
+}
+.detail-fig {
+  margin: 0;
+  padding: 0.6rem 0.6rem 0;
+  background: #fff;
+  transform: rotate(var(--fr, 0deg));
+  box-shadow: 0 1px 2px rgba(31, 28, 6, 0.12), 0 14px 22px -14px rgba(31, 28, 6, 0.5);
+}
+.detail-fig img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #f1f0ea;
+}
+.detail-figs.single .detail-fig img {
+  aspect-ratio: auto;
+}
+.detail-fig figcaption {
+  padding: 0.45rem 0.2rem 0.75rem;
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+/* 上一个 / 下一个 */
+.detail-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 5rem;
+  padding-top: 1.5rem;
+  border-top: 1.5px dashed rgba(31, 28, 6, 0.4);
+}
+.detail-pager a {
+  display: grid;
+  gap: 0.2rem;
+  text-decoration: none;
+  color: inherit;
+}
+.detail-pager a:last-child {
+  text-align: right;
+}
+.detail-pager span {
+  font-family: var(--font-hand);
+  font-size: 1.2rem;
+  color: var(--red);
+}
+.detail-pager b {
+  font-weight: 900;
+  font-size: clamp(1rem, 2.4vw, 1.35rem);
+}
+.detail-pager a:hover b {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (max-width: 720px) {
+  .detail-close {
+    width: 44px;
+    height: 44px;
+    font-size: 1.7rem;
+  }
+  .detail-hero {
+    transform: translateY(-2.5rem) rotate(-1deg);
+  }
 }

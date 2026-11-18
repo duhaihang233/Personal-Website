@@ -1,5 +1,6 @@
 /* =========================================================
    作品数据 —— 新增/修改作品只需编辑这个数组（按数组顺序显示）
+   slug      网址里用的英文名（详情页地址是 #work-<slug>，详情内容在 js/details.js）
    title     项目名            subtitle  一句话副标题
    label     卡片左侧竖排标签   color     卡片底色：cyan | ink | pink | lime | cream
    year / duration / team      显示在标题下的信息行（可留空）
@@ -11,6 +12,7 @@
    ========================================================= */
 const PROJECTS = [
   {
+    slug: "fitseat",
     title: "FitSeat",
     subtitle: "可交互的智能坐垫",
     label: "Health",
@@ -33,6 +35,7 @@ const PROJECTS = [
     },
   },
   {
+    slug: "rhythm-arcade",
     title: "Home-Scale Rhythm Arcade",
     subtitle: "家用尺寸的音游街机控制器",
     label: "Interaction",
@@ -56,6 +59,7 @@ const PROJECTS = [
     },
   },
   {
+    slug: "pipe-robot",
     title: "Bio-Inspired Pipe-Cleaning Robot",
     subtitle: "仿生管道清洁机器人",
     label: "Robotics",
@@ -77,6 +81,7 @@ const PROJECTS = [
     },
   },
   {
+    slug: "connect-hub",
     title: "Connect Hub",
     subtitle: "Grow, Gather, Guide",
     label: "Space",
@@ -100,6 +105,7 @@ const PROJECTS = [
     },
   },
   {
+    slug: "diy-guitar",
     title: "DIY Guitar",
     subtitle: "自己设计的 Telecaster",
     label: "Music",
@@ -122,6 +128,7 @@ const PROJECTS = [
     },
   },
   {
+    slug: "wood-bookmark",
     title: "Wood Bookmark",
     subtitle: "学校职业日文创书签",
     label: "Graphics",
@@ -184,6 +191,16 @@ const I18N = {
     contactTitle: "一起<em>聊聊</em>？",
     contactLead: "欢迎合作或交流，通过以下方式找到我。",
     email: "发邮件",
+    openNote: (title) => `打开 ${title} 详情`,
+    noteMore: "展开看看 ↗",
+    close: "关闭",
+    metaYear: "年份",
+    metaDuration: "时长",
+    metaTeam: "合作",
+    metaField: "领域",
+    metaTools: "工具",
+    prev: "上一个",
+    next: "下一个",
   },
   en: {
     pageTitle: "Thomas Du · Portfolio",
@@ -219,6 +236,16 @@ const I18N = {
     contactTitle: "Drop me a <em>line</em>.",
     contactLead: "Open to collaborations and conversations. Here's where to find me.",
     email: "Email me",
+    openNote: (title) => `Open ${title} details`,
+    noteMore: "Open it up ↗",
+    close: "Close",
+    metaYear: "Year",
+    metaDuration: "Duration",
+    metaTeam: "Team",
+    metaField: "Field",
+    metaTools: "Tools",
+    prev: "Previous",
+    next: "Next",
   },
 };
 
@@ -279,8 +306,9 @@ function noteHTML(p, i) {
     .map((l) => `<a href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(l.text)}</a>`)
     .join("");
   return `
-    <article class="note note-${color}" style="--r:${NOTE_TILT[i % NOTE_TILT.length]}deg;--pr:${i % 2 ? -1.5 : 1.2}deg">
+    <article class="note note-${color}" data-index="${i}" style="--r:${NOTE_TILT[i % NOTE_TILT.length]}deg;--pr:${i % 2 ? -1.5 : 1.2}deg">
       <span class="tape ${TAPES[i % TAPES.length]}" style="--tr:${i % 2 ? 4 : -3}deg"></span>
+      <button type="button" class="note-open" aria-label="${escapeHTML(t("openNote")(p.title))}"><span>${t("noteMore")}</span></button>
       <div class="note-top"><span>No.${num}${p.label ? ` · ${escapeHTML(p.label)}` : ""}</span>${meta ? `<span>${meta}</span>` : ""}</div>
       <figure class="note-photo"><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}" loading="lazy"
         onerror="this.onerror=null;this.src='assets/images/placeholder.svg'" /></figure>
@@ -410,6 +438,252 @@ function initJournal() {
   refreshJournal = () => { build(); update(); };
 }
 
+/* =========================================================
+   作品详情页：点击便签 → 便签“揭下并展开”成整页 → 显示详情
+   地址：#work-<slug>（可分享、可用浏览器返回键关闭）
+   ========================================================= */
+const L = (o) => (o ? (LANG === "en" && o.en !== undefined ? o.en : o.zh) : "");
+let refreshDetail = () => {};
+
+function detailHTML(i) {
+  const p = PROJECTS[i];
+  const d = (typeof DETAILS !== "undefined" && DETAILS[p.slug]) || { tools: [], sections: [] };
+  const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
+  const num = String(i + 1).padStart(2, "0");
+  const prev = PROJECTS[(i - 1 + PROJECTS.length) % PROJECTS.length];
+  const next = PROJECTS[(i + 1) % PROJECTS.length];
+  const meta = [
+    [t("metaYear"), p.year],
+    [t("metaDuration"), field(p, "duration")],
+    [t("metaTeam"), field(p, "team")],
+    [t("metaField"), field(p, "field")],
+    [t("metaTools"), (d.tools || []).join(", ")],
+  ].filter(([, v]) => v);
+  const links = (field(p, "links") || [])
+    .map((l) => `<a class="btn btn-solid" href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(l.text)} ↗</a>`)
+    .join("");
+  const fig = (img, k) => `
+    <figure class="detail-fig" style="--fr:${[-1.2, 0.9, -0.6, 1.4, -1, 0.7][k % 6]}deg">
+      <img src="${escapeHTML(img.src)}" alt="${escapeHTML(L(img))}" loading="lazy" />
+      <figcaption>${escapeHTML(L(img))}</figcaption>
+    </figure>`;
+  const sections = (d.sections || []).map((sec) => `
+    <section class="detail-section">
+      <h3 class="detail-h rough">${escapeHTML(L(sec.title))}</h3>
+      ${sec.body ? `<p class="detail-body">${escapeHTML(L(sec.body))}</p>` : ""}
+      ${sec.points ? `<ul class="detail-points">${sec.points.map((x) => `<li>${escapeHTML(L(x))}</li>`).join("")}</ul>` : ""}
+      ${sec.images ? `<div class="detail-figs${sec.images.length === 1 ? " single" : ""}">${sec.images.map(fig).join("")}</div>` : ""}
+    </section>`).join("");
+
+  return `
+    <header class="detail-head note-${color}">
+      <div class="detail-inner">
+        <p class="detail-no">No.${num}${p.label ? ` · ${escapeHTML(p.label)}` : ""}</p>
+        <h2 class="detail-title" id="detail-title">${escapeHTML(p.title)}</h2>
+        ${field(p, "subtitle") ? `<p class="detail-sub">${escapeHTML(field(p, "subtitle"))}</p>` : ""}
+        <dl class="detail-meta">${meta.map(([k, v]) => `<div><dt>${escapeHTML(k)}</dt><dd>${escapeHTML(v)}</dd></div>`).join("")}</dl>
+      </div>
+    </header>
+    <div class="detail-inner detail-content">
+      <figure class="detail-hero"><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}" /></figure>
+      <p class="detail-lead">${escapeHTML(field(p, "description"))}</p>
+      ${links ? `<p class="detail-links">${links}</p>` : ""}
+      ${sections}
+      <nav class="detail-pager" aria-label="${escapeHTML(t("pager"))}">
+        <a href="#work-${prev.slug}" data-go="${PROJECTS.indexOf(prev)}"><span>← ${t("prev")}</span><b>${escapeHTML(prev.title)}</b></a>
+        <a href="#work-${next.slug}" data-go="${PROJECTS.indexOf(next)}"><span>${t("next")} →</span><b>${escapeHTML(next.title)}</b></a>
+      </nav>
+    </div>`;
+}
+
+function initDetail() {
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const outside = [document.querySelector(".site-header"), document.getElementById("main"), document.querySelector(".site-footer")];
+
+  // 详情层：一张会动画的“便签纸” + 可滚动的内容
+  const root = document.createElement("div");
+  root.className = "detail";
+  root.hidden = true;
+  root.setAttribute("role", "dialog");
+  root.setAttribute("aria-modal", "true");
+  root.setAttribute("aria-labelledby", "detail-title");
+  root.innerHTML = `
+    <div class="detail-sheet" aria-hidden="true"><span class="tape"></span></div>
+    <div class="detail-scroll">
+      <button type="button" class="detail-close"><span aria-hidden="true">×</span></button>
+      <div class="detail-page"></div>
+    </div>`;
+  document.body.appendChild(root);
+  const sheet = root.querySelector(".detail-sheet");
+  const scroller = root.querySelector(".detail-scroll");
+  const page = root.querySelector(".detail-page");
+  const closeBtn = root.querySelector(".detail-close");
+
+  let current = -1;      // 当前打开的作品
+  let sourceNote = null; // 被“揭下”的那张便签
+  let pushed = false;    // 是否由点击便签打开（关闭时用返回键回到原地址）
+  let busy = false;
+
+  const noteFor = (i) => document.querySelector(`.page:not([inert]) .note[data-index="${i}"]`);
+  const visible = (el) => {
+    if (!el) return false;
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
+  };
+
+  function fill(i) {
+    current = i;
+    const p = PROJECTS[i];
+    const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
+    sheet.className = `detail-sheet note-${color}`;
+    page.innerHTML = detailHTML(i);
+    closeBtn.setAttribute("aria-label", t("close"));
+    page.querySelectorAll("[data-go]").forEach((a) =>
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        go(+a.dataset.go);
+      })
+    );
+  }
+
+  // 便签在屏幕上的位置 → 让整页纸从这里展开（或收回这里）
+  function fromNoteKeyframes(note) {
+    const r = note.getBoundingClientRect();
+    const tilt = parseFloat(note.style.getPropertyValue("--r")) || 0;
+    const W = innerWidth, H = innerHeight;
+    const sx = r.width / W, sy = r.height / H;
+    const dx = r.left + r.width / 2 - W / 2, dy = r.top + r.height / 2 - H / 2;
+    return [
+      { transform: `translate(${dx}px, ${dy}px) rotate(${tilt}deg) scale(${sx}, ${sy})`, offset: 0 },
+      // 揭下：抬起、摆正、微微放大
+      { transform: `translate(${dx}px, ${dy - 24}px) rotate(0deg) scale(${sx * 1.08}, ${sy * 1.08})`, offset: 0.28 },
+      // 展开：先横向打开……
+      { transform: `translate(0px, ${dy * 0.35}px) rotate(0deg) scale(1, ${Math.max(sy * 1.15, 0.3)})`, offset: 0.62 },
+      // ……再纵向铺满
+      { transform: "none", offset: 1 },
+    ];
+  }
+
+  function lockPage(lock) {
+    document.documentElement.classList.toggle("detail-open", lock);
+    outside.forEach((el) => el && (lock ? el.setAttribute("inert", "") : el.removeAttribute("inert")));
+  }
+
+  async function open(i, note) {
+    if (busy) return;
+    busy = true;
+    fill(i);
+    root.hidden = false;
+    lockPage(true);
+    scroller.scrollTop = 0;
+    sourceNote = note && visible(note) ? note : null;
+    root.classList.remove("is-ready");
+
+    if (sourceNote && !reduceMotion.matches) {
+      sourceNote.classList.add("is-lifted");
+      sheet.classList.add("is-unfolding");
+      await sheet.animate(fromNoteKeyframes(sourceNote), {
+        duration: 900, easing: "cubic-bezier(0.65, 0, 0.25, 1)",
+      }).finished.catch(() => {});
+      sheet.classList.remove("is-unfolding");
+    } else {
+      await sheet.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduceMotion.matches ? 1 : 250 }).finished.catch(() => {});
+    }
+    root.classList.add("is-ready");
+    closeBtn.focus({ preventScroll: true });
+    busy = false;
+  }
+
+  async function close() {
+    if (root.hidden || busy) return;
+    busy = true;
+    const note =
+      sourceNote && sourceNote.isConnected && current === +sourceNote.dataset.index ? sourceNote : noteFor(current);
+    root.classList.remove("is-ready");
+    await new Promise((r) => setTimeout(r, reduceMotion.matches ? 0 : 180));
+    if (note && visible(note) && !reduceMotion.matches) {
+      sheet.classList.add("is-unfolding");
+      await sheet.animate(fromNoteKeyframes(note).reverse().map((k, n, a) => ({ ...k, offset: n / (a.length - 1) })), {
+        duration: 700, easing: "cubic-bezier(0.65, 0, 0.25, 1)",
+      }).finished.catch(() => {});
+      sheet.classList.remove("is-unfolding");
+    } else {
+      await sheet.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduceMotion.matches ? 1 : 220 }).finished.catch(() => {});
+    }
+    root.hidden = true;
+    lockPage(false);
+    document.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
+    const focusTarget = note && note.querySelector(".note-open");
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
+    sourceNote = null;
+    current = -1;
+    busy = false;
+  }
+
+  // 在详情页里切换到上一个/下一个作品
+  function go(i) {
+    history.replaceState(null, "", `#work-${PROJECTS[i].slug}`);
+    document.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
+    sourceNote = null;
+    page.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150 }).finished.then(() => {
+      fill(i);
+      scroller.scrollTop = 0;
+      page.animate([{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }], { duration: 300, easing: "ease-out" });
+    });
+  }
+
+  const indexFromHash = () => {
+    const m = location.hash.match(/^#work-([a-z0-9-]+)$/);
+    return m ? PROJECTS.findIndex((p) => p.slug === m[1]) : -1;
+  };
+
+  // 点击便签
+  document.getElementById("book").addEventListener("click", (e) => {
+    const btn = e.target.closest(".note-open");
+    if (!btn) return;
+    const note = btn.closest(".note");
+    const i = +note.dataset.index;
+    pushed = true;
+    history.pushState(null, "", `#work-${PROJECTS[i].slug}`);
+    open(i, note);
+  });
+
+  closeBtn.addEventListener("click", () => {
+    if (pushed) history.back();
+    else {
+      history.replaceState(null, "", location.pathname + location.search);
+      close();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !root.hidden) closeBtn.click();
+  });
+  // 浏览器前进/后退
+  addEventListener("popstate", () => {
+    const i = indexFromHash();
+    if (i < 0) {
+      pushed = false;
+      close();
+    } else if (root.hidden) open(i, noteFor(i));
+    else if (i !== current) go(i);
+  });
+
+  // 切换语言：重写详情内容；手账本重新渲染后，把对应便签重新标记为“已揭下”
+  refreshDetail = () => {
+    if (root.hidden || current < 0) return;
+    fill(current);
+    const n = noteFor(current);
+    if (sourceNote && n) {
+      sourceNote = n;
+      n.classList.add("is-lifted");
+    }
+  };
+
+  // 直接打开带 #work-xxx 的链接
+  const start = indexFromHash();
+  if (start >= 0) open(start, null);
+}
+
 /* ---------- 中英切换（记住用户选择） ---------- */
 function initLang() {
   const btn = document.querySelector(".lang-toggle");
@@ -426,6 +700,7 @@ function initLang() {
     const inBook = track && top0 <= 0 && -top0 < track.offsetHeight;
     applyI18n();
     refreshJournal();
+    refreshDetail();
     syncMenuLabel();
     if (inBook) window.scrollBy(0, track.getBoundingClientRect().top - top0);
   });
@@ -479,6 +754,7 @@ function initActiveLink() {
 document.addEventListener("DOMContentLoaded", () => {
   initLang();
   initJournal();
+  initDetail();
   initNav();
   initActiveLink();
   const year = document.getElementById("year");
