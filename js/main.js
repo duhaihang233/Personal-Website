@@ -500,7 +500,7 @@ function initDetail() {
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const outside = [document.querySelector(".site-header"), document.getElementById("main"), document.querySelector(".site-footer")];
 
-  // 详情层：一张会动画的“便签纸” + 可滚动的内容
+  // 详情层：可滚动的详情内容（底色 = 便签颜色）
   const root = document.createElement("div");
   root.className = "detail";
   root.hidden = true;
@@ -508,13 +508,11 @@ function initDetail() {
   root.setAttribute("aria-modal", "true");
   root.setAttribute("aria-labelledby", "detail-title");
   root.innerHTML = `
-    <div class="detail-sheet" aria-hidden="true"><span class="tape"></span></div>
     <div class="detail-scroll">
       <button type="button" class="detail-close"><span aria-hidden="true">×</span></button>
       <div class="detail-page"></div>
     </div>`;
   document.body.appendChild(root);
-  const sheet = root.querySelector(".detail-sheet");
   const scroller = root.querySelector(".detail-scroll");
   const page = root.querySelector(".detail-page");
   const closeBtn = root.querySelector(".detail-close");
@@ -530,12 +528,14 @@ function initDetail() {
     const r = el.getBoundingClientRect();
     return r.width > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
   };
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const done = (anims) => Promise.all(anims.map((a) => a.finished.catch(() => {})));
 
   function fill(i) {
     current = i;
     const p = PROJECTS[i];
     const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
-    sheet.className = `detail-sheet note-${color}`;
+    root.className = `detail note-${color}`;
     page.innerHTML = detailHTML(i);
     closeBtn.setAttribute("aria-label", t("close"));
     page.querySelectorAll("[data-go]").forEach((a) =>
@@ -546,22 +546,120 @@ function initDetail() {
     );
   }
 
-  // 便签在屏幕上的位置 → 让整页纸从这里展开（或收回这里）
-  function fromNoteKeyframes(note) {
-    const r = note.getBoundingClientRect();
-    const tilt = parseFloat(note.style.getPropertyValue("--r")) || 0;
+  /* ---------- 动画舞台：把便签复制出来，切成 3×3 九块 ----------
+     复制整张纸页（保留容器查询的尺寸），所以复制出来的便签和原来一模一样；
+     每一块都是完整便签的副本，用 clip-path 只露出自己那一格；
+     胶带单独复制一份，用来做“撕开 / 贴回”。 */
+  const ROW_SHIFT = [0.05, -0.06, 0.03]; // 每一行左右错开的比例（相对一格的宽度），和首屏照片同一手法
+  function stage(note) {
+    const pageEl = note.closest(".page");
+    const pr = pageEl.getBoundingClientRect();
+    const layer = document.createElement("div");
+    layer.className = "page fx-page";
+    layer.setAttribute("aria-hidden", "true");
+    Object.assign(layer.style, { left: `${pr.left}px`, top: `${pr.top}px`, width: `${pr.width}px`, height: `${pr.height}px` });
+
+    const tiles = [];
+    for (let k = 0; k < 9; k++) {
+      const r = Math.floor(k / 3), c = k % 3;
+      const tile = note.cloneNode(true);
+      tile.classList.add("fx-tile");
+      tile.classList.remove("is-lifted");
+      tile.querySelectorAll(".tape").forEach((x) => x.remove());
+      const e = 0.4; // 稍微重叠一点，避免拼合时出现细缝
+      tile.style.clipPath = `inset(calc(${r * 33.333}% - ${e}px) calc(${(2 - c) * 33.333}% - ${e}px) calc(${(2 - r) * 33.333}% - ${e}px) calc(${c * 33.333}% - ${e}px))`;
+      const cover = document.createElement("span");
+      cover.className = "fx-cover";
+      tile.appendChild(cover);
+      tile.dataset.r = r;
+      layer.appendChild(tile);
+      tiles.push(tile);
+    }
+    const tapeNote = note.cloneNode(true);
+    tapeNote.classList.add("fx-tapeonly");
+    tapeNote.classList.remove("is-lifted");
+    layer.appendChild(tapeNote);
+    document.body.appendChild(layer);
+
+    // 便签（未旋转时）的尺寸和在屏幕上的中心点
+    const nw = note.offsetWidth, nh = note.offsetHeight;
+    const cx = pr.left + note.offsetLeft + nw / 2, cy = pr.top + note.offsetTop + nh / 2;
     const W = innerWidth, H = innerHeight;
-    const sx = r.width / W, sy = r.height / H;
-    const dx = r.left + r.width / 2 - W / 2, dy = r.top + r.height / 2 - H / 2;
-    return [
-      { transform: `translate(${dx}px, ${dy}px) rotate(${tilt}deg) scale(${sx}, ${sy})`, offset: 0 },
-      // 揭下：抬起、摆正、微微放大
-      { transform: `translate(${dx}px, ${dy - 24}px) rotate(0deg) scale(${sx * 1.08}, ${sy * 1.08})`, offset: 0.28 },
-      // 展开：先横向打开……
-      { transform: `translate(0px, ${dy * 0.35}px) rotate(0deg) scale(1, ${Math.max(sy * 1.15, 0.3)})`, offset: 0.62 },
-      // ……再纵向铺满
-      { transform: "none", offset: 1 },
-    ];
+    return {
+      layer, tiles, tape: tapeNote.querySelector(".tape"),
+      tilt: parseFloat(note.style.getPropertyValue("--r")) || 0,
+      // 把整张便签映射到整个屏幕
+      fullT: (extraX = 0) => `translate(${W / 2 - cx + extraX}px, ${H / 2 - cy}px) scale(${W / nw}, ${H / nh})`,
+      cellW: W / 3,
+      nCell: nw / 3,
+    };
+  }
+
+  // 打开：揭下 → 切开 → 飞出铺满 → 拼合
+  function unfold(st) {
+    const anims = [];
+    const D = 1350;
+    // 胶带：一角翘起，被撕开飞走
+    if (st.tape) {
+      anims.push(st.tape.animate([
+        { transform: getComputedStyle(st.tape).transform, opacity: 1 },
+        { transform: `translateX(-50%) translate(-6px, -10px) rotate(${-14}deg)`, opacity: 1, offset: 0.12 },
+        { transform: `translateX(-50%) translate(-60px, -120px) rotate(-38deg)`, opacity: 0, offset: 0.3 },
+        { opacity: 0 },
+      ], { duration: D, easing: "ease-out", fill: "forwards" }));
+    }
+    st.tiles.forEach((tile, k) => {
+      const r = +tile.dataset.r;
+      const lift = `translate(0px, -18px) rotate(0deg) scale(1.06)`;
+      const split = `translate(${ROW_SHIFT[r] * st.nCell * 2.2}px, -18px) rotate(0deg) scale(1.06)`;
+      anims.push(tile.animate([
+        { transform: `rotate(${st.tilt}deg)`, offset: 0 },
+        { transform: lift, offset: 0.18, easing: "cubic-bezier(0.3, 0, 0.2, 1)" },
+        { transform: split, offset: 0.34, easing: "cubic-bezier(0.7, 0, 0.2, 1)" },
+        { transform: st.fullT(ROW_SHIFT[r] * st.cellW * 1.4), offset: 0.84, easing: "cubic-bezier(0.5, 0, 0.2, 1)" },
+        { transform: st.fullT(0), offset: 1 },
+      ], { duration: D, delay: (k % 3) * 35 + Math.floor(k / 3) * 55, fill: "forwards" }));
+      // 飞出时，便签上的内容渐渐隐去，只剩纸的颜色
+      anims.push(tile.querySelector(".fx-cover").animate([
+        { opacity: 0 }, { opacity: 0, offset: 0.55 }, { opacity: 1, offset: 0.8 }, { opacity: 1 },
+      ], { duration: D, fill: "forwards" }));
+    });
+    // 抬起后的投影
+    anims.push(st.layer.animate([
+      { filter: "drop-shadow(0 2px 2px rgba(31,28,6,0.15))" },
+      { filter: "drop-shadow(0 26px 22px rgba(31,28,6,0.35))", offset: 0.25 },
+      { filter: "drop-shadow(0 30px 30px rgba(31,28,6,0.3))", offset: 0.8 },
+      { filter: "drop-shadow(0 0 0 rgba(31,28,6,0))" },
+    ], { duration: D, fill: "forwards" }));
+    return done(anims);
+  }
+
+  // 关闭：整屏切开 → 错位收回 → 缩成便签贴回去，胶带重新贴上
+  function fold(st) {
+    const anims = [];
+    const D = 1150;
+    st.tiles.forEach((tile, k) => {
+      const r = +tile.dataset.r;
+      anims.push(tile.animate([
+        { transform: st.fullT(0), offset: 0 },
+        { transform: st.fullT(ROW_SHIFT[r] * st.cellW * 1.4), offset: 0.18, easing: "cubic-bezier(0.6, 0, 0.3, 1)" },
+        { transform: `translate(${ROW_SHIFT[r] * st.nCell * 2.2}px, -18px) rotate(0deg) scale(1.06)`, offset: 0.66, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
+        { transform: `translate(0px, -12px) rotate(0deg) scale(1.04)`, offset: 0.8, easing: "cubic-bezier(0.5, 0, 0.3, 1.4)" },
+        { transform: `rotate(${st.tilt}deg)`, offset: 1 },
+      ], { duration: D, delay: (2 - (k % 3)) * 30 + (2 - Math.floor(k / 3)) * 45, fill: "forwards" }));
+      anims.push(tile.querySelector(".fx-cover").animate([
+        { opacity: 1 }, { opacity: 1, offset: 0.35 }, { opacity: 0, offset: 0.62 }, { opacity: 0 },
+      ], { duration: D, fill: "forwards" }));
+    });
+    if (st.tape) {
+      anims.push(st.tape.animate([
+        { transform: `translateX(-50%) translate(-60px, -120px) rotate(-38deg)`, opacity: 0 },
+        { transform: `translateX(-50%) translate(-60px, -120px) rotate(-38deg)`, opacity: 0, offset: 0.72 },
+        { transform: `translateX(-50%) translate(-4px, -8px) rotate(-10deg)`, opacity: 1, offset: 0.9 },
+        { transform: getComputedStyle(st.tape).transform, opacity: 1 },
+      ], { duration: D, easing: "ease-out", fill: "forwards" }));
+    }
+    return done(anims);
   }
 
   function lockPage(lock) {
@@ -569,27 +667,35 @@ function initDetail() {
     outside.forEach((el) => el && (lock ? el.setAttribute("inert", "") : el.removeAttribute("inert")));
   }
 
+  // 详情内容出场：网点逐渐长大“印”出纸面，标题依次升起
+  function reveal() {
+    root.classList.remove("is-revealing");
+    void root.offsetWidth;
+    root.classList.add("is-ready", "is-revealing");
+    setTimeout(() => root.classList.remove("is-revealing"), 1400);
+  }
+
   async function open(i, note) {
     if (busy) return;
     busy = true;
     fill(i);
-    root.hidden = false;
     lockPage(true);
     scroller.scrollTop = 0;
     sourceNote = note && visible(note) ? note : null;
-    root.classList.remove("is-ready");
+    root.classList.remove("is-ready", "is-revealing");
 
     if (sourceNote && !reduceMotion.matches) {
+      const st = stage(sourceNote);
       sourceNote.classList.add("is-lifted");
-      sheet.classList.add("is-unfolding");
-      await sheet.animate(fromNoteKeyframes(sourceNote), {
-        duration: 900, easing: "cubic-bezier(0.65, 0, 0.25, 1)",
-      }).finished.catch(() => {});
-      sheet.classList.remove("is-unfolding");
+      await unfold(st);
+      root.hidden = false; // 九块已铺满整屏，详情层（同样的颜色）接上
+      reveal();
+      requestAnimationFrame(() => st.layer.remove());
     } else {
-      await sheet.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduceMotion.matches ? 1 : 250 }).finished.catch(() => {});
+      root.hidden = false;
+      await root.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduceMotion.matches ? 1 : 250 }).finished.catch(() => {});
+      root.classList.add("is-ready");
     }
-    root.classList.add("is-ready");
     closeBtn.focus({ preventScroll: true });
     busy = false;
   }
@@ -599,18 +705,22 @@ function initDetail() {
     busy = true;
     const note =
       sourceNote && sourceNote.isConnected && current === +sourceNote.dataset.index ? sourceNote : noteFor(current);
-    root.classList.remove("is-ready");
-    await new Promise((r) => setTimeout(r, reduceMotion.matches ? 0 : 180));
+    root.classList.remove("is-ready", "is-revealing");
     if (note && visible(note) && !reduceMotion.matches) {
-      sheet.classList.add("is-unfolding");
-      await sheet.animate(fromNoteKeyframes(note).reverse().map((k, n, a) => ({ ...k, offset: n / (a.length - 1) })), {
-        duration: 700, easing: "cubic-bezier(0.65, 0, 0.25, 1)",
-      }).finished.catch(() => {});
-      sheet.classList.remove("is-unfolding");
+      await wait(220); // 详情内容先淡出，只剩便签颜色
+      note.classList.add("is-lifted");
+      const st = stage(note);
+      st.layer.querySelectorAll(".fx-cover").forEach((c) => (c.style.opacity = 1));
+      st.tiles.forEach((tl) => (tl.style.transform = st.fullT(0)));
+      if (st.tape) st.tape.style.opacity = 0;
+      root.hidden = true;
+      await fold(st);
+      note.classList.remove("is-lifted");
+      st.layer.remove();
     } else {
-      await sheet.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduceMotion.matches ? 1 : 220 }).finished.catch(() => {});
+      await root.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduceMotion.matches ? 1 : 220 }).finished.catch(() => {});
+      root.hidden = true;
     }
-    root.hidden = true;
     lockPage(false);
     document.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
     const focusTarget = note && note.querySelector(".note-open");

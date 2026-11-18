@@ -1219,38 +1219,11 @@ html.detail-open {
   inset: 0;
   z-index: 1000;
   color: var(--note-text);
+  /* 底色 = 便签颜色：九块拼合后无缝接上，网点“印”出纸面时露出的也是它 */
+  background: var(--note-bg, var(--cyan));
 }
 .detail[hidden] {
   display: none;
-}
-
-/* 动画用的“便签纸”：从便签的位置揭下、展开到全屏 */
-.detail-sheet {
-  position: absolute;
-  inset: 0;
-  background: var(--note-bg, var(--cyan));
-  transform-origin: center;
-  font-size: 16px;
-}
-.detail-sheet .tape {
-  top: -0.6em;
-  transition: opacity 0.2s;
-}
-.detail.is-ready .detail-sheet .tape {
-  opacity: 0;
-}
-/* 展开时的折痕和阴影 */
-.detail-sheet.is-unfolding {
-  box-shadow: 0 30px 60px -20px rgba(31, 28, 6, 0.55);
-}
-.detail-sheet.is-unfolding::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, transparent 49.6%, rgba(31, 28, 6, 0.14) 50%, rgba(255, 255, 255, 0.25) 50.4%, transparent 51%),
-    linear-gradient(to right, transparent 49.7%, rgba(31, 28, 6, 0.1) 50%, transparent 50.3%);
-  pointer-events: none;
 }
 
 .detail-scroll {
@@ -1303,6 +1276,8 @@ html.detail-open {
 }
 /* 顶部：便签颜色 */
 .detail-head {
+  position: relative;
+  z-index: 1;
   background: var(--note-bg);
   color: var(--note-text);
   padding-block: clamp(5.5rem, 12vw, 7.5rem) clamp(5rem, 10vw, 7rem);
@@ -1495,4 +1470,89 @@ html.detail-open {
   .detail-hero {
     transform: translateY(-2.5rem) rotate(-1deg);
   }
+}
+
+/* 便签色顶部的下沿：撕纸边（与“关于”“联系”色带同一种边） */
+.detail-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -38px;
+  height: 40px;
+  background: inherit;
+  transform: scaleY(-1);
+  -webkit-mask: var(--edge) center bottom / 100% 100% no-repeat;
+  mask: var(--edge) center bottom / 100% 100% no-repeat;
+  pointer-events: none;
+}
+.detail-hero {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- 展开动画的舞台（复制出来的便签，切成 3×3） ---------- */
+.fx-page {
+  position: fixed;
+  z-index: 1001;
+  overflow: visible;
+  background: none;
+  pointer-events: none;
+}
+.fx-page::after {
+  display: none;
+}
+.fx-tile {
+  will-change: transform;
+  transition: none !important;
+}
+/* 飞出时盖住便签内容的纯色层 */
+.fx-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: var(--note-bg);
+  opacity: 0;
+}
+/* 只用来显示胶带的那一份复制 */
+.fx-tapeonly {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.fx-tapeonly::after,
+.fx-tapeonly > :not(.tape) {
+  visibility: hidden;
+}
+
+/* ---------- 详情内容出场 ---------- */
+/* 网点“印刷”：点阵纸面从一个个小圆点开始长大，直到铺满 */
+@property --ht {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 20px;
+}
+.detail.is-revealing .detail-content {
+  -webkit-mask-image: radial-gradient(circle, #000 var(--ht), transparent calc(var(--ht) + 0.5px));
+  mask-image: radial-gradient(circle, #000 var(--ht), transparent calc(var(--ht) + 0.5px));
+  -webkit-mask-size: 16px 16px;
+  mask-size: 16px 16px;
+  animation: halftone-in 0.9s 0.15s cubic-bezier(0.3, 0, 0.3, 1) both;
+}
+@keyframes halftone-in {
+  from { --ht: 0px; }
+  to { --ht: 12px; }
+}
+/* 标题区依次升起 */
+.detail.is-revealing .detail-head .detail-inner > * {
+  animation: detail-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.detail.is-revealing .detail-head .detail-inner > :nth-child(2) { animation-delay: 0.08s; }
+.detail.is-revealing .detail-head .detail-inner > :nth-child(3) { animation-delay: 0.16s; }
+.detail.is-revealing .detail-head .detail-inner > :nth-child(4) { animation-delay: 0.24s; }
+@keyframes detail-rise {
+  from { opacity: 0; transform: translateY(18px); }
+}
+/* 详情层接上时不再整体淡入（由上面的出场动画负责） */
+.detail.is-revealing .detail-scroll {
+  transition: none;
 }
