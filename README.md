@@ -1,7 +1,7 @@
 # Thomas Du · 个人作品集
 
-网站地址：https://duhaihang233.github.io/Personal-Website/
-（自定义域名 thomasdu.me 等 DNS 生效后再启用：在仓库根目录加回内容为 `thomasdu.me` 的 `CNAME` 文件即可）
+网站地址：https://thomasdu.me
+（由 GitHub Pages 托管；仓库根目录的 `CNAME` 文件指定了这个域名，不要删除）
 
 用纯 HTML、CSS 和 JavaScript 写成，不需要构建工具和依赖。
 
