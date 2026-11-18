@@ -270,6 +270,33 @@ em {
 .nav-menu a.active::after {
   transform: scaleX(1);
 }
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* 中英切换按钮：与主题按钮同样的圆形描边 */
+.lang-toggle {
+  display: grid;
+  place-items: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.lang-toggle:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
 .theme-toggle {
   display: grid;
   place-items: center;
@@ -343,7 +370,7 @@ em {
   .nav-menu a::after {
     display: none;
   }
-  .theme-toggle {
+  .nav-tools {
     margin-top: 0.75rem;
   }
 }
@@ -498,6 +525,7 @@ em {
 }
 .journal-track {
   position: relative;
+  overflow-anchor: none;
   /* 高度由 JS 按翻页次数设置；无 JS 时保持一屏 */
   min-height: calc(100svh - var(--header-h));
 }

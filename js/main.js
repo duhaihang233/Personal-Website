@@ -6,6 +6,8 @@
    field     涉及的领域         description  简介
    image     封面图（assets/projects/ 下）
    tags      工具或关键词       links     [{ text, url }]，没有可留空数组
+   en        英文版内容：subtitle / duration / team / field / description / tags / links
+             （没写的字段会沿用中文版，例如 title、year、label）
    ========================================================= */
 const PROJECTS = [
   {
@@ -21,6 +23,14 @@ const PROJECTS = [
     image: "assets/projects/fitseat.jpg",
     tags: ["Spline", "3D 建模", "产品设计"],
     links: [],
+    en: {
+      subtitle: "An interactive smart seat cushion",
+      duration: "2 months",
+      field: "Design + Mechanical Engineering, Biomedical Engineering & Health",
+      description:
+        "Prolonged sitting causes back pain, and today's cushions are fixed, under-supportive and quick to deform. FitSeat is a four-zone adaptive smart cushion: modular air cells, sensor-driven posture correction, a foldable frame, and an app with AI gesture control and adjustable massage.",
+      tags: ["Spline", "3D modeling", "Product design"],
+    },
   },
   {
     title: "Home-Scale Rhythm Arcade",
@@ -35,6 +45,15 @@ const PROJECTS = [
     image: "assets/projects/rhythm-arcade.jpg",
     tags: ["传感器", "电子焊接", "人体工学"],
     links: [{ text: "观看 10 秒演示", url: "https://youtu.be/nccHetU1E48" }],
+    en: {
+      subtitle: "A home-scale rhythm arcade game controller",
+      duration: "3 months",
+      field: "Design + Electrical Engineering, Media & Interaction",
+      description:
+        "Arcade feel, at home. Panel sensors read taps, touches and slides and send USB input to a PC for beat-synced visual and audio feedback. The stand's height and tilt adjust for different statures, and the build is low-cost and DIY-friendly.",
+      tags: ["Sensors", "Soldering", "Ergonomics"],
+      links: [{ text: "Watch the 10s demo", url: "https://youtu.be/nccHetU1E48" }],
+    },
   },
   {
     title: "Bio-Inspired Pipe-Cleaning Robot",
@@ -49,6 +68,13 @@ const PROJECTS = [
     image: "assets/projects/pipe-robot.jpg",
     tags: ["Onshape", "Illustrator", "Bambu Lab"],
     links: [],
+    en: {
+      subtitle: "A bio-inspired pipe-cleaning robot",
+      duration: "1 month",
+      field: "Design + Mechanical Engineering & Robotics",
+      description:
+        "Home drains clog with hair and grease, and rigid tools jam at U-bends. Inspired by earthworm peristalsis, modular segments extend, grip and contract while keeping wall contact through curves. A 3D-printed prototype validated the motion and segment coupling.",
+    },
   },
   {
     title: "Connect Hub",
@@ -64,6 +90,14 @@ const PROJECTS = [
     image: "assets/projects/connect-hub.jpg",
     tags: ["实体模型", "实地调研", "App 设计"],
     links: [],
+    en: {
+      duration: "3 weeks",
+      team: "with Emma",
+      field: "Design + Architecture, Sustainability & Interior Design",
+      description:
+        "On-site research at Stanford Mall found underused public zones and a scattered dining layout with no central hub. The design links a rooftop farm to a farm-direct store below (Grow), adds shared seating and pop-up activities (Gather), and a one-stop app that trades farm volunteering for dining rewards (Guide).",
+      tags: ["Physical model", "Field research", "App design"],
+    },
   },
   {
     title: "DIY Guitar",
@@ -78,6 +112,14 @@ const PROJECTS = [
     image: "assets/projects/diy-guitar.jpg",
     tags: ["喷涂", "焊接", "组装调校"],
     links: [],
+    en: {
+      subtitle: "A self-designed Telecaster",
+      duration: "3 weeks",
+      field: "Design + Art, Music Technology & Electronics",
+      description:
+        "I couldn't find a guitar in a color I liked, so I built one in white, gold and Klein blue. A CNC-cut alder body went through sparkle-flake paint, nitro lacquer, pickup soldering, assembly and setup, with a modern bridge for a better color match and intonation.",
+      tags: ["Spray finishing", "Soldering", "Setup"],
+    },
   },
   {
     title: "Wood Bookmark",
@@ -92,8 +134,125 @@ const PROJECTS = [
     image: "assets/projects/wood-bookmark.jpg",
     tags: ["Onshape", "激光切割"],
     links: [],
+    en: {
+      subtitle: "Wood bookmarks for the school Career Fair",
+      duration: "1 week",
+      field: "Design + Art, Graphics & Culture",
+      description:
+        "Wooden bookmarks for the school Career Fair, with graphics for career and inspiration. Modeled in Onshape, personalized with the names of 23 guests, then laser cut.",
+      tags: ["Onshape", "Laser cutting"],
+    },
   },
 ];
+
+/* =========================================================
+   中英文案 —— data-i18n="key" 的元素会被替换为对应文字（可含 <em>），
+   data-i18n-aria="key" 会替换 aria-label
+   ========================================================= */
+const I18N = {
+  zh: {
+    pageTitle: "Thomas Du · 个人作品集",
+    pageDesc: "Thomas Du 的个人作品集：项目展示、技能与联系方式。",
+    skip: "跳到主要内容",
+    home: "Thomas Du 首页",
+    navMain: "主导航",
+    navFooter: "页脚导航",
+    navWork: "作品",
+    navAbout: "关于",
+    navSkills: "技能",
+    navContact: "联系",
+    langBtn: "EN",
+    langAria: "Switch to English",
+    theme: "切换深色/浅色模式",
+    menuOpen: "打开菜单",
+    menuClose: "关闭菜单",
+    heroHello: "你好，我是",
+    heroSub: "做<em>有用</em>又<em>有趣</em>的东西。",
+    heroLead: "一句话介绍自己，例如：前端开发者 / 设计师，专注于打造简洁、好用的数字产品。",
+    heroContact: "联系我",
+    toWork: "向下查看作品",
+    photo: "Thomas Du 的照片",
+    workTitle: "作品",
+    pager: "翻页",
+    pagerHint: "向下滚动翻页 ↓",
+    spread: (k) => `第 ${k} 个对开页`,
+    tbc: "未完待续…",
+    halftone: "Thomas Du 的网点肖像",
+    aboutBody:
+      "我是一个热爱工业设计的高中生，喜欢把想法变成真正能用的东西。从自适应的人体工学坐垫，到受生物启发的小装置，我把 3D 打印、焊接和一点代码结合起来，再不断迭代，直到它简单、可靠又好玩。",
+    resume: "下载简历（PDF）",
+    skillsTitle: "技能",
+    contactTitle: "一起<em>聊聊</em>？",
+    contactLead: "欢迎合作或交流，通过以下方式找到我。",
+    email: "发邮件",
+  },
+  en: {
+    pageTitle: "Thomas Du · Portfolio",
+    pageDesc: "Portfolio of Thomas Du: design and engineering projects, skills and contact.",
+    skip: "Skip to main content",
+    home: "Thomas Du home",
+    navMain: "Main navigation",
+    navFooter: "Footer navigation",
+    navWork: "Work",
+    navAbout: "About",
+    navSkills: "Skills",
+    navContact: "Contact",
+    langBtn: "中",
+    langAria: "切换到中文",
+    theme: "Toggle dark or light mode",
+    menuOpen: "Open menu",
+    menuClose: "Close menu",
+    heroHello: "Hello, I'm",
+    heroSub: "Making things that are <em>useful</em> and <em>fun</em>.",
+    heroLead: "One-line intro, e.g. a designer and maker who builds simple, useful things.",
+    heroContact: "Get in touch",
+    toWork: "Scroll to projects",
+    photo: "Photo of Thomas Du",
+    workTitle: "Projects",
+    pager: "Page navigation",
+    pagerHint: "Scroll to turn the page ↓",
+    spread: (k) => `Spread ${k}`,
+    tbc: "To be continued…",
+    halftone: "Halftone portrait of Thomas Du",
+    aboutBody:
+      "I'm a high-school industrial-design nerd who turns ideas into working things. From an adaptive ergonomic seat to bio-inspired gizmos, I blend 3D printing, soldering and a little code, then iterate until it's simple, reliable and fun.",
+    resume: "Download résumé (PDF)",
+    skillsTitle: "Skills",
+    contactTitle: "Drop me a <em>line</em>.",
+    contactLead: "Open to collaborations and conversations. Here's where to find me.",
+    email: "Email me",
+  },
+};
+
+function detectLang() {
+  try {
+    const saved = localStorage.getItem("lang");
+    if (saved === "zh" || saved === "en") return saved;
+  } catch (e) {}
+  return /^zh/i.test(navigator.language || "") ? "zh" : "en";
+}
+let LANG = detectLang();
+const t = (key) => I18N[LANG][key];
+
+// 作品字段：英文模式下优先取 p.en 里的值
+const field = (p, key) => (LANG === "en" && p.en && p.en[key] !== undefined ? p.en[key] : p[key]);
+
+function applyI18n() {
+  const root = document.documentElement;
+  root.lang = LANG === "zh" ? "zh-CN" : "en";
+  root.setAttribute("data-lang", LANG);
+  document.title = t("pageTitle");
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.setAttribute("content", t("pageDesc"));
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const v = t(el.dataset.i18n);
+    if (typeof v === "string") el.innerHTML = v;
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+    const v = t(el.dataset.i18nAria);
+    if (typeof v === "string") el.setAttribute("aria-label", v);
+  });
+}
 
 /* ---------- 工具 ---------- */
 function escapeHTML(str) {
@@ -111,12 +270,14 @@ const TAPES = ["", "tape-cyan", "tape-lime"];
 
 function noteHTML(p, i) {
   if (!p) {
-    return `<div class="note note-cream note-empty" style="--r:1deg"><span class="tape"></span><p>未完待续…</p></div>`;
+    return `<div class="note note-cream note-empty" style="--r:1deg"><span class="tape"></span><p>${t("tbc")}</p></div>`;
   }
   const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
   const num = String(i + 1).padStart(2, "0");
-  const meta = [p.year, p.duration, p.team].filter(Boolean).map(escapeHTML).join(" · ");
-  const links = (p.links || [])
+  const meta = [p.year, field(p, "duration"), field(p, "team")].filter(Boolean).map(escapeHTML).join(" · ");
+  const subtitle = field(p, "subtitle");
+  const tags = field(p, "tags") || [];
+  const links = (field(p, "links") || [])
     .map((l) => `<a href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(l.text)}</a>`)
     .join("");
   return `
@@ -127,10 +288,10 @@ function noteHTML(p, i) {
         onerror="this.onerror=null;this.src='assets/images/placeholder.svg'" /></figure>
       <div class="note-head">
         <h3>${escapeHTML(p.title)}</h3>
-        ${p.subtitle ? `<p class="note-sub">${escapeHTML(p.subtitle)}</p>` : ""}
+        ${subtitle ? `<p class="note-sub">${escapeHTML(subtitle)}</p>` : ""}
       </div>
-      <p class="note-desc">${escapeHTML(p.description)}</p>
-      ${p.tags && p.tags.length ? `<ul class="tag-list">${p.tags.map((t) => `<li>${escapeHTML(t)}</li>`).join("")}</ul>` : ""}
+      <p class="note-desc">${escapeHTML(field(p, "description"))}</p>
+      ${tags.length ? `<ul class="tag-list">${tags.map((x) => `<li>${escapeHTML(x)}</li>`).join("")}</ul>` : ""}
       ${links ? `<div class="note-links">${links}</div>` : ""}
     </article>`;
 }
@@ -160,30 +321,43 @@ function renderJournal() {
   return spreads;
 }
 
+let refreshJournal = () => {};
+
 function initJournal() {
-  const spreads = renderJournal();
   const track = document.getElementById("journal-track");
   const sticky = track && track.querySelector(".journal-sticky");
   const nav = document.getElementById("journal-nav");
-  if (!spreads || !track || !sticky) return;
+  if (!track || !sticky || !document.getElementById("book")) return;
 
-  const leaves = [...document.querySelectorAll(".leaf")];
-  const baseA = document.querySelector(".page-a.base");
-  const baseB = document.querySelector(".page-b.base");
-  const flips = spreads - 1;
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  let spreads = 1, flips = 0, leaves = [], baseA = null, baseB = null;
+  let count = null, dots = [], hint = null, seg = 0, current = -1;
 
-  // 翻页导航：页码点 + 提示
-  nav.innerHTML = `
-    <span class="journal-count" aria-live="polite">01 / ${String(spreads).padStart(2, "0")}</span>
-    <span class="journal-dots">${Array.from({ length: spreads }, (_, k) =>
-      `<button type="button" aria-label="第 ${k + 1} 个对开页"></button>`).join("")}</span>
-    ${flips ? `<span class="journal-hint">向下滚动翻页 ↓</span>` : ""}`;
-  const count = nav.querySelector(".journal-count");
-  const dots = [...nav.querySelectorAll(".journal-dots button")];
-  const hint = nav.querySelector(".journal-hint");
+  // 渲染书页和翻页导航（切换语言时会再次调用，结构不变，滚动位置保持）
+  function build() {
+    spreads = renderJournal();
+    flips = spreads - 1;
+    leaves = [...document.querySelectorAll(".leaf")];
+    baseA = document.querySelector(".page-a.base");
+    baseB = document.querySelector(".page-b.base");
+    nav.innerHTML = `
+      <span class="journal-count" aria-live="polite"></span>
+      <span class="journal-dots">${Array.from({ length: spreads }, (_, k) =>
+        `<button type="button" aria-label="${escapeHTML(t("spread")(k + 1))}"></button>`).join("")}</span>
+      ${flips ? `<span class="journal-hint">${t("pagerHint")}</span>` : ""}`;
+    count = nav.querySelector(".journal-count");
+    dots = [...nav.querySelectorAll(".journal-dots button")];
+    hint = nav.querySelector(".journal-hint");
+    dots.forEach((d, k) =>
+      d.addEventListener("click", () => {
+        const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+        const top = track.getBoundingClientRect().top + window.scrollY - stickyTop + k * seg + 1;
+        window.scrollTo({ top, behavior: reduceMotion.matches ? "auto" : "smooth" });
+      })
+    );
+    current = -1;
+  }
 
-  let seg = 0;
   function layout() {
     seg = window.innerHeight * 0.85; // 每翻一页需要滚动的距离
     const endHold = window.innerHeight * 0.3;
@@ -197,7 +371,6 @@ function initJournal() {
     else el.removeAttribute("inert");
   }
 
-  let current = -1;
   function update() {
     const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
     const scrolled = stickyTop - track.getBoundingClientRect().top;
@@ -226,14 +399,6 @@ function initJournal() {
     if (hint) hint.style.opacity = raw >= flips - 0.05 ? "0" : "1";
   }
 
-  dots.forEach((d, k) =>
-    d.addEventListener("click", () => {
-      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-      const top = track.getBoundingClientRect().top + window.scrollY - stickyTop + k * seg + 1;
-      window.scrollTo({ top, behavior: reduceMotion.matches ? "auto" : "smooth" });
-    })
-  );
-
   let ticking = false;
   window.addEventListener("scroll", () => {
     if (ticking) return;
@@ -241,24 +406,53 @@ function initJournal() {
     requestAnimationFrame(() => { update(); ticking = false; });
   }, { passive: true });
   window.addEventListener("resize", layout);
+
+  build();
   layout();
+  refreshJournal = () => { build(); update(); };
+}
+
+/* ---------- 中英切换（记住用户选择） ---------- */
+function initLang() {
+  const btn = document.querySelector(".lang-toggle");
+  applyI18n();
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    LANG = LANG === "zh" ? "en" : "zh";
+    try {
+      localStorage.setItem("lang", LANG);
+    } catch (e) {}
+    // 如果正在看作品（手账本区域内），切换后保持在同一页
+    const track = document.getElementById("journal-track");
+    const top0 = track ? track.getBoundingClientRect().top : 0;
+    const inBook = track && top0 <= 0 && -top0 < track.offsetHeight;
+    applyI18n();
+    refreshJournal();
+    syncMenuLabel();
+    if (inBook) window.scrollBy(0, track.getBoundingClientRect().top - top0);
+  });
 }
 
 /* ---------- 移动端菜单 ---------- */
+let syncMenuLabel = () => {};
+
 function initNav() {
   const toggle = document.querySelector(".nav-toggle");
   const menu = document.getElementById("nav-menu");
   if (!toggle || !menu) return;
 
+  syncMenuLabel = () =>
+    toggle.setAttribute("aria-label", menu.classList.contains("open") ? t("menuClose") : t("menuOpen"));
   const setOpen = (open) => {
     menu.classList.toggle("open", open);
     toggle.setAttribute("aria-expanded", String(open));
-    toggle.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+    syncMenuLabel();
   };
 
   toggle.addEventListener("click", () => setOpen(!menu.classList.contains("open")));
   menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
   document.addEventListener("keydown", (e) => e.key === "Escape" && setOpen(false));
+  syncMenuLabel();
 }
 
 /* ---------- 深色/浅色切换（记住用户选择） ---------- */
@@ -303,6 +497,7 @@ function initActiveLink() {
 
 /* ---------- 启动 ---------- */
 document.addEventListener("DOMContentLoaded", () => {
+  initLang();
   initJournal();
   initNav();
   initTheme();
