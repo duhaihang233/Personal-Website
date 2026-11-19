@@ -13,55 +13,6 @@
    图片放在 assets/projects/<slug>/ 下
    ========================================================= */
 const DETAILS = {
-  fitseat: {
-    tools: ["Spline"],
-    sections: [
-      {
-        title: { zh: "背景与概念", en: "Background & Concept" },
-        points: [
-          { zh: "问题：长时间久坐会带来腰背疼痛，甚至长期损伤。", en: "Problem: prolonged sitting leads to back pain and long-term damage." },
-          { zh: "现有坐垫的局限：形状固定、支撑不足、容易变形，也不智能。", en: "Limits of current cushions: fixed, under-supportive, deforming, non-smart." },
-          { zh: "概念：四分区自适应智能坐垫，模块化、传感器驱动、可折叠。", en: "Concept: a four-zone adaptive smart cushion that is modular, sensor-driven and foldable." },
-        ],
-        images: [
-          { src: "assets/projects/fitseat/sketch.jpg", zh: "草图：靠背模块、座面模块、可旋转扶手和调节按钮", en: "Sketch: back module, seat module, rotating armrest and adjust button" },
-        ],
-      },
-      {
-        title: { zh: "建模过程", en: "Modeling Process" },
-        body: {
-          zh: "按分区建模，由模块化气囊组成：从脊柱支撑开始，延伸出座面并嵌入传感器；边缘做圆角提升舒适度；扶手可旋转收纳；表面用高弹膜加白色外壳，易清洁、防污。",
-          en: "Zoned modeling with modular air cells: start from spine support, extend the seat, embed sensors; round edges for comfort; rotating armrests for storage; a high-elastic membrane and white shell for an easy-clean, stain-resistant finish.",
-        },
-        images: [
-          { src: "assets/projects/fitseat/model-1.jpg", zh: "01 脊柱模块", en: "01 Spine module" },
-          { src: "assets/projects/fitseat/model-2.jpg", zh: "02 座面底座", en: "02 Seat base" },
-          { src: "assets/projects/fitseat/model-3.jpg", zh: "03 气囊分区", en: "03 Air-cell bays" },
-          { src: "assets/projects/fitseat/model-4.jpg", zh: "04 舒适圆角", en: "04 Comfort fillets" },
-          { src: "assets/projects/fitseat/model-5.jpg", zh: "05 旋转扶手", en: "05 Rotating armrest" },
-          { src: "assets/projects/fitseat/model-6.jpg", zh: "06 材质与表面", en: "06 Materials & finish" },
-        ],
-      },
-      {
-        title: { zh: "功能", en: "Functions" },
-        points: [
-          { zh: "01 一键开机", en: "01 Instant power" },
-          { zh: "02 便携折叠", en: "02 Portable collapse" },
-          { zh: "03 自适应坐姿", en: "03 Adaptive posture" },
-          { zh: "04 带按摩功能的 AI App", en: "04 AI app with massage" },
-        ],
-        images: [
-          { src: "assets/projects/fitseat/fn-power.jpg", zh: "一键电源按钮启动", en: "Activated by a one-press power button" },
-          { src: "assets/projects/fitseat/fn-fold2.jpg", zh: "扶手可以收起", en: "Retractable armrests" },
-          { src: "assets/projects/fitseat/fn-fold.jpg", zh: "座面旋转折叠，小巧便携", en: "Seat rotates to fold: compact, grab-and-go" },
-          { src: "assets/projects/fitseat/fn-posture.jpg", zh: "自动矫正坐姿", en: "Auto-corrects sitting posture" },
-          { src: "assets/projects/fitseat/fn-aircell.jpg", zh: "可充气的气囊", en: "Inflatable air cells" },
-          { src: "assets/projects/fitseat/fn-app.jpg", zh: "AI 手势辅助；按摩强度和区域可调", en: "AI gesture assist; adjustable massage intensity and zones" },
-        ],
-      },
-    ],
-  },
-
   "rhythm-arcade": {
     tools: [],
     art: "ring",

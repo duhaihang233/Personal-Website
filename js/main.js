@@ -12,29 +12,6 @@
    ========================================================= */
 const PROJECTS = [
   {
-    slug: "fitseat",
-    title: "FitSeat",
-    subtitle: "可交互的智能坐垫",
-    label: "Health",
-    color: "cyan",
-    year: "2025",
-    duration: "2 个月",
-    field: "设计 + 机械工程、生物医学工程与健康",
-    description:
-      "久坐会带来腰背疼痛，而现有坐垫固定、支撑不足、容易变形。FitSeat 是一款四分区自适应智能坐垫：模块化气囊、传感器驱动的坐姿矫正、可折叠收纳，并配套支持 AI 手势和按摩调节的 App。",
-    image: "assets/projects/fitseat.jpg",
-    tags: ["Spline", "3D 建模", "产品设计"],
-    links: [],
-    en: {
-      subtitle: "An interactive smart seat cushion",
-      duration: "2 months",
-      field: "Design + Mechanical Engineering, Biomedical Engineering & Health",
-      description:
-        "Prolonged sitting causes back pain, and today's cushions are fixed, under-supportive and quick to deform. FitSeat is a four-zone adaptive smart cushion: modular air cells, sensor-driven posture correction, a foldable frame, and an app with AI gesture control and adjustable massage.",
-      tags: ["Spline", "3D modeling", "Product design"],
-    },
-  },
-  {
     slug: "rhythm-arcade",
     style: "arcade", // 音游风：手绘漫画横幅 + 霓虹音符
     title: "Home-Scale Rhythm Arcade",
