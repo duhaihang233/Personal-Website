@@ -1644,3 +1644,28 @@ html.fx-slid body::before {
     transition: none;
   }
 }
+
+/* ---------- 动画性能 ---------- */
+/* 便签抬起的阴影：独立一层，只改透明度 */
+.fx-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  box-shadow: 0 34px 40px -18px rgba(31, 28, 6, 0.55), 0 2px 2px rgba(31, 28, 6, 0.1);
+  opacity: 0;
+  pointer-events: none;
+}
+.fx-page {
+  will-change: transform;
+}
+/* 点击时就把要滑动的部分准备成独立图层；滑动期间关掉导航栏的毛玻璃（移动它很耗性能） */
+html.fx-prep .site-header,
+html.fx-prep #main,
+html.fx-prep .site-footer,
+html.fx-prep body::before {
+  will-change: transform;
+}
+html.fx-prep .site-header {
+  backdrop-filter: none;
+  background: var(--paper);
+}

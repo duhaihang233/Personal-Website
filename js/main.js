@@ -592,18 +592,46 @@ function initDetail() {
     const clone = note.cloneNode(true);
     clone.classList.remove("is-lifted");
     clone.querySelectorAll(".note-open").forEach((x) => x.remove());
+    const shade = document.createElement("span");
+    shade.className = "fx-shade";
+    clone.appendChild(shade);
     layer.appendChild(clone);
     document.body.appendChild(layer);
     const ox = note.offsetLeft + note.offsetWidth / 2, oy = note.offsetTop + note.offsetHeight / 2;
     layer.style.transformOrigin = `${ox}px ${oy}px`;
     return {
-      layer, note: clone, tape: clone.querySelector(".tape"),
+      layer, note: clone, shade, tape: clone.querySelector(".tape"),
       tilt: parseFloat(note.style.getPropertyValue("--r")) || 0,
       cx: pr.left + ox, cy: pr.top + oy, w: pr.width,
     };
   }
-  const SHADOW_DOWN = "drop-shadow(0 4px 3px rgba(31,28,6,0.18))";
-  const SHADOW_UP = "drop-shadow(0 30px 24px rgba(31,28,6,0.32))";
+  const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
+  // 提前把要滑动的整页准备成独立图层，避免滑动开始那一下卡顿
+  // 吸顶元素（导航栏、手账本）跟着整页一起移动时，浏览器要每帧重算它们的位置，造成卡顿。
+  // 动画期间页面本来就不能滚动，所以先把它们“钉”在当前位置，结束后再恢复。
+  const stickies = [document.querySelector(".site-header"), document.querySelector(".journal-sticky")].filter(Boolean);
+  function freezeSticky(on) {
+    stickies.forEach((el) => {
+      if (on) {
+        if (el.dataset.frozen) return;
+        const before = el.getBoundingClientRect().top;
+        el.style.position = "relative";
+        el.style.top = "0px";
+        const shift = before - el.getBoundingClientRect().top;
+        el.style.top = `${shift}px`;
+        el.dataset.frozen = "1";
+      } else if (el.dataset.frozen) {
+        el.style.position = "";
+        el.style.top = "";
+        delete el.dataset.frozen;
+      }
+    });
+  }
+  const prepSlide = (on) => {
+    if (on) freezeSticky(true);
+    document.documentElement.classList.toggle("fx-prep", on);
+    if (!on) freezeSticky(false);
+  };
   const atSource = () => "translate(0px, -18px) scale(1.07)";
   const atTarget = (fx, T, s) => `translate(${T.x - fx.cx}px, ${T.y - fx.cy}px) scale(${s * 1.05})`;
 
@@ -637,50 +665,60 @@ function initDetail() {
   async function open(i, note) {
     if (busy) return;
     busy = true;
-    fill(i);
-    lockPage(true);
     sourceNote = note && visible(note) ? note : null;
-    root.hidden = false;
-    scroller.scrollTop = 0;
-    alignToRules(); // 隐藏时量不到位置，显示后再对齐一次
 
     if (reduceMotion.matches) {
+      fill(i);
+      lockPage(true);
+      root.hidden = false;
+      scroller.scrollTop = 0;
       document.documentElement.classList.add("fx-slid");
       root.classList.add("is-ready");
+      alignToRules();
       closeBtn.focus({ preventScroll: true });
       busy = false;
       return;
     }
 
-    root.classList.add("fx-active");
-    root.style.transform = `translateX(${innerWidth}px)`;
-    const T = pinTarget();
-    const s = pinDims().w / (sourceNote ? sourceNote.closest(".page").offsetWidth : 1);
-    let fx = null;
-
-    // ① 抬起：胶带飞走，便签抬起、摆正
+    // ① 先让便签抬起来（只用 transform / opacity，交给 GPU，不受后面计算的影响）
+    let fx = null, lifted = Promise.resolve();
     if (sourceNote) {
       fx = makeFx(sourceNote);
       sourceNote.classList.add("is-lifted");
-      const lift = [
-        fx.layer.animate([{ transform: "none", filter: SHADOW_DOWN }, { transform: atSource(), filter: SHADOW_UP }],
+      lifted = done([
+        fx.layer.animate([{ transform: "none" }, { transform: atSource() }],
           { duration: 380, easing: "cubic-bezier(0.3, 0, 0.2, 1)", fill: "forwards" }),
+        fx.shade.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 380, easing: "ease-out", fill: "forwards" }),
         fx.note.animate([{ transform: `rotate(${fx.tilt}deg)` }, { transform: "rotate(0deg)" }],
           { duration: 380, easing: "ease-out", fill: "forwards" }),
         fx.tape && fx.tape.animate([
           { transform: getComputedStyle(fx.tape).transform, opacity: 1 },
           { transform: "translateX(-50%) translate(-50px, -110px) rotate(-36deg)", opacity: 0 },
         ], { duration: 340, easing: "ease-in", fill: "forwards" }),
-      ];
-      await done(lift);
+      ]);
     }
+    prepSlide(true);
+    await nextFrame();
+    await nextFrame();
+
+    // 抬起的同时，在后台准备好横线纸页面（放在屏幕右边外面）
+    fill(i);
+    lockPage(true);
+    root.classList.add("fx-active");
+    root.style.transform = `translateX(${innerWidth}px)`;
+    root.hidden = false;
+    scroller.scrollTop = 0;
+    alignToRules();
+    const T = pinTarget();
+    const s = pinDims().w / (sourceNote ? sourceNote.closest(".page").offsetWidth : 1);
+    await lifted;
 
     // ② 背景向左滑走，横线纸从右边滑入；便签浮在上面，移到横线纸左上角
     document.documentElement.classList.add("fx-slid");
     const slide = [
       root.animate([{ transform: `translateX(${innerWidth}px)` }, { transform: "translateX(0)" }],
         { duration: SLIDE, easing: EASE, fill: "forwards" }),
-      fx && fx.layer.animate([{ transform: atSource(), filter: SHADOW_UP }, { transform: atTarget(fx, T, s), filter: SHADOW_UP }],
+      fx && fx.layer.animate([{ transform: atSource() }, { transform: atTarget(fx, T, s) }],
         { duration: SLIDE, easing: EASE, fill: "forwards" }),
     ];
     await done(slide);
@@ -701,6 +739,7 @@ function initDetail() {
       sourceNote && sourceNote.isConnected && current === +sourceNote.dataset.index ? sourceNote : noteFor(current);
     const back = note && visible(note) && !reduceMotion.matches;
     root.classList.remove("is-ready");
+    prepSlide(true);
 
     if (reduceMotion.matches) {
       root.hidden = true;
@@ -720,14 +759,15 @@ function initDetail() {
         note.classList.add("is-lifted");
         fx = makeFx(note);
         fx.layer.style.transform = atTarget(fx, T, s);
-        fx.layer.style.filter = SHADOW_UP;
+        fx.shade.style.opacity = "1";
         fx.note.style.transform = "rotate(0deg)";
         if (fx.tape) fx.tape.style.opacity = "0";
         // 从钉住的样子平滑过渡到抬起
         await done([fx.layer.animate([
-          { transform: `translate(${T.x - fx.cx}px, ${T.y - fx.cy}px) scale(${s})`, filter: SHADOW_DOWN },
-          { transform: atTarget(fx, T, s), filter: SHADOW_UP },
+          { transform: `translate(${T.x - fx.cx}px, ${T.y - fx.cy}px) scale(${s})` },
+          { transform: atTarget(fx, T, s) },
         ], { duration: 180, easing: "ease-out" }),
+        fx.shade.animate([{ opacity: 0.2 }, { opacity: 1 }], { duration: 180 }),
         fx.note.animate([{ transform: `rotate(${fx.tilt}deg)` }, { transform: "rotate(0deg)" }], { duration: 180 })]);
         pinNote.style.visibility = "hidden";
       }
@@ -737,7 +777,7 @@ function initDetail() {
       await done([
         root.animate([{ transform: "translateX(0)" }, { transform: `translateX(${innerWidth}px)` }],
           { duration: SLIDE, easing: EASE, fill: "forwards" }),
-        fx && fx.layer.animate([{ transform: atTarget(fx, T, s), filter: SHADOW_UP }, { transform: atSource(), filter: SHADOW_UP }],
+        fx && fx.layer.animate([{ transform: atTarget(fx, T, s) }, { transform: atSource() }],
           { duration: SLIDE, easing: EASE, fill: "forwards" }),
       ]);
       root.hidden = true;
@@ -745,8 +785,9 @@ function initDetail() {
       // 便签落回本子上，胶带贴回去
       if (fx) {
         await done([
-          fx.layer.animate([{ transform: atSource(), filter: SHADOW_UP }, { transform: "none", filter: SHADOW_DOWN }],
+          fx.layer.animate([{ transform: atSource() }, { transform: "none" }],
             { duration: 300, easing: "cubic-bezier(0.3, 1.3, 0.5, 1)", fill: "forwards" }),
+          fx.shade.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: "forwards" }),
           fx.note.animate([{ transform: "rotate(0deg)" }, { transform: `rotate(${fx.tilt}deg)` }],
             { duration: 300, easing: "ease-out", fill: "forwards" }),
           fx.tape && fx.tape.animate([
@@ -758,6 +799,7 @@ function initDetail() {
       }
     }
     lockPage(false);
+    prepSlide(false);
     book.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
     const focusTarget = note && note.querySelector(".note-open");
     if (focusTarget) focusTarget.focus({ preventScroll: true });
@@ -835,6 +877,30 @@ function initDetail() {
       n.classList.add("is-lifted");
     }
   };
+
+  // 预先加载详情页会用到的字形：中文字体按字分片下载，第一次打开详情页时
+  // 新出现的字会临时去下载，下载完整页重新排版，正好卡在滑动动画的开头。
+  // 所以页面空闲时先把所有作品、两种语言的文字都加载好。
+  function preloadFonts() {
+    if (!document.fonts || !document.fonts.load) return;
+    const parts = [];
+    const walk = (v) => {
+      if (typeof v === "string") parts.push(v);
+      else if (Array.isArray(v)) v.forEach(walk);
+      else if (v && typeof v === "object") Object.values(v).forEach(walk);
+    };
+    walk(PROJECTS);
+    if (typeof DETAILS !== "undefined") walk(DETAILS);
+    ["zh", "en"].forEach((l) => walk(Object.values(I18N[l]).filter((x) => typeof x === "string")));
+    const text = [...new Set(parts.join(""))].join("");
+    ["400", "700"].forEach((w) => {
+      document.fonts.load(`${w} 16px "Noto Serif SC"`, text).catch(() => {});
+      document.fonts.load(`${w} 16px "Newsreader"`, text).catch(() => {});
+    });
+    document.fonts.load(`900 16px "Archivo"`, text).catch(() => {});
+    document.fonts.load(`700 16px "Caveat"`, text).catch(() => {});
+  }
+  (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(preloadFonts, { timeout: 2500 });
 
   // 直接打开带 #work-xxx 的链接
   const start = indexFromHash();
