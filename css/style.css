@@ -1218,9 +1218,9 @@ html.detail-open {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  color: var(--note-text);
-  /* 底色 = 便签颜色：九块拼合后无缝接上，网点“印”出纸面时露出的也是它 */
-  background: var(--note-bg, var(--cyan));
+  color: #1f1c06;
+  background: var(--ruled-bg);
+  will-change: transform;
 }
 .detail[hidden] {
   display: none;
@@ -1231,13 +1231,6 @@ html.detail-open {
   inset: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-.detail.is-ready .detail-scroll {
-  opacity: 1;
-  transform: none;
 }
 .detail-close {
   position: fixed;
@@ -1273,14 +1266,6 @@ html.detail-open {
   margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px), 4vw);
   padding-right: max(16px, env(safe-area-inset-right, 0px), 4vw);
-}
-/* 顶部：便签颜色 */
-.detail-head {
-  position: relative;
-  z-index: 1;
-  background: var(--note-bg);
-  color: var(--note-text);
-  padding-block: clamp(5.5rem, 12vw, 7.5rem) clamp(5rem, 10vw, 7rem);
 }
 .detail-no {
   margin: 0 0 0.75rem;
@@ -1324,29 +1309,6 @@ html.detail-open {
   line-height: 1.4;
 }
 
-/* 内容：点阵纸 */
-.detail-content {
-  max-width: none;
-  padding-left: max(16px, env(safe-area-inset-left, 0px), calc((100% - 980px) / 2 + 4vw));
-  padding-right: max(16px, env(safe-area-inset-right, 0px), calc((100% - 980px) / 2 + 4vw));
-  padding-bottom: 5rem;
-  background-color: var(--sheet);
-  background-image: radial-gradient(var(--sheet-dot) 1px, transparent 1.3px);
-  background-size: 22px 22px;
-  color: #1f1c06;
-}
-.detail-hero {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 0.75rem 0.75rem 2.25rem;
-  background: #fff;
-  transform: translateY(-3.5rem) rotate(-1.2deg);
-  box-shadow: 0 2px 3px rgba(31, 28, 6, 0.1), 0 22px 34px -18px rgba(31, 28, 6, 0.55);
-}
-.detail-hero img {
-  width: 100%;
-  background: #e6e6e4;
-}
 .detail-lead {
   max-width: 44rem;
   margin: -1rem 0 0;
@@ -1467,31 +1429,199 @@ html.detail-open {
     height: 44px;
     font-size: 1.7rem;
   }
-  .detail-hero {
-    transform: translateY(-2.5rem) rotate(-1deg);
+}
+
+/* ---------- 横线纸 ---------- */
+:root {
+  --ruled-paper: #fdfcf6;
+  --ruled-line: rgba(70, 120, 180, 0.24);
+  --ruled-margin: rgba(235, 42, 35, 0.5);
+  --ruled-gap: 32px;   /* 行距 */
+  --ruled-top: 96px;   /* 顶部留白 */
+  --ruled-x: 72px;     /* 红色页边线位置 */
+  --ruled-bg:
+    linear-gradient(to right, transparent calc(var(--ruled-x) - 1px), var(--ruled-margin) calc(var(--ruled-x) - 1px) calc(var(--ruled-x) + 1px), transparent calc(var(--ruled-x) + 1px)),
+    linear-gradient(to bottom, var(--ruled-paper) var(--ruled-top), transparent var(--ruled-top)),
+    repeating-linear-gradient(to bottom, transparent 0 calc(var(--ruled-gap) - 1px), var(--ruled-line) calc(var(--ruled-gap) - 1px) var(--ruled-gap)),
+    var(--ruled-paper);
+}
+@media (max-width: 720px) {
+  :root {
+    --ruled-x: 32px;
+    --ruled-top: 72px;
+  }
+}
+/* 横线随内容一起滚动 */
+.detail-scroll {
+  background: var(--ruled-bg);
+  background-attachment: local;
+}
+.detail-page {
+  padding-left: calc(var(--ruled-x) + clamp(20px, 3vw, 40px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px), 4vw);
+  padding-bottom: 5rem;
+}
+.detail-top,
+.detail-content {
+  max-width: 1080px;
+}
+
+/* 顶部：左上角钉着便签，右边是标题 */
+.detail-top {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding-top: calc(var(--ruled-top) - 40px);
+}
+.pin-slot {
+  position: relative;
+  flex: none;
+  width: var(--pw);
+  height: var(--ph);
+}
+.pin-page {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+}
+.pin-page::after,
+.pin-page .tape,
+.pin-page .note::after {
+  display: none;
+}
+/* 钉住的便签：保持原来的微斜，不再有悬停效果 */
+.pin-page .note,
+.pin-page .note:hover {
+  transform: rotate(var(--r, 0deg));
+  box-shadow: 0 1px 1px rgba(31, 28, 6, 0.1), 0 10px 16px -10px rgba(31, 28, 6, 0.5);
+  transition: transform 0.28s cubic-bezier(0.3, 1.4, 0.5, 1), box-shadow 0.28s;
+}
+/* 还没钉上：被抬起、摆正（与动画用的复制便签完全一致，方便无缝替换） */
+.pin-page .note.pin-lifted {
+  transform: scale(1.05);
+  box-shadow: 0 2px 2px rgba(31, 28, 6, 0.1), 0 34px 40px -18px rgba(31, 28, 6, 0.55);
+  transition: none;
+}
+
+/* 大头钉 */
+.pin {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--ph) * 0.1 + 6px);
+  z-index: 4;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9a90 0 10%, #f0372f 34%, #b0170f 78%, #8a0f09 100%);
+  box-shadow: inset -2px -3px 4px rgba(0, 0, 0, 0.25), 2px 4px 5px rgba(31, 28, 6, 0.35);
+  pointer-events: none;
+}
+/* 针在纸上的影子 */
+.pin::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 19px;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(31, 28, 6, 0.35);
+  transform: rotate(38deg);
+  filter: blur(0.8px);
+}
+.pin.drop {
+  animation: pin-drop 0.62s both;
+}
+@keyframes pin-drop {
+  0% {
+    opacity: 0;
+    transform: translate(-28px, -110px) scale(2.6) rotate(-28deg);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.4);
+  }
+  6% { opacity: 1; }
+  68% {
+    transform: translate(0, 0) scale(0.9);
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  84% { transform: scale(1.1); }
+  100% { opacity: 1; transform: none; }
+}
+/* 动画进行中：钉住的便签和大头钉先藏起来，由动画用的复制便签代替 */
+.detail.fx-active .pin-page,
+.detail.fx-active .pin {
+  visibility: hidden;
+}
+
+.detail-head {
+  flex: 1;
+  min-width: 0;
+  padding-top: 24px;
+}
+/* 文字在便签钉好之后才出现 */
+.detail-head,
+.detail-content,
+.detail-close {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.detail:not(.is-ready) .detail-head,
+.detail:not(.is-ready) .detail-content,
+.detail:not(.is-ready) .detail-close {
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+}
+.detail.is-ready .detail-content {
+  transition-delay: 0.12s;
+}
+.detail-content {
+  padding-top: 2.5rem;
+}
+.detail-lead {
+  margin: 0;
+  line-height: var(--ruled-gap);
+}
+.detail-body,
+.detail-points li {
+  line-height: var(--ruled-gap);
+}
+.detail-points {
+  gap: 0;
+}
+.detail-points li::before {
+  top: calc(var(--ruled-gap) / 2);
+}
+@media (max-width: 720px) {
+  .detail-top {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .detail-page {
+    padding-right: 16px;
   }
 }
 
-/* 便签色顶部的下沿：撕纸边（与“关于”“联系”色带同一种边） */
-.detail-head::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -38px;
-  height: 40px;
-  background: inherit;
-  transform: scaleY(-1);
-  -webkit-mask: var(--edge) center bottom / 100% 100% no-repeat;
-  mask: var(--edge) center bottom / 100% 100% no-repeat;
-  pointer-events: none;
+/* ---------- 打开/关闭时：整个页面（书、导航、网格线）向左滑出 ---------- */
+:root {
+  --slide-ms: 820ms;
+  --slide-ease: cubic-bezier(0.7, 0, 0.2, 1);
 }
-.detail-hero {
-  position: relative;
-  z-index: 2;
+.site-header,
+#main,
+.site-footer,
+body::before {
+  transition: transform var(--slide-ms) var(--slide-ease);
+}
+html.fx-slid .site-header,
+html.fx-slid #main,
+html.fx-slid .site-footer,
+html.fx-slid body::before {
+  transform: translateX(-100vw);
 }
 
-/* ---------- 展开动画的舞台（复制出来的便签，切成 3×3） ---------- */
+/* 动画用的复制便签 */
 .fx-page {
   position: fixed;
   z-index: 1001;
@@ -1502,57 +1632,15 @@ html.detail-open {
 .fx-page::after {
   display: none;
 }
-.fx-tile {
-  will-change: transform;
+.fx-page .note {
   transition: none !important;
+  will-change: transform;
 }
-/* 飞出时盖住便签内容的纯色层 */
-.fx-cover {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  background: var(--note-bg);
-  opacity: 0;
-}
-/* 只用来显示胶带的那一份复制 */
-.fx-tapeonly {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-.fx-tapeonly::after,
-.fx-tapeonly > :not(.tape) {
-  visibility: hidden;
-}
-
-/* ---------- 详情内容出场 ---------- */
-/* 网点“印刷”：点阵纸面从一个个小圆点开始长大，直到铺满 */
-@property --ht {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 20px;
-}
-.detail.is-revealing .detail-content {
-  -webkit-mask-image: radial-gradient(circle, #000 var(--ht), transparent calc(var(--ht) + 0.5px));
-  mask-image: radial-gradient(circle, #000 var(--ht), transparent calc(var(--ht) + 0.5px));
-  -webkit-mask-size: 16px 16px;
-  mask-size: 16px 16px;
-  animation: halftone-in 0.9s 0.15s cubic-bezier(0.3, 0, 0.3, 1) both;
-}
-@keyframes halftone-in {
-  from { --ht: 0px; }
-  to { --ht: 12px; }
-}
-/* 标题区依次升起 */
-.detail.is-revealing .detail-head .detail-inner > * {
-  animation: detail-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-.detail.is-revealing .detail-head .detail-inner > :nth-child(2) { animation-delay: 0.08s; }
-.detail.is-revealing .detail-head .detail-inner > :nth-child(3) { animation-delay: 0.16s; }
-.detail.is-revealing .detail-head .detail-inner > :nth-child(4) { animation-delay: 0.24s; }
-@keyframes detail-rise {
-  from { opacity: 0; transform: translateY(18px); }
-}
-/* 详情层接上时不再整体淡入（由上面的出场动画负责） */
-.detail.is-revealing .detail-scroll {
-  transition: none;
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  #main,
+  .site-footer,
+  body::before {
+    transition: none;
+  }
 }

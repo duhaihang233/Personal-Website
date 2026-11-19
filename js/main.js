@@ -439,13 +439,14 @@ function initJournal() {
 }
 
 /* =========================================================
-   作品详情页：点击便签 → 便签“揭下并展开”成整页 → 显示详情
+   作品详情页：点击便签 → 便签抬起 → 书和背景向左滑走、横线纸滑入
+   → 大头钉落下，把便签钉在横线纸左上角 → 显示详情
    地址：#work-<slug>（可分享、可用浏览器返回键关闭）
    ========================================================= */
 const L = (o) => (o ? (LANG === "en" && o.en !== undefined ? o.en : o.zh) : "");
 let refreshDetail = () => {};
 
-function detailHTML(i) {
+function detailHTML(i, dims) {
   const p = PROJECTS[i];
   const d = (typeof DETAILS !== "undefined" && DETAILS[p.slug]) || { tools: [], sections: [] };
   const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
@@ -475,17 +476,22 @@ function detailHTML(i) {
       ${sec.images ? `<div class="detail-figs${sec.images.length === 1 ? " single" : ""}">${sec.images.map(fig).join("")}</div>` : ""}
     </section>`).join("");
 
+  // 钉在左上角的便签：和手账本上的那张一模一样（去掉“展开”按钮）
+  const pinned = noteHTML(p, i).replace(/<button type="button" class="note-open"[\s\S]*?<\/button>/, "");
   return `
-    <header class="detail-head note-${color}">
-      <div class="detail-inner">
+    <div class="detail-top">
+      <div class="pin-slot" style="--pw:${dims.w}px;--ph:${dims.h}px">
+        <div class="page pin-page">${pinned}</div>
+        <span class="pin" aria-hidden="true"></span>
+      </div>
+      <header class="detail-head">
         <p class="detail-no">No.${num}${p.label ? ` · ${escapeHTML(p.label)}` : ""}</p>
         <h2 class="detail-title" id="detail-title">${escapeHTML(p.title)}</h2>
         ${field(p, "subtitle") ? `<p class="detail-sub">${escapeHTML(field(p, "subtitle"))}</p>` : ""}
         <dl class="detail-meta">${meta.map(([k, v]) => `<div><dt>${escapeHTML(k)}</dt><dd>${escapeHTML(v)}</dd></div>`).join("")}</dl>
-      </div>
-    </header>
-    <div class="detail-inner detail-content">
-      <figure class="detail-hero"><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}" /></figure>
+      </header>
+    </div>
+    <div class="detail-content">
       <p class="detail-lead">${escapeHTML(field(p, "description"))}</p>
       ${links ? `<p class="detail-links">${links}</p>` : ""}
       ${sections}
@@ -522,22 +528,39 @@ function initDetail() {
   let pushed = false;    // 是否由点击便签打开（关闭时用返回键回到原地址）
   let busy = false;
 
-  const noteFor = (i) => document.querySelector(`.page:not([inert]) .note[data-index="${i}"]`);
+  const book = document.getElementById("book");
+  const noteFor = (i) => book.querySelector(`.page:not([inert]) .note[data-index="${i}"]`);
+  // 主页面向左滑走时，书上元素的实际位置要加回这段位移
+  const slidX = () => (document.documentElement.classList.contains("fx-slid") ? innerWidth : 0);
+  const rectOf = (el) => {
+    const r = el.getBoundingClientRect(), dx = slidX();
+    return { left: r.left + dx, top: r.top, right: r.right + dx, bottom: r.bottom, width: r.width, height: r.height };
+  };
   const visible = (el) => {
     if (!el) return false;
-    const r = el.getBoundingClientRect();
+    const r = rectOf(el);
     return r.width > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
   };
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const done = (anims) => Promise.all(anims.map((a) => a.finished.catch(() => {})));
+  const done = (anims) => Promise.all(anims.filter(Boolean).map((a) => a.finished.catch(() => {})));
+  const SLIDE = 820, EASE = "cubic-bezier(0.7, 0, 0.2, 1)";
+
+  // 钉住的便签的尺寸：和手账本的纸页同比例
+  function pinDims() {
+    const pg = book.querySelector(".page-b.base") || book.querySelector(".page");
+    const w0 = pg ? pg.offsetWidth : 300, h0 = pg ? pg.offsetHeight : 400;
+    const w = innerWidth <= 720 ? Math.min(innerWidth - 56, 420) : Math.min(380, Math.max(280, innerWidth * 0.3));
+    return { w: Math.round(w), h: Math.round((w * h0) / w0), src: w0 };
+  }
 
   function fill(i) {
     current = i;
     const p = PROJECTS[i];
     const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
     root.className = `detail note-${color}`;
-    page.innerHTML = detailHTML(i);
+    page.innerHTML = detailHTML(i, pinDims());
     closeBtn.setAttribute("aria-label", t("close"));
+    alignToRules();
     page.querySelectorAll("[data-go]").forEach((a) =>
       a.addEventListener("click", (e) => {
         e.preventDefault();
@@ -546,120 +569,49 @@ function initDetail() {
     );
   }
 
-  /* ---------- 动画舞台：把便签复制出来，切成 3×3 九块 ----------
-     复制整张纸页（保留容器查询的尺寸），所以复制出来的便签和原来一模一样；
-     每一块都是完整便签的副本，用 clip-path 只露出自己那一格；
-     胶带单独复制一份，用来做“撕开 / 贴回”。 */
-  const ROW_SHIFT = [0.05, -0.06, 0.03]; // 每一行左右错开的比例（相对一格的宽度），和首屏照片同一手法
-  function stage(note) {
+  // 让正文第一行落在横线上：把内容区的起点对齐到行距的整数倍
+  function alignToRules() {
+    const content = page.querySelector(".detail-content");
+    if (!content) return;
+    content.style.paddingTop = "";
+    const gap = parseFloat(getComputedStyle(root).getPropertyValue("--ruled-gap")) || 32;
+    const top = content.offsetTop + parseFloat(getComputedStyle(content).paddingTop);
+    content.style.paddingTop = `${parseFloat(getComputedStyle(content).paddingTop) + ((gap - (top % gap)) % gap)}px`;
+  }
+
+  /* ---------- 动画用的复制便签 ----------
+     复制整张纸页（保留容器查询的尺寸），所以复制出来的便签和本子上的一模一样；
+     整层以便签中心为原点缩放、平移，便签自身负责旋转 */
+  function makeFx(note) {
     const pageEl = note.closest(".page");
-    const pr = pageEl.getBoundingClientRect();
+    const pr = rectOf(pageEl);
     const layer = document.createElement("div");
     layer.className = "page fx-page";
     layer.setAttribute("aria-hidden", "true");
     Object.assign(layer.style, { left: `${pr.left}px`, top: `${pr.top}px`, width: `${pr.width}px`, height: `${pr.height}px` });
-
-    const tiles = [];
-    for (let k = 0; k < 9; k++) {
-      const r = Math.floor(k / 3), c = k % 3;
-      const tile = note.cloneNode(true);
-      tile.classList.add("fx-tile");
-      tile.classList.remove("is-lifted");
-      tile.querySelectorAll(".tape").forEach((x) => x.remove());
-      const e = 0.4; // 稍微重叠一点，避免拼合时出现细缝
-      tile.style.clipPath = `inset(calc(${r * 33.333}% - ${e}px) calc(${(2 - c) * 33.333}% - ${e}px) calc(${(2 - r) * 33.333}% - ${e}px) calc(${c * 33.333}% - ${e}px))`;
-      const cover = document.createElement("span");
-      cover.className = "fx-cover";
-      tile.appendChild(cover);
-      tile.dataset.r = r;
-      layer.appendChild(tile);
-      tiles.push(tile);
-    }
-    const tapeNote = note.cloneNode(true);
-    tapeNote.classList.add("fx-tapeonly");
-    tapeNote.classList.remove("is-lifted");
-    layer.appendChild(tapeNote);
+    const clone = note.cloneNode(true);
+    clone.classList.remove("is-lifted");
+    clone.querySelectorAll(".note-open").forEach((x) => x.remove());
+    layer.appendChild(clone);
     document.body.appendChild(layer);
-
-    // 便签（未旋转时）的尺寸和在屏幕上的中心点
-    const nw = note.offsetWidth, nh = note.offsetHeight;
-    const cx = pr.left + note.offsetLeft + nw / 2, cy = pr.top + note.offsetTop + nh / 2;
-    const W = innerWidth, H = innerHeight;
+    const ox = note.offsetLeft + note.offsetWidth / 2, oy = note.offsetTop + note.offsetHeight / 2;
+    layer.style.transformOrigin = `${ox}px ${oy}px`;
     return {
-      layer, tiles, tape: tapeNote.querySelector(".tape"),
+      layer, note: clone, tape: clone.querySelector(".tape"),
       tilt: parseFloat(note.style.getPropertyValue("--r")) || 0,
-      // 把整张便签映射到整个屏幕
-      fullT: (extraX = 0) => `translate(${W / 2 - cx + extraX}px, ${H / 2 - cy}px) scale(${W / nw}, ${H / nh})`,
-      cellW: W / 3,
-      nCell: nw / 3,
+      cx: pr.left + ox, cy: pr.top + oy, w: pr.width,
     };
   }
+  const SHADOW_DOWN = "drop-shadow(0 4px 3px rgba(31,28,6,0.18))";
+  const SHADOW_UP = "drop-shadow(0 30px 24px rgba(31,28,6,0.32))";
+  const atSource = () => "translate(0px, -18px) scale(1.07)";
+  const atTarget = (fx, T, s) => `translate(${T.x - fx.cx}px, ${T.y - fx.cy}px) scale(${s * 1.05})`;
 
-  // 打开：揭下 → 切开 → 飞出铺满 → 拼合
-  function unfold(st) {
-    const anims = [];
-    const D = 1350;
-    // 胶带：一角翘起，被撕开飞走
-    if (st.tape) {
-      anims.push(st.tape.animate([
-        { transform: getComputedStyle(st.tape).transform, opacity: 1 },
-        { transform: `translateX(-50%) translate(-6px, -10px) rotate(${-14}deg)`, opacity: 1, offset: 0.12 },
-        { transform: `translateX(-50%) translate(-60px, -120px) rotate(-38deg)`, opacity: 0, offset: 0.3 },
-        { opacity: 0 },
-      ], { duration: D, easing: "ease-out", fill: "forwards" }));
-    }
-    st.tiles.forEach((tile, k) => {
-      const r = +tile.dataset.r;
-      const lift = `translate(0px, -18px) rotate(0deg) scale(1.06)`;
-      const split = `translate(${ROW_SHIFT[r] * st.nCell * 2.2}px, -18px) rotate(0deg) scale(1.06)`;
-      anims.push(tile.animate([
-        { transform: `rotate(${st.tilt}deg)`, offset: 0 },
-        { transform: lift, offset: 0.18, easing: "cubic-bezier(0.3, 0, 0.2, 1)" },
-        { transform: split, offset: 0.34, easing: "cubic-bezier(0.7, 0, 0.2, 1)" },
-        { transform: st.fullT(ROW_SHIFT[r] * st.cellW * 1.4), offset: 0.84, easing: "cubic-bezier(0.5, 0, 0.2, 1)" },
-        { transform: st.fullT(0), offset: 1 },
-      ], { duration: D, delay: (k % 3) * 35 + Math.floor(k / 3) * 55, fill: "forwards" }));
-      // 飞出时，便签上的内容渐渐隐去，只剩纸的颜色
-      anims.push(tile.querySelector(".fx-cover").animate([
-        { opacity: 0 }, { opacity: 0, offset: 0.55 }, { opacity: 1, offset: 0.8 }, { opacity: 1 },
-      ], { duration: D, fill: "forwards" }));
-    });
-    // 抬起后的投影
-    anims.push(st.layer.animate([
-      { filter: "drop-shadow(0 2px 2px rgba(31,28,6,0.15))" },
-      { filter: "drop-shadow(0 26px 22px rgba(31,28,6,0.35))", offset: 0.25 },
-      { filter: "drop-shadow(0 30px 30px rgba(31,28,6,0.3))", offset: 0.8 },
-      { filter: "drop-shadow(0 0 0 rgba(31,28,6,0))" },
-    ], { duration: D, fill: "forwards" }));
-    return done(anims);
-  }
-
-  // 关闭：整屏切开 → 错位收回 → 缩成便签贴回去，胶带重新贴上
-  function fold(st) {
-    const anims = [];
-    const D = 1150;
-    st.tiles.forEach((tile, k) => {
-      const r = +tile.dataset.r;
-      anims.push(tile.animate([
-        { transform: st.fullT(0), offset: 0 },
-        { transform: st.fullT(ROW_SHIFT[r] * st.cellW * 1.4), offset: 0.18, easing: "cubic-bezier(0.6, 0, 0.3, 1)" },
-        { transform: `translate(${ROW_SHIFT[r] * st.nCell * 2.2}px, -18px) rotate(0deg) scale(1.06)`, offset: 0.66, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
-        { transform: `translate(0px, -12px) rotate(0deg) scale(1.04)`, offset: 0.8, easing: "cubic-bezier(0.5, 0, 0.3, 1.4)" },
-        { transform: `rotate(${st.tilt}deg)`, offset: 1 },
-      ], { duration: D, delay: (2 - (k % 3)) * 30 + (2 - Math.floor(k / 3)) * 45, fill: "forwards" }));
-      anims.push(tile.querySelector(".fx-cover").animate([
-        { opacity: 1 }, { opacity: 1, offset: 0.35 }, { opacity: 0, offset: 0.62 }, { opacity: 0 },
-      ], { duration: D, fill: "forwards" }));
-    });
-    if (st.tape) {
-      anims.push(st.tape.animate([
-        { transform: `translateX(-50%) translate(-60px, -120px) rotate(-38deg)`, opacity: 0 },
-        { transform: `translateX(-50%) translate(-60px, -120px) rotate(-38deg)`, opacity: 0, offset: 0.72 },
-        { transform: `translateX(-50%) translate(-4px, -8px) rotate(-10deg)`, opacity: 1, offset: 0.9 },
-        { transform: getComputedStyle(st.tape).transform, opacity: 1 },
-      ], { duration: D, easing: "ease-out", fill: "forwards" }));
-    }
-    return done(anims);
+  // 钉住的便签在横线纸上的中心位置（详情层已就位时）
+  function pinTarget() {
+    const r = page.querySelector(".pin-page .note").getBoundingClientRect();
+    const off = new DOMMatrixReadOnly(getComputedStyle(root).transform).m41;
+    return { x: r.left + r.width / 2 - off, y: r.top + r.height / 2 };
   }
 
   function lockPage(lock) {
@@ -667,12 +619,19 @@ function initDetail() {
     outside.forEach((el) => el && (lock ? el.setAttribute("inert", "") : el.removeAttribute("inert")));
   }
 
-  // 详情内容出场：网点逐渐长大“印”出纸面，标题依次升起
-  function reveal() {
-    root.classList.remove("is-revealing");
-    void root.offsetWidth;
-    root.classList.add("is-ready", "is-revealing");
-    setTimeout(() => root.classList.remove("is-revealing"), 1400);
+  // 大头钉落下，便签被按回纸上（恢复微斜、阴影变小），然后显示文字
+  async function pinIt() {
+    const pinNote = page.querySelector(".pin-page .note");
+    const pin = page.querySelector(".pin");
+    pinNote.classList.add("pin-lifted");
+    root.classList.remove("fx-active");
+    pin.classList.remove("drop");
+    void pin.offsetWidth;
+    pin.classList.add("drop");
+    await wait(420); // 钉尖碰到纸的那一刻
+    pinNote.classList.remove("pin-lifted");
+    await wait(260);
+    root.classList.add("is-ready");
   }
 
   async function open(i, note) {
@@ -681,22 +640,56 @@ function initDetail() {
     fill(i);
     lockPage(true);
     sourceNote = note && visible(note) ? note : null;
-    root.classList.remove("is-ready", "is-revealing");
+    root.hidden = false;
+    scroller.scrollTop = 0;
+    alignToRules(); // 隐藏时量不到位置，显示后再对齐一次
 
-    if (sourceNote && !reduceMotion.matches) {
-      const st = stage(sourceNote);
-      sourceNote.classList.add("is-lifted");
-      await unfold(st);
-      root.hidden = false; // 九块已铺满整屏，详情层（同样的颜色）接上
-      scroller.scrollTop = 0;
-      reveal();
-      requestAnimationFrame(() => st.layer.remove());
-    } else {
-      root.hidden = false;
-      scroller.scrollTop = 0;
-      await root.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduceMotion.matches ? 1 : 250 }).finished.catch(() => {});
+    if (reduceMotion.matches) {
+      document.documentElement.classList.add("fx-slid");
       root.classList.add("is-ready");
+      closeBtn.focus({ preventScroll: true });
+      busy = false;
+      return;
     }
+
+    root.classList.add("fx-active");
+    root.style.transform = `translateX(${innerWidth}px)`;
+    const T = pinTarget();
+    const s = pinDims().w / (sourceNote ? sourceNote.closest(".page").offsetWidth : 1);
+    let fx = null;
+
+    // ① 抬起：胶带飞走，便签抬起、摆正
+    if (sourceNote) {
+      fx = makeFx(sourceNote);
+      sourceNote.classList.add("is-lifted");
+      const lift = [
+        fx.layer.animate([{ transform: "none", filter: SHADOW_DOWN }, { transform: atSource(), filter: SHADOW_UP }],
+          { duration: 380, easing: "cubic-bezier(0.3, 0, 0.2, 1)", fill: "forwards" }),
+        fx.note.animate([{ transform: `rotate(${fx.tilt}deg)` }, { transform: "rotate(0deg)" }],
+          { duration: 380, easing: "ease-out", fill: "forwards" }),
+        fx.tape && fx.tape.animate([
+          { transform: getComputedStyle(fx.tape).transform, opacity: 1 },
+          { transform: "translateX(-50%) translate(-50px, -110px) rotate(-36deg)", opacity: 0 },
+        ], { duration: 340, easing: "ease-in", fill: "forwards" }),
+      ];
+      await done(lift);
+    }
+
+    // ② 背景向左滑走，横线纸从右边滑入；便签浮在上面，移到横线纸左上角
+    document.documentElement.classList.add("fx-slid");
+    const slide = [
+      root.animate([{ transform: `translateX(${innerWidth}px)` }, { transform: "translateX(0)" }],
+        { duration: SLIDE, easing: EASE, fill: "forwards" }),
+      fx && fx.layer.animate([{ transform: atSource(), filter: SHADOW_UP }, { transform: atTarget(fx, T, s), filter: SHADOW_UP }],
+        { duration: SLIDE, easing: EASE, fill: "forwards" }),
+    ];
+    await done(slide);
+    root.style.transform = "";
+    slide[0].cancel();
+
+    // ③ 背景换好之后：大头钉落下，把便签钉住
+    if (fx) fx.layer.remove();
+    await pinIt();
     closeBtn.focus({ preventScroll: true });
     busy = false;
   }
@@ -706,24 +699,66 @@ function initDetail() {
     busy = true;
     const note =
       sourceNote && sourceNote.isConnected && current === +sourceNote.dataset.index ? sourceNote : noteFor(current);
-    root.classList.remove("is-ready", "is-revealing");
-    if (note && visible(note) && !reduceMotion.matches) {
-      await wait(220); // 详情内容先淡出，只剩便签颜色
-      note.classList.add("is-lifted");
-      const st = stage(note);
-      st.layer.querySelectorAll(".fx-cover").forEach((c) => (c.style.opacity = 1));
-      st.tiles.forEach((tl) => (tl.style.transform = st.fullT(0)));
-      if (st.tape) st.tape.style.opacity = 0;
+    const back = note && visible(note) && !reduceMotion.matches;
+    root.classList.remove("is-ready");
+
+    if (reduceMotion.matches) {
       root.hidden = true;
-      await fold(st);
-      note.classList.remove("is-lifted");
-      st.layer.remove();
+      document.documentElement.classList.remove("fx-slid");
     } else {
-      await root.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduceMotion.matches ? 1 : 220 }).finished.catch(() => {});
+      await wait(160); // 文字先淡出
+      const pinNote = page.querySelector(".pin-page .note");
+      const pin = page.querySelector(".pin");
+      // 拔掉大头钉（和便签抬起同时进行）
+      const pull = pin.animate([{ transform: "none", opacity: 1 }, { transform: "translate(24px, -120px) scale(2.2) rotate(30deg)", opacity: 0 }],
+        { duration: 300, easing: "cubic-bezier(0.3, 0, 0.6, 1)", fill: "forwards" });
+      await wait(120);
+      let fx = null, T = null, s = 1;
+      if (back) {
+        T = pinTarget();
+        s = pinDims().w / note.closest(".page").offsetWidth;
+        note.classList.add("is-lifted");
+        fx = makeFx(note);
+        fx.layer.style.transform = atTarget(fx, T, s);
+        fx.layer.style.filter = SHADOW_UP;
+        fx.note.style.transform = "rotate(0deg)";
+        if (fx.tape) fx.tape.style.opacity = "0";
+        // 从钉住的样子平滑过渡到抬起
+        await done([fx.layer.animate([
+          { transform: `translate(${T.x - fx.cx}px, ${T.y - fx.cy}px) scale(${s})`, filter: SHADOW_DOWN },
+          { transform: atTarget(fx, T, s), filter: SHADOW_UP },
+        ], { duration: 180, easing: "ease-out" }),
+        fx.note.animate([{ transform: `rotate(${fx.tilt}deg)` }, { transform: "rotate(0deg)" }], { duration: 180 })]);
+        pinNote.style.visibility = "hidden";
+      }
+      await done([pull]);
+      // 横线纸向右滑走，书和背景滑回来；便签飞回原位
+      document.documentElement.classList.remove("fx-slid");
+      await done([
+        root.animate([{ transform: "translateX(0)" }, { transform: `translateX(${innerWidth}px)` }],
+          { duration: SLIDE, easing: EASE, fill: "forwards" }),
+        fx && fx.layer.animate([{ transform: atTarget(fx, T, s), filter: SHADOW_UP }, { transform: atSource(), filter: SHADOW_UP }],
+          { duration: SLIDE, easing: EASE, fill: "forwards" }),
+      ]);
       root.hidden = true;
+      root.getAnimations().forEach((a) => a.cancel());
+      // 便签落回本子上，胶带贴回去
+      if (fx) {
+        await done([
+          fx.layer.animate([{ transform: atSource(), filter: SHADOW_UP }, { transform: "none", filter: SHADOW_DOWN }],
+            { duration: 300, easing: "cubic-bezier(0.3, 1.3, 0.5, 1)", fill: "forwards" }),
+          fx.note.animate([{ transform: "rotate(0deg)" }, { transform: `rotate(${fx.tilt}deg)` }],
+            { duration: 300, easing: "ease-out", fill: "forwards" }),
+          fx.tape && fx.tape.animate([
+            { transform: "translateX(-50%) translate(-30px, -70px) rotate(-30deg)", opacity: 0 },
+            { transform: getComputedStyle(fx.tape).transform, opacity: 1 },
+          ], { duration: 300, delay: 120, easing: "ease-out", fill: "forwards" }),
+        ]);
+        fx.layer.remove();
+      }
     }
     lockPage(false);
-    document.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
+    book.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
     const focusTarget = note && note.querySelector(".note-open");
     if (focusTarget) focusTarget.focus({ preventScroll: true });
     sourceNote = null;
@@ -731,15 +766,25 @@ function initDetail() {
     busy = false;
   }
 
-  // 在详情页里切换到上一个/下一个作品
+  // 在详情页里切换到上一个/下一个作品：换一张便签，再钉一次
   function go(i) {
+    if (busy) return;
     history.replaceState(null, "", `#work-${PROJECTS[i].slug}`);
-    document.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
+    book.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
     sourceNote = null;
-    page.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150 }).finished.then(() => {
+    busy = true;
+    root.classList.remove("is-ready");
+    page.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: "forwards" }).finished.then(async (a) => {
       fill(i);
       scroller.scrollTop = 0;
-      page.animate([{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }], { duration: 300, easing: "ease-out" });
+      a.cancel();
+      if (reduceMotion.matches) root.classList.add("is-ready");
+      else {
+        root.classList.add("fx-active");
+        await wait(60);
+        await pinIt();
+      }
+      busy = false;
     });
   }
 
@@ -783,6 +828,7 @@ function initDetail() {
   refreshDetail = () => {
     if (root.hidden || current < 0) return;
     fill(current);
+    root.classList.add("is-ready");
     const n = noteFor(current);
     if (sourceNote && n) {
       sourceNote = n;
