@@ -242,4 +242,106 @@ const DETAILS = {
       },
     ],
   },
+
+  "ballot-grove": {
+    tools: ["Figma", "Replit"],
+    mascot: "assets/projects/ballot-grove/eagle-cheer.png",
+    sections: [
+      {
+        title: { zh: "问题：参与率的落差", en: "The Problem: A Participation Gap" },
+        body: {
+          zh: "四个年轻人里有三个没有去投票。人们常说“年轻人就是不在乎”，但我们的访谈讲了一个不同的故事：不是不在乎，而是投票前要做的功课太多。",
+          en: "Three out of four young adults didn't vote. The common assumption is that young people just don't care, but our conversations told a different story: the problem is how much homework voting takes.",
+        },
+        stats: [
+          { value: "27%", zh: "18–29 岁年轻人的投票率", en: "Young adults, ages 18–29", hl: true },
+          { value: "49%", zh: "全国整体投票率", en: "National turnout" },
+        ],
+        note: { zh: "数据来自课堂演讲稿，具体年份和来源待确认。", en: "Figures from the presentation script; election year and source to be confirmed." },
+        points: [
+          { zh: "01 信息来源有偏见", en: "01 Biased sources" },
+          { zh: "02 信息过载", en: "02 Information overload" },
+          { zh: "03 司法相关的选项很复杂", en: "03 A complex judicial system" },
+          { zh: "04 语言太专业、难读懂", en: "04 Complicated language" },
+        ],
+        images: [
+          { src: "assets/projects/ballot-grove/deck-02.jpg", zh: "参与率落差", en: "The participation gap" },
+          { src: "assets/projects/ballot-grove/deck-03.jpg", zh: "我们听到的 vs. 实际情况", en: "What we heard vs. what we found" },
+          { src: "assets/projects/ballot-grove/deck-05.jpg", zh: "理解选票的四个障碍", en: "Four barriers to understanding" },
+        ],
+      },
+      {
+        title: { zh: "用户故事：Michelle 的投票之旅", en: "User Story: Michelle's Voting Journey" },
+        points: [
+          { zh: "01 信件：选票、样票，再加一本 40 页的说明手册", en: "01 The mail: ballot, sample ballot and a 40-page pamphlet" },
+          { zh: "02 研究：花大量时间才弄清楚每一项在说什么", en: "02 The research: hours spent figuring things out" },
+          { zh: "03 投票站：排长队，最后一刻还在临时查资料", en: "03 The polls: a long line and last-minute research" },
+        ],
+        images: [{ src: "assets/projects/ballot-grove/deck-04.jpg", zh: "Michelle 的投票之旅", en: "Michelle's voting journey" }],
+      },
+      {
+        title: { zh: "用户旅程与信息架构", en: "User Journey & Information Architecture" },
+        body: {
+          zh: "从欢迎页、选择语言、填写所在地区，到一个小问卷了解用户关心的议题，然后分成两种使用方式：探索模式按主题把选票拆成不同的岛；选票模式按纸质选票的顺序逐项完成。每个候选人和提案都按固定的信息顺序展示：这个职位做什么、谁在竞选、有什么不同、做过什么、去哪里了解更多。",
+          en: "From welcome, language and location to a short quiz about the topics you care about, the flow splits into two modes: Explore mode breaks the ballot into themed islands, and Ballot mode follows the printed ballot in order. Every candidate and measure follows the same information order: what the office does, who's running, how they differ, what they've done, and where to learn more.",
+        },
+        points: [
+          { zh: "进度条：探索越多，解锁越多角色皮肤", en: "A progress bar that unlocks character skins as you explore" },
+          { zh: "边探索边做笔记，标记想投的选项", en: "Annotate and mark your picks as you explore" },
+          { zh: "最后生成样票，变成可以带去投票站的二维码", en: "Finish with a sample ballot that becomes a QR code for the polls" },
+          { zh: "多语言：点一下就能看到原文，确保填写正确", en: "Multilingual, with a tap to see the original wording" },
+        ],
+        images: [
+          { src: "assets/projects/ballot-grove/journey.jpg", zh: "用户旅程图", en: "User journey map" },
+        ],
+      },
+      {
+        title: { zh: "早期线框图", en: "Early Wireframes" },
+        images: [
+          { src: "assets/projects/ballot-grove/wire-mac1.jpg", zh: "首页", en: "Landing" },
+          { src: "assets/projects/ballot-grove/wire-explore.jpg", zh: "选择一座岛去探索", en: "Pick an island to explore" },
+          { src: "assets/projects/ballot-grove/wire-props.jpg", zh: "提案按议题分成不同建筑", en: "Measures as buildings by topic" },
+          { src: "assets/projects/ballot-grove/wire-cand.jpg", zh: "候选人介绍", en: "Meet the candidates" },
+          { src: "assets/projects/ballot-grove/wire-compare.jpg", zh: "对比候选人", en: "Compare candidates" },
+        ],
+      },
+      {
+        title: { zh: "最终设计：像素世界", en: "Final Design: A Pixel World" },
+        body: {
+          zh: "最终版本换成了暖色像素美术：每一类选项是一座漂浮的小岛，老鹰向导陪你一路学习。每一页都把“问题是什么、现在怎样、会改变什么、支持和反对的意思”拆成短句，并标出信息来源；看完后可以选择、记笔记，最后得到一份按纸质选票顺序排好的选票计划。",
+          en: "The final version moved to warm pixel art: each part of the ballot is a floating island, and an eagle guide learns alongside you. Each page breaks a measure into short answers (what's the question, what happens now, what would change, what YES and NO mean) with sources. You choose, take notes, and end with a ballot plan in printed-ballot order.",
+        },
+        images: [
+          { src: "assets/projects/ballot-grove/ui-home.jpg", zh: "首页", en: "Home" },
+          { src: "assets/projects/ballot-grove/ui-goal.jpg", zh: "设置：选择今天想做什么", en: "Setup: choose your goal" },
+          { src: "assets/projects/ballot-grove/ui-explore.jpg", zh: "选择一座岛", en: "Pick an island" },
+          { src: "assets/projects/ballot-grove/ui-props.jpg", zh: "提案教室：读懂、选择、记笔记", en: "Measure classroom: read, choose, take notes" },
+          { src: "assets/projects/ballot-grove/ui-cand.jpg", zh: "候选人档案", en: "Candidate profile" },
+          { src: "assets/projects/ballot-grove/ui-compare.jpg", zh: "并排对比候选人", en: "Compare side by side" },
+          { src: "assets/projects/ballot-grove/ui-receipt.jpg", zh: "你的选票计划 + 二维码", en: "Your ballot plan + QR code" },
+          { src: "assets/projects/ballot-grove/ui-phone.jpg", zh: "手机版选票计划", en: "Ballot plan on phone" },
+        ],
+      },
+      {
+        title: { zh: "像素素材", en: "Pixel Assets" },
+        body: {
+          zh: "老鹰向导的待机、挥手、欢呼、思考、读书、走路等动画帧，候选人角色，以及五座会漂浮的议题小岛。",
+          en: "Animation frames for the eagle guide (idle, wave, cheer, think, read, walk), candidate characters and five floating topic islands.",
+        },
+        images: [{ src: "assets/projects/ballot-grove/pixel-assets.jpg", zh: "像素素材表", en: "Pixel asset sheet" }],
+      },
+      {
+        title: { zh: "你的一票，你的信心", en: "Your Vote. Your Confidence." },
+        body: {
+          zh: "Ballot Grove 的目标很简单：让每个人都能对选票上的每一项做出有把握的决定。",
+          en: "Ballot Grove's goal is simple: help everyone make a confident decision on every choice on their ballot.",
+        },
+        images: [
+          { src: "assets/projects/ballot-grove/deck-01.jpg", zh: "欢迎来到 Ballot Grove", en: "Welcome to Ballot Grove" },
+          { src: "assets/projects/ballot-grove/deck-06.jpg", zh: "现场演示", en: "Live demo" },
+          { src: "assets/projects/ballot-grove/deck-09.jpg", zh: "谢谢！", en: "Thank you!" },
+        ],
+      },
+    ],
+  },
 };

@@ -150,6 +150,29 @@ const PROJECTS = [
       tags: ["Onshape", "Laser cutting"],
     },
   },
+  {
+    slug: "ballot-grove",
+    style: "pixel", // 像素风：便签和详情页使用像素字体、像素边框
+    title: "Ballot Grove",
+    subtitle: "让投票变简单的像素风选民指南",
+    label: "Civic UX",
+    color: "sky",
+    team: "Iris · Thomas · Michelle · Brian · Christine",
+    field: "交互设计、用户研究与公民科技",
+    description:
+      "四分之三的年轻人没有投票，原因往往不是不在乎，而是选票太难懂。Ballot Grove 把选票拆成一座座漂浮的像素小岛：跟着老鹰向导逐个探索议题和候选人，对比、记笔记，最后生成一份可以带去投票站的选票计划。",
+    image: "assets/projects/ballot-grove.jpg",
+    tags: ["Figma", "Replit", "用户研究", "像素美术"],
+    links: [],
+    en: {
+      subtitle: "A pixel-art voter guide that makes voting simple",
+      team: "Iris · Thomas · Michelle · Brian · Christine",
+      field: "Interaction design, user research & civic tech",
+      description:
+        "Three in four young adults didn't vote, and not because they don't care: ballots are hard to understand. Ballot Grove turns the ballot into floating pixel islands. An eagle guide walks you through measures and candidates; you compare, take notes, and leave with a ballot plan to bring to the polls.",
+      tags: ["Figma", "Replit", "User research", "Pixel art"],
+    },
+  },
 ];
 
 /* =========================================================
@@ -291,7 +314,7 @@ const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 /* ---------- 手账本：每个对开页放两个作品 ---------- */
-const NOTE_COLORS = ["cyan", "ink", "pink", "lime", "cream"];
+const NOTE_COLORS = ["cyan", "ink", "pink", "lime", "cream", "sky"];
 const NOTE_TILT = [-1.6, 1.3, -0.9, 1.8, -1.3, 0.8];
 const TAPES = ["", "tape-cyan", "tape-lime"];
 
@@ -301,14 +324,16 @@ function noteHTML(p, i) {
   }
   const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
   const num = String(i + 1).padStart(2, "0");
-  const meta = [p.year, field(p, "duration"), field(p, "team")].filter(Boolean).map(escapeHTML).join(" · ");
+  // 便签角落空间小：合作者名单太长时只在详情页显示
+  const team = field(p, "team");
+  const meta = [p.year, field(p, "duration"), team && team.length <= 16 ? team : ""].filter(Boolean).map(escapeHTML).join(" · ");
   const subtitle = field(p, "subtitle");
   const tags = field(p, "tags") || [];
   const links = (field(p, "links") || [])
     .map((l) => `<a href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(l.text)}</a>`)
     .join("");
   return `
-    <article class="note note-${color}" data-index="${i}" style="--r:${NOTE_TILT[i % NOTE_TILT.length]}deg;--pr:${i % 2 ? -1.5 : 1.2}deg">
+    <article class="note note-${color}${p.style === "pixel" ? " note-pixel" : ""}" data-index="${i}" style="--r:${NOTE_TILT[i % NOTE_TILT.length]}deg;--pr:${i % 2 ? -1.5 : 1.2}deg">
       <span class="tape ${TAPES[i % TAPES.length]}" style="--tr:${i % 2 ? 4 : -3}deg"></span>
       <button type="button" class="note-open" aria-label="${escapeHTML(t("openNote")(p.title))}"><span>${t("noteMore")}</span></button>
       <div class="note-top"><span>No.${num}${p.label ? ` · ${escapeHTML(p.label)}` : ""}</span>${meta ? `<span>${meta}</span>` : ""}</div>
@@ -454,6 +479,8 @@ function detailHTML(i, dims) {
     <section class="detail-section">
       <h3 class="detail-h rough">${escapeHTML(L(sec.title))}</h3>
       ${sec.body ? `<p class="detail-body">${escapeHTML(L(sec.body))}</p>` : ""}
+      ${sec.stats ? `<div class="detail-stats">${sec.stats.map((x) => `<div class="detail-stat${x.hl ? " hl" : ""}"><b>${escapeHTML(x.value)}</b><span>${escapeHTML(L(x))}</span></div>`).join("")}</div>` : ""}
+      ${sec.note ? `<p class="detail-note">${escapeHTML(L(sec.note))}</p>` : ""}
       ${sec.points ? `<ul class="detail-points">${sec.points.map((x) => `<li>${escapeHTML(L(x))}</li>`).join("")}</ul>` : ""}
       ${sec.images ? `<div class="detail-figs${sec.images.length === 1 ? " single" : ""}">${sec.images.map(fig).join("")}</div>` : ""}
     </section>`).join("");
@@ -477,6 +504,7 @@ function detailHTML(i, dims) {
       <p class="detail-lead">${escapeHTML(field(p, "description"))}</p>
       ${links ? `<p class="detail-links">${links}</p>` : ""}
       ${sections}
+      ${d.mascot ? `<img class="detail-mascot" src="${escapeHTML(d.mascot)}" alt="" aria-hidden="true" />` : ""}
       <nav class="detail-pager" aria-label="${escapeHTML(t("pager"))}">
         <a href="#work-${prev.slug}" data-go="${PROJECTS.indexOf(prev)}"><span>← ${t("prev")}</span><b>${escapeHTML(prev.title)}</b></a>
         <a href="#work-${next.slug}" data-go="${PROJECTS.indexOf(next)}"><span>${t("next")} →</span><b>${escapeHTML(next.title)}</b></a>
@@ -539,7 +567,7 @@ function initDetail() {
     current = i;
     const p = PROJECTS[i];
     const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
-    root.className = `detail note-${color}`;
+    root.className = `detail note-${color}${p.style === "pixel" ? " detail-pixel" : ""}`;
     page.innerHTML = detailHTML(i, pinDims());
     closeBtn.setAttribute("aria-label", t("close"));
     alignToRules();
@@ -886,6 +914,7 @@ function initDetail() {
     });
     document.fonts.load(`900 16px "Archivo"`, text).catch(() => {});
     document.fonts.load(`700 16px "Caveat"`, text).catch(() => {});
+    document.fonts.load(`700 16px "Pixelify Sans"`, text).catch(() => {});
   }
   (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(preloadFonts, { timeout: 2500 });
 

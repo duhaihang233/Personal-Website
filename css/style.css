@@ -1903,3 +1903,178 @@ html.fx-prep .site-header {
     display: none;
   }
 }
+
+/* =========================================================
+   14. 像素风作品（Ballot Grove）
+   在整站风格上叠加：像素字体、方角粗描边、硬投影、黄色高亮
+   ========================================================= */
+:root {
+  --sky: #cdeefe;
+  --px-navy: #1b3358;
+  --px-yellow: #ffd84d;
+  --font-pixel: "Pixelify Sans", "Archivo", system-ui, sans-serif;
+}
+.note-sky { --note-bg: var(--sky); }
+
+/* 便签：方角 + 深蓝描边 + 硬投影，像游戏里的对话框 */
+.note-pixel {
+  --note-text: var(--px-navy);
+  border: 3px solid var(--px-navy);
+  border-radius: 0;
+  background-image: linear-gradient(var(--px-yellow), var(--px-yellow));
+  background-size: calc(100% - 1.6em) 0.32em;
+  background-position: 0.8em 0.5em;
+  background-repeat: no-repeat;
+  box-shadow: 0.35em 0.35em 0 var(--px-navy);
+}
+.note-pixel::after {
+  display: none;
+}
+.note-pixel:hover {
+  box-shadow: 0.5em 0.6em 0 var(--px-navy);
+}
+.note-pixel h3,
+.note-pixel .note-top {
+  font-family: var(--font-pixel);
+  font-weight: 700;
+}
+.note-pixel h3::before {
+  border-radius: 0;
+  background: var(--px-yellow);
+  box-shadow: 0 0 0 2px var(--px-navy);
+}
+.note-pixel .note-photo {
+  border: 2px solid var(--px-navy);
+  box-shadow: 0.25em 0.25em 0 var(--px-navy);
+}
+.note-pixel .note-photo img {
+  image-rendering: pixelated;
+}
+.note-pixel .tag-list li {
+  border-radius: 0;
+  border-width: 2px;
+  font-family: var(--font-pixel);
+  font-weight: 500;
+}
+/* 胶带换成像素块 */
+.note-pixel .tape {
+  background: var(--px-yellow);
+  clip-path: none;
+  border: 2px solid var(--px-navy);
+  height: 1.5em;
+}
+
+/* 详情页：像素模式 */
+.detail-pixel .detail-title,
+.detail-pixel .detail-h,
+.detail-pixel .detail-no {
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  color: var(--px-navy);
+  letter-spacing: 0;
+}
+.detail-pixel .detail-h {
+  filter: none;
+  display: inline-block;
+  padding: 0.15em 0.5em 0.2em;
+  background: var(--px-yellow);
+  border: 3px solid var(--px-navy);
+  box-shadow: 5px 5px 0 var(--px-navy);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin-bottom: 1.5rem;
+}
+.detail-pixel .detail-meta {
+  border-top: 3px solid var(--px-navy);
+}
+.detail-pixel .detail-points li::before {
+  width: 0.55rem;
+  height: 0.55rem;
+  top: calc(var(--ruled-gap) / 2 - 0.3rem);
+  background: var(--px-yellow);
+  box-shadow: 0 0 0 2px var(--px-navy);
+}
+.detail-pixel .detail-fig {
+  padding: 0;
+  border: 3px solid var(--px-navy);
+  box-shadow: 6px 6px 0 var(--px-navy);
+  transform: none;
+  background: #fff;
+}
+.detail-pixel .detail-fig img {
+  background: #fff;
+}
+.detail-pixel .detail-fig figcaption {
+  padding: 0.5rem 0.75rem 0.6rem;
+  border-top: 3px solid var(--px-navy);
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+  color: var(--px-navy);
+}
+.detail-pixel .detail-pager {
+  border-top: 3px dashed var(--px-navy);
+}
+.detail-pixel .detail-pager span {
+  font-family: var(--font-pixel);
+  color: var(--px-navy);
+}
+
+/* 数据卡（任何作品都能用，像素模式下是黄/白游戏卡片） */
+.detail-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  max-width: 54rem;
+  margin: 1.5rem auto 0.75rem;
+}
+.detail-stat {
+  flex: 1 1 220px;
+  padding: 1rem 1.25rem 1.1rem;
+  border: 2px solid currentColor;
+  background: #fff;
+}
+.detail-stat b {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  line-height: 1;
+}
+.detail-stat span {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+}
+.detail-pixel .detail-stat {
+  border: 3px solid var(--px-navy);
+  box-shadow: 0 8px 0 var(--px-navy);
+  color: var(--px-navy);
+}
+.detail-pixel .detail-stat.hl {
+  background: var(--px-yellow);
+}
+.detail-pixel .detail-stat b {
+  font-family: var(--font-pixel);
+  font-weight: 700;
+}
+.detail-note {
+  max-width: 54rem;
+  margin: 0.75rem auto 1rem;
+  font-size: 0.85rem;
+  opacity: 0.65;
+}
+/* 吉祥物：老鹰在页尾欢呼 */
+.detail-mascot {
+  display: block;
+  width: 120px;
+  height: auto;
+  margin: 4rem auto -2rem;
+  image-rendering: pixelated;
+  animation: mascot-hop 1.6s steps(2) infinite;
+}
+@keyframes mascot-hop {
+  50% { transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .detail-mascot { animation: none; }
+}
