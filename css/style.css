@@ -430,9 +430,9 @@ em {
 /* 九宫格错位肖像：照片切成 3×3 方块，每一行整体左右轻微错开、不上下移动，
    所以双眼所在的中间一行始终保持水平。悬停时拼回完整 */
 .slices {
-  --size: min(100%, 460px);
-  justify-self: end;
-  width: var(--size);
+  position: relative;
+  z-index: 2;
+  width: 100%;
   aspect-ratio: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -469,11 +469,11 @@ em {
   .hero-inner {
     grid-template-columns: 1fr;
   }
-  .slices {
-    --size: min(82vw, 360px);
+  .portrait-wrap {
+    --size: min(76vw, 340px);
     justify-self: center;
     order: -1;
-    margin-block: 0.5rem;
+    margin-block: 1.25rem 0.75rem;
   }
 }
 
@@ -2077,4 +2077,261 @@ html.fx-prep .site-header {
 }
 @media (prefers-reduced-motion: reduce) {
   .detail-mascot { animation: none; }
+}
+
+
+/* =========================================================
+   15. 包豪斯元素：三原色 + 圆、方、三角的几何构成
+   ========================================================= */
+:root {
+  --bh-red: #e2361f;
+  --bh-yellow: #f6c21a;
+  --bh-blue: #1f4fa8;
+  --bh-black: #1b1a14;
+}
+
+/* 首屏：照片后面的不对称构成 */
+.portrait-wrap {
+  --size: min(100%, 460px);
+  position: relative;
+  justify-self: end;
+  width: var(--size);
+}
+.bh {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+.bh-circle {
+  width: 62%;
+  aspect-ratio: 1;
+  right: -14%;
+  top: -12%;
+  border-radius: 50%;
+  background: var(--bh-yellow);
+}
+.bh-square {
+  width: 34%;
+  aspect-ratio: 1;
+  left: -11%;
+  bottom: -9%;
+  background: var(--bh-blue);
+}
+.bh-tri {
+  width: 22%;
+  aspect-ratio: 1;
+  left: -15%;
+  top: 8%;
+  background: var(--bh-red);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  z-index: 3;
+}
+.bh-bar {
+  height: 14px;
+  width: 78%;
+  right: -10%;
+  bottom: -7%;
+  background: var(--bh-black);
+  z-index: 3;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bh {
+    animation: bh-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .bh-square { animation-delay: 0.08s; }
+  .bh-tri { animation-delay: 0.16s; }
+  .bh-bar { animation-delay: 0.24s; transform-origin: right; }
+}
+@keyframes bh-in {
+  from { opacity: 0; transform: scale(0.6); }
+}
+
+/* 分隔条：一根黑色粗线，几何形坐在线上 */
+.bh-strip {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(10px, 2.2vw, 30px);
+  width: min(var(--container), calc(100% - 2 * clamp(1rem, 4vw, 2rem)));
+  margin: clamp(1rem, 3vw, 2rem) auto 0;
+  padding-bottom: 6px;
+}
+.bh-strip::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: var(--bh-black);
+}
+.bh-strip i {
+  display: block;
+  flex: none;
+  width: clamp(18px, 2.6vw, 34px);
+  aspect-ratio: 1;
+}
+.bh-strip i.sm { width: clamp(10px, 1.4vw, 18px); }
+.bh-strip .c { border-radius: 50%; }
+.bh-strip .t { clip-path: polygon(0 100%, 50% 0, 100% 100%); }
+.bh-strip .bar {
+  flex: 1;
+  height: 6px;
+  width: auto;
+  aspect-ratio: auto;
+  margin-bottom: 10px;
+  background: repeating-linear-gradient(90deg, var(--bh-black) 0 3px, transparent 3px 10px);
+  opacity: 0.35;
+}
+.bh-strip .r { background: var(--bh-red); }
+.bh-strip .y { background: var(--bh-yellow); }
+.bh-strip .b { background: var(--bh-blue); }
+.bh-strip .k { background: var(--bh-black); }
+
+/* 小标题旁的几何标记 */
+.section-head {
+  position: relative;
+}
+.section-head::before {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 18px;
+  margin-bottom: 0.9rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 18'%3E%3Ccircle cx='9' cy='9' r='9' fill='%23e2361f'/%3E%3Crect x='24' y='0' width='18' height='18' fill='%231f4fa8'/%3E%3Cpolygon points='46,18 55,0 64,18' fill='%23f6c21a'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* 白板上的几何磁铁 */
+.magnet {
+  position: absolute;
+  z-index: 5;
+  width: 26px;
+  aspect-ratio: 1;
+  box-shadow: 0 4px 5px -1px rgba(0, 0, 0, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+.mg-circle { top: -4px; left: 7%; border-radius: 50%; background: var(--bh-red); }
+.mg-square { top: -4px; left: calc(7% + 36px); background: var(--bh-blue); }
+.mg-tri {
+  top: -6px;
+  right: 9%;
+  width: 30px;
+  background: var(--bh-yellow);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  box-shadow: none;
+  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* 关于（黄色色带）：红圆 + 黑条衬在网点肖像后面 */
+.about-grid {
+  position: relative;
+}
+.halftone {
+  z-index: 1;
+}
+.band-yellow .about-grid::before,
+.band-yellow .about-grid::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.band-yellow .about-grid::before {
+  width: clamp(110px, 16vw, 190px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--bh-red);
+  left: calc(clamp(1rem, 4vw, 2rem) - clamp(30px, 4vw, 60px));
+  top: clamp(-50px, -4vw, -24px);
+}
+.band-yellow .about-grid::after {
+  height: 16px;
+  width: clamp(160px, 26vw, 320px);
+  background: var(--bh-black);
+  left: clamp(1rem, 4vw, 2rem);
+  bottom: clamp(-28px, -2vw, -14px);
+  z-index: 2;
+}
+
+/* 技能：每个标签前一个几何形，颜色轮换三原色 */
+#skills .tag-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 0;
+  border-width: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--bh-black);
+}
+#skills .tag-list li::before {
+  content: "";
+  width: 0.8em;
+  height: 0.8em;
+  flex: none;
+}
+#skills .tag-list li:nth-child(3n + 1)::before { border-radius: 50%; background: var(--bh-red); }
+#skills .tag-list li:nth-child(3n + 2)::before { background: var(--bh-blue); }
+#skills .tag-list li:nth-child(3n + 3)::before { background: var(--bh-yellow); clip-path: polygon(0 100%, 50% 0, 100% 100%); }
+#skills .tag-list li:nth-child(4) { background: var(--bh-yellow); }
+#skills .tag-list li:nth-child(4)::before { background: var(--bh-black); }
+
+/* 联系（蓝色色带）：感叹号后面一个黄圆 + 红方 */
+.band-blue .bang {
+  position: relative;
+}
+.band-blue .bang::before,
+.band-blue .bang::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+}
+.band-blue .bang::before {
+  width: 170px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--bh-yellow);
+  top: 10px;
+  left: -70px;
+}
+.band-blue .bang::after {
+  width: 70px;
+  aspect-ratio: 1;
+  background: var(--bh-red);
+  bottom: -20px;
+  right: -46px;
+}
+.band-blue .bang {
+  isolation: isolate;
+}
+
+/* 页脚：小小的构成 */
+.footer-inner {
+  position: relative;
+}
+.footer-inner::after {
+  content: "";
+  position: absolute;
+  right: clamp(1rem, 4vw, 2rem);
+  top: -10px;
+  width: 92px;
+  height: 30px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 92 30'%3E%3Ccircle cx='15' cy='15' r='15' fill='%23e2361f'/%3E%3Crect x='36' y='0' width='26' height='30' fill='%23f6c21a'/%3E%3Cpolygon points='64,30 78,2 92,30' fill='%231f4fa8'/%3E%3C/svg%3E") no-repeat;
+}
+@media (max-width: 720px) {
+  .footer-inner::after { display: none; }
+  .bh-strip .bar { display: none; }
+}
+/* 覆盖旧的技能标签配色 */
+#skills .tag-list li:nth-child(3n + 1),
+#skills .tag-list li:nth-child(5n + 2) {
+  background: var(--paper);
+  border-color: var(--bh-black);
+  color: var(--ink);
+}
+#skills .tag-list li:nth-child(4) {
+  background: var(--bh-yellow);
+}
+@media (max-width: 720px) {
+  .bh-tri { left: -5%; top: 6%; width: 18%; }
+  .bh-square { left: -4%; bottom: -7%; }
+  .bh-circle { right: -8%; }
 }

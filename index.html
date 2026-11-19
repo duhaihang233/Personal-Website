@@ -80,14 +80,26 @@
         </div>
         </div>
         <!-- 九宫格错位肖像：每行只左右错开，眼睛保持水平；鼠标移上去会拼回完整 -->
-        <div class="slices" role="img" aria-label="Thomas Du 的照片" data-i18n-aria="photo">
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
+        <!-- 包豪斯构成：圆、方、三角、黑条衬在照片后面 -->
+        <div class="portrait-wrap">
+          <span class="bh bh-circle" aria-hidden="true"></span>
+          <span class="bh bh-square" aria-hidden="true"></span>
+          <span class="bh bh-tri" aria-hidden="true"></span>
+          <span class="bh bh-bar" aria-hidden="true"></span>
+          <div class="slices" role="img" aria-label="Thomas Du 的照片" data-i18n-aria="photo">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
         </div>
       </div>
 
     </section>
+
+    <!-- 包豪斯分隔条：黑色粗线上的几何形 -->
+    <div class="bh-strip" aria-hidden="true">
+      <i class="c r"></i><i class="s y"></i><i class="t b"></i><i class="bar"></i><i class="c k sm"></i><i class="s b"></i><i class="t r"></i><i class="c y"></i>
+    </div>
 
     <!-- ============ 作品 ============ -->
     <section id="projects" class="section journal-section">
@@ -102,6 +114,9 @@
       <div class="journal-track" id="journal-track">
         <div class="journal-sticky">
           <div class="board" id="board">
+            <span class="magnet mg-circle" aria-hidden="true"></span>
+            <span class="magnet mg-square" aria-hidden="true"></span>
+            <span class="magnet mg-tri" aria-hidden="true"></span>
             <div class="board-surface">
               <div class="board-strip" id="board-strip">
                 <noscript><p>请启用 JavaScript 以查看作品。Please enable JavaScript to see the projects.</p></noscript>
@@ -132,6 +147,11 @@
     </section>
 
     <!-- ============ 技能 ============ -->
+    <!-- 包豪斯分隔条：黑色粗线上的几何形 -->
+    <div class="bh-strip" aria-hidden="true">
+      <i class="s b"></i><i class="c r"></i><i class="t b"></i><i class="bar"></i><i class="c k sm"></i><i class="s b"></i><i class="t r"></i><i class="c y"></i>
+    </div>
+
     <section id="skills" class="section">
       <div class="container">
         <header class="section-head">
