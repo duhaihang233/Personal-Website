@@ -1479,11 +1479,13 @@ html.detail-open {
   width: var(--pw);
   height: var(--ph);
 }
+/* 钉住的便签：按手账本纸页的原尺寸排版，再整体等比缩放，
+   这样字号、间距和本子上的那张完全一致，动画交接时不会跳 */
 .pin-page {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
   background: none;
 }
 .pin-page::after,

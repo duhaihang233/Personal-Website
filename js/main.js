@@ -481,7 +481,7 @@ function detailHTML(i, dims) {
   return `
     <div class="detail-top">
       <div class="pin-slot" style="--pw:${dims.w}px;--ph:${dims.h}px">
-        <div class="page pin-page">${pinned}</div>
+        <div class="page pin-page" style="width:${dims.src}px;height:${dims.srcH}px;transform:scale(${dims.w / dims.src})">${pinned}</div>
         <span class="pin" aria-hidden="true"></span>
       </div>
       <header class="detail-head">
@@ -550,7 +550,7 @@ function initDetail() {
     const pg = book.querySelector(".page-b.base") || book.querySelector(".page");
     const w0 = pg ? pg.offsetWidth : 300, h0 = pg ? pg.offsetHeight : 400;
     const w = innerWidth <= 720 ? Math.min(innerWidth - 56, 420) : Math.min(380, Math.max(280, innerWidth * 0.3));
-    return { w: Math.round(w), h: Math.round((w * h0) / w0), src: w0 };
+    return { w: Math.round(w), h: Math.round((w * h0) / w0), src: w0, srcH: h0 };
   }
 
   function fill(i) {
