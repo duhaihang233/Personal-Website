@@ -216,6 +216,9 @@ const I18N = {
     contactTitle: "一起<em>聊聊</em>？",
     contactLead: "欢迎合作或交流，通过以下方式找到我。",
     email: "发邮件",
+    htWrite: "写信",
+    htCode: "看代码",
+    htConnect: "加好友",
     openNote: (title) => `打开 ${title} 详情`,
     noteMore: "展开看看 ↗",
     close: "关闭",
@@ -262,6 +265,9 @@ const I18N = {
     contactTitle: "Drop me a <em>line</em>.",
     contactLead: "Open to collaborations and conversations. Here's where to find me.",
     email: "Email me",
+    htWrite: "Write",
+    htCode: "Code",
+    htConnect: "Connect",
     openNote: (title) => `Open ${title} details`,
     noteMore: "Open it up ↗",
     close: "Close",
@@ -486,6 +492,9 @@ function ringArt() {
     </figure>`;
 }
 
+// 网点卡片右下角的白色圆形箭头
+const HT_ARROW = `<i class="ht-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`;
+
 function detailHTML(i, dims) {
   const p = PROJECTS[i];
   const d = (typeof DETAILS !== "undefined" && DETAILS[p.slug]) || { tools: [], sections: [] };
@@ -541,8 +550,8 @@ function detailHTML(i, dims) {
       ${d.art === "ring" ? ringArt() : ""}
       ${d.mascot ? `<img class="detail-mascot" src="${escapeHTML(d.mascot)}" alt="" aria-hidden="true" />` : ""}
       <nav class="detail-pager" aria-label="${escapeHTML(t("pager"))}">
-        <a href="#work-${prev.slug}" data-go="${PROJECTS.indexOf(prev)}"><span>← ${t("prev")}</span><b>${escapeHTML(prev.title)}</b></a>
-        <a href="#work-${next.slug}" data-go="${PROJECTS.indexOf(next)}"><span>${t("next")} →</span><b>${escapeHTML(next.title)}</b></a>
+        <a class="ht-card ht-blue ht-back" href="#work-${prev.slug}" data-go="${PROJECTS.indexOf(prev)}"><span class="ht-side">${t("prev")}</span><b class="ht-title">${escapeHTML(prev.title)}</b>${HT_ARROW}</a>
+        <a class="ht-card ht-red" href="#work-${next.slug}" data-go="${PROJECTS.indexOf(next)}"><span class="ht-side">${t("next")}</span><b class="ht-title">${escapeHTML(next.title)}</b>${HT_ARROW}</a>
       </nav>
     </div>`;
 }

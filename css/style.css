@@ -1398,30 +1398,6 @@ html.detail-open {
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-top: 5rem;
-  padding-top: 1.5rem;
-  border-top: 1.5px dashed rgba(31, 28, 6, 0.4);
-}
-.detail-pager a {
-  display: grid;
-  gap: 0.2rem;
-  text-decoration: none;
-  color: inherit;
-}
-.detail-pager a:last-child {
-  text-align: right;
-}
-.detail-pager span {
-  font-family: var(--font-hand);
-  font-size: 1.2rem;
-  color: var(--red);
-}
-.detail-pager b {
-  font-weight: 900;
-  font-size: clamp(1rem, 2.4vw, 1.35rem);
-}
-.detail-pager a:hover b {
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 @media (max-width: 720px) {
   .detail-close {
@@ -2010,13 +1986,6 @@ html.fx-prep .site-header {
   font-size: 1rem;
   color: var(--px-navy);
 }
-.detail-pixel .detail-pager {
-  border-top: 3px dashed var(--px-navy);
-}
-.detail-pixel .detail-pager span {
-  font-family: var(--font-pixel);
-  color: var(--px-navy);
-}
 
 /* 数据卡（任何作品都能用，像素模式下是黄/白游戏卡片） */
 .detail-stats {
@@ -2580,4 +2549,144 @@ html.fx-prep .site-header {
     width: 2.4rem;
     left: 0.6rem;
   }
+}
+
+/* =========================================================
+   18. 网点卡片（参考海报：彩色网点渐变底 + 竖排小字 +
+   左下超粗大标题 + 右下白色圆形箭头）
+   用在：详情页底部的上一个/下一个、联系区的链接
+   ========================================================= */
+.ht-card {
+  --ht-img: url("../assets/images/halftone/red.webp");
+  --ht-text: #2a1a08;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 1;
+  padding: clamp(1rem, 3cqi, 1.6rem);
+  overflow: hidden;
+  container-type: inline-size;
+  background: var(--ht-img) center / cover no-repeat;
+  color: var(--ht-text);
+  text-decoration: none;
+  isolation: isolate;
+}
+.ht-red { --ht-img: url("../assets/images/halftone/red.webp"); }
+.ht-blue { --ht-img: url("../assets/images/halftone/blue.webp"); --ht-text: #fff; }
+.ht-yellow { --ht-img: url("../assets/images/halftone/yellow.webp"); }
+.ht-flip { background-position: right bottom; background-size: 160%; }
+/* 悬停时网点慢慢放大，像镜头推近 */
+.ht-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: inherit;
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ht-card:hover::before,
+.ht-card:focus-visible::before {
+  transform: scale(1.12) rotate(-2deg);
+}
+.ht-side {
+  position: absolute;
+  top: 7%;
+  left: 7%;
+  writing-mode: vertical-rl;
+  font-family: var(--font-sans, "Archivo", sans-serif);
+  font-size: clamp(0.72rem, 5.2cqi, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.ht-side::before {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  margin-bottom: 0.9em;
+  border-radius: 50%;
+  background: currentColor;
+}
+.ht-title {
+  max-width: 74%;
+  font-family: var(--font-sans, "Archivo", sans-serif);
+  font-size: clamp(1.3rem, 13cqi, 3.2rem);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.ht-arrow {
+  position: absolute;
+  right: 6%;
+  bottom: 6%;
+  display: grid;
+  place-items: center;
+  width: clamp(2.6rem, 15cqi, 4.2rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff;
+  color: #1f1c06;
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.ht-arrow svg {
+  width: 52%;
+  height: 52%;
+}
+.ht-card:hover .ht-arrow,
+.ht-card:focus-visible .ht-arrow {
+  transform: translateX(4px);
+}
+.ht-back .ht-arrow svg {
+  transform: scaleX(-1);
+}
+.ht-card:focus-visible {
+  outline: 3px solid #1f1c06;
+  outline-offset: 4px;
+}
+
+/* 详情页底部：两张方卡 */
+.detail .detail-pager {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.8rem, 2.5vw, 1.6rem);
+  border-top: 0;
+}
+.detail .detail-pager .ht-card { text-align: left; }
+.detail-pixel .detail-pager .ht-card { border: 3px solid var(--px-navy); }
+.detail-arcade .detail-pager .ht-card { box-shadow: 0 0 0 2px var(--neon-purple), 0 0 22px rgba(164, 107, 255, 0.45); }
+
+/* 联系区：三张方卡一排 */
+.contact-links.ht-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 13.5rem));
+  gap: 1rem;
+}
+.ht-row .ht-card {
+  box-shadow: 0.4rem 0.4rem 0 var(--klein-ink);
+}
+/* 手机：卡片改成一列横向长方形，标题不和竖排字、箭头挤在一起 */
+@media (max-width: 560px) {
+  .contact-links.ht-row,
+  .detail .detail-pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ht-row .ht-card,
+  .detail .detail-pager .ht-card {
+    aspect-ratio: 2 / 1;
+    padding-left: 3.4rem;
+  }
+  .ht-row .ht-card .ht-title,
+  .detail .detail-pager .ht-title {
+    font-size: clamp(1.4rem, 8cqi, 2rem);
+  }
+  .ht-side {
+    top: 1rem;
+    left: 1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ht-card::before,
+  .ht-arrow { transition: none; }
 }
