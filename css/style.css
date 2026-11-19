@@ -1684,3 +1684,45 @@ html.fx-prep .site-header {
     gap: 2.5rem 2rem;
   }
 }
+
+/* ---------- 详情页居中 ----------
+   顶部：便签 + 标题作为一个整体居中；
+   正文：导语、小标题、段落、要点组成一列居中；图片组整体居中 */
+.detail-top {
+  justify-content: center;
+}
+.detail-head {
+  flex: 0 1 640px;
+}
+.detail-content > .detail-lead,
+.detail-content > .detail-links,
+.detail-section > .detail-h,
+.detail-section > .detail-body,
+.detail-section > .detail-points {
+  max-width: 54rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.detail-figs {
+  justify-content: center;
+}
+.detail-figs.single {
+  grid-template-columns: minmax(0, 760px);
+}
+.detail-pager {
+  max-width: 54rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (max-width: 720px) {
+  .detail-head {
+    flex: none;
+    width: 100%;
+  }
+}
+/* 宽屏：左右留白对称，内容真正居中 */
+@media (min-width: 721px) {
+  .detail-page {
+    padding-right: max(calc(var(--ruled-x) + 24px), 5vw);
+  }
+}
