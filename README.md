@@ -46,3 +46,8 @@ python3 -m http.server 8000
 
 - **GitHub Pages**：推送到仓库，然后在 Settings → Pages 里选择分支。
 - **Netlify / Vercel**：导入仓库即可，构建命令留空，发布目录选择项目根目录。
+
+## 更新后浏览器看不到变化？
+
+`index.html` 里引用样式和脚本时带了版本号（如 `css/style.css?v=202611191100`）。
+每次改了 CSS / JS，把这几个 `?v=` 后面的数字改成新的（比如当前时间），浏览器就会重新下载，而不是用旧缓存。
