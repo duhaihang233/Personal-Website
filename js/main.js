@@ -187,7 +187,7 @@ const PROJECTS = [
       "海平面上升让海水渗进小岛屿发展中国家的地下淡水层。Blue Lens 把活体海堤、太阳能净化和盐度监测做成一套系统：先拦截漫过海岸的海水，再把它变成可用的淡水，并在海水入侵前提前预警。这是 ACAD 183 的期末商业方案，包含市场规模、竞争分析和财务预测。",
     image: "assets/projects/blue-lens.jpg",
     tags: ["市场分析", "竞争分析", "财务预测", "信息图"],
-    links: [],
+    links: [{ text: "Pro-Forma 财务表", url: "https://docs.google.com/spreadsheets/d/1DIBeZI6tc56l4XhTHWjhpToqU5aBuMqbZ-E0cjgBqe8/edit?usp=sharing" }],
     en: {
       subtitle: "A living sea wall that protects island freshwater",
       team: "Kylie · Jerry · Sam · Thomas · Srinija",
@@ -195,6 +195,7 @@ const PROJECTS = [
       description:
         "Rising seas push saltwater into the groundwater that small island developing states drink. Blue Lens combines a living sea wall, solar-powered treatment and salinity monitoring in one system: it captures overwash, turns it into usable freshwater, and warns operators before intrusion reaches the aquifer. Final business pitch for ACAD 183, with market sizing, competitive analysis and a pro-forma.",
       tags: ["Market sizing", "Competitive analysis", "Pro-forma", "Infographics"],
+      links: [{ text: "Pro-forma spreadsheet", url: "https://docs.google.com/spreadsheets/d/1DIBeZI6tc56l4XhTHWjhpToqU5aBuMqbZ-E0cjgBqe8/edit?usp=sharing" }],
     },
   },
 ];
