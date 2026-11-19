@@ -436,16 +436,16 @@ const DETAILS = {
       {
         title: { zh: "市场规模", en: "Market Sizing" },
         body: {
-          zh: "Blue Lens 在小岛屿发展中国家可以获得约 121.9 亿美元的市场。",
-          en: "Blue Lens can obtain a $12.19B market across small island developing states.",
+          zh: "从小岛屿发展中国家的全部海岸线出发，逐层缩小到 Blue Lens 在 100 个项目的情景下实际能拿下的市场。",
+          en: "Starting from every kilometer of SIDS coastline, we narrowed down to what Blue Lens could realistically win in a 100-project scenario.",
         },
         blocks: [
           {
             type: "rings",
             items: [
-              { k: "TAM", value: "$76.16B", name: { zh: "总可达市场", en: "Total addressable market" }, how: { zh: "51,587 公里海岸线 × 每公里约 148 万美元建造成本（每英尺 450 美元）", en: "51,587 km of SIDS coastline × $1.48M per km to install ($450 per linear foot)" } },
-              { k: "SAM", value: "$15.23B", name: { zh: "可服务市场", en: "Serviceable addressable market" }, how: { zh: "约 6,500 万居民 × 可服务的 20% × 人均 1,171.72 美元", en: "~65M SIDS residents × 20% we can serve × $1,171.72 per person" } },
-              { k: "SOM", value: "$12.19B", name: { zh: "可获得市场", en: "Serviceable obtainable market" }, how: { zh: "SAM × 可以拿下的 80%", en: "SAM × 80% of the serviceable market we can capture" } },
+              { k: "TAM", value: "$76.16B", name: { zh: "总可达市场", en: "Total addressable market" }, how: { zh: "51,587 公里海岸线 × 每公里 $1,476,377.95 建造成本（每英尺 450 美元）", en: "51,587 km of SIDS coastline × $1,476,377.95 per km to install ($450 per linear foot)" } },
+              { k: "SAM", value: "$15.23B", name: { zh: "可服务市场", en: "Serviceable addressable market" }, how: { zh: "TAM × 假设可服务的 20%", en: "TAM × 20% assumed serviceable share" } },
+              { k: "SOM", value: "$73.82M", name: { zh: "可获得市场", en: "Serviceable obtainable market" }, how: { zh: "100 个项目 × 每个项目 0.5 公里 × 每公里 $1,476,377.95（100 个项目的情景）", en: "100 projects × 0.5 km per project × $1,476,377.95 per km (100-project scenario)" } },
             ],
           },
         ],
