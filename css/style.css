@@ -2401,3 +2401,185 @@ html.fx-prep .site-header {
 .pin-page .note.pin-lifted {
   box-shadow: 0.7em 0.9em 0 var(--note-line);
 }
+
+/* =========================================================
+   17. 音游风作品（Home-Scale Rhythm Arcade）
+   手绘漫画横幅（黑色马克笔字、速度线、锯齿对话框、红色强调）
+   + 霓虹音符（紫色判定圈、TAP / HOLD / SLIDE / BREAK）
+   ========================================================= */
+:root {
+  --font-marker: "Permanent Marker", "ZCOOL KuaiLe", "Caveat", cursive;
+  --neon-purple: #a46bff;
+  --neon-cyan: #2fd7e6;
+  --neon-pink: #ff7fb8;
+  --neon-yellow: #e6c63a;
+  --neon-orange: #ff7a3c;
+  --arcade-bg: #0c0a13;
+}
+
+/* 白板上的便签：黑底 + 角落的霓虹判定圈 */
+.note-arcade {
+  --note-bg: var(--arcade-bg);
+  --note-text: #f4f0ff;
+  --note-bar: var(--neon-cyan);
+  background-color: var(--arcade-bg);
+  background-image:
+    linear-gradient(var(--note-bar), var(--note-bar)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='84' fill='none' stroke='%23a46bff' stroke-opacity='.55' stroke-width='3'/%3E%3Ccircle cx='100' cy='100' r='66' fill='none' stroke='%23e6c63a' stroke-opacity='.4' stroke-width='2' stroke-dasharray='80 340'/%3E%3Ccircle cx='38' cy='60' r='10' fill='none' stroke='%23ff7fb8' stroke-opacity='.7' stroke-width='5'/%3E%3Ccircle cx='160' cy='132' r='10' fill='none' stroke='%23ff7a3c' stroke-opacity='.7' stroke-width='5'/%3E%3Cpath d='M118 30 l8 6 l8 -6 M118 44 l8 6 l8 -6 M118 58 l8 6 l8 -6 M118 72 l8 6 l8 -6' fill='none' stroke='%232fd7e6' stroke-opacity='.7' stroke-width='4'/%3E%3C/svg%3E");
+  background-size: calc(100% - 1.6em) 0.32em, 46% auto;
+  background-position: 0.8em 0.5em, 118% 112%;
+  background-repeat: no-repeat;
+}
+.note-arcade h3 {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(47, 215, 230, 0.55);
+}
+.note-arcade h3::before {
+  background: var(--neon-pink);
+  box-shadow: 0 0 8px var(--neon-pink);
+}
+.note-arcade .note-photo {
+  border-color: #fff;
+  box-shadow: 0.25em 0.25em 0 var(--neon-purple);
+}
+.note-arcade .tag-list li {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+.note-arcade .note-links a {
+  color: var(--neon-yellow);
+}
+
+/* 详情页：手绘漫画小标题 */
+.detail-arcade .detail-title {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.detail-arcade .detail-no {
+  font-family: var(--font-marker);
+}
+.detail-arcade .detail-h {
+  position: relative;
+  display: inline-block;
+  filter: none;
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  padding: 0.2em 0.7em 0.25em 1.2em;
+  background: #fff;
+  border: 3px solid #1f1c06;
+  /* 手画的歪框 */
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  margin-bottom: 1.5rem;
+}
+/* 速度线 */
+.detail-arcade .detail-h::before {
+  content: "";
+  position: absolute;
+  right: calc(100% - 0.6em);
+  top: 22%;
+  width: 3.2em;
+  height: 56%;
+  background: repeating-linear-gradient(180deg, #1f1c06 0 2px, transparent 2px 7px);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 70%);
+  mask: linear-gradient(90deg, transparent, #000 70%);
+}
+.detail-arcade .detail-points li::before {
+  width: 0.7rem;
+  height: 0.7rem;
+  top: calc(var(--ruled-gap) / 2 - 0.35rem);
+  border-radius: 50%;
+  background: transparent;
+  border: 3px solid var(--neon-pink);
+}
+.detail-arcade .detail-points li:nth-child(3n + 2)::before { border-color: var(--neon-cyan); }
+.detail-arcade .detail-points li:nth-child(3n + 3)::before { border-color: var(--neon-orange); }
+.detail-arcade .detail-fig {
+  border: 3px solid #1f1c06;
+  border-radius: 14px 4px 16px 6px / 6px 16px 4px 14px;
+  box-shadow: 5px 5px 0 #1f1c06;
+}
+.detail-arcade .detail-fig figcaption {
+  font-family: var(--font-marker);
+  font-size: 1.05rem;
+}
+
+/* 漫画横幅：锯齿对话框 + 速度线 + 红色强调 */
+.detail-banner {
+  position: relative;
+  max-width: 54rem;
+  margin: 0 auto 2.5rem;
+  padding: 1.1rem 1.5rem 1.3rem 5.5rem;
+  font-family: var(--font-marker);
+  font-size: clamp(2rem, 5.5vw, 3.6rem);
+  line-height: 1.15;
+  color: #1f1c06;
+  background: #fff;
+  border: 3px solid #1f1c06;
+  border-radius: 40px 8px 46px 10px / 10px 44px 8px 40px;
+  transform: rotate(-1.2deg);
+  box-shadow: 6px 7px 0 #1f1c06;
+}
+.detail-banner::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 24%;
+  width: 3.6rem;
+  height: 52%;
+  background: repeating-linear-gradient(180deg, #1f1c06 0 3px, transparent 3px 10px);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 80%);
+  mask: linear-gradient(90deg, transparent, #000 80%);
+}
+.detail-banner em {
+  font-style: normal;
+  color: var(--red);
+  -webkit-text-stroke: 1px #1f1c06;
+  background: none;
+  padding: 0;
+}
+/* 叹号旁的冲击线 */
+.detail-banner::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: -16px;
+  width: 44px;
+  height: 44px;
+  background:
+    linear-gradient(60deg, transparent 46%, #1f1c06 46% 54%, transparent 54%) 0 0 / 50% 50% no-repeat,
+    linear-gradient(90deg, transparent 46%, #1f1c06 46% 54%, transparent 54%) 100% 0 / 50% 60% no-repeat,
+    linear-gradient(-30deg, transparent 46%, #1f1c06 46% 54%, transparent 54%) 100% 100% / 50% 50% no-repeat;
+}
+
+/* 霓虹判定圈插图 */
+.ring-art {
+  max-width: 820px;
+  margin: 4.5rem auto 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  background:
+    radial-gradient(circle at 55% 50%, rgba(164, 107, 255, 0.18), transparent 60%),
+    var(--arcade-bg);
+  border: 3px solid #1f1c06;
+  border-radius: 6px;
+  box-shadow: 6px 6px 0 #1f1c06;
+}
+.ring-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 6px rgba(164, 107, 255, 0.7)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.4));
+}
+@media (max-width: 720px) {
+  .detail-banner {
+    padding-left: 3.6rem;
+  }
+  .detail-banner::before {
+    width: 2.4rem;
+    left: 0.6rem;
+  }
+}

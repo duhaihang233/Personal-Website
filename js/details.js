@@ -62,6 +62,8 @@ const DETAILS = {
 
   "rhythm-arcade": {
     tools: [],
+    art: "ring",
+    banner: { zh: "一起来<em>打歌</em>吗？！", en: "Wanna <em>play</em> a round?!" },
     sections: [
       {
         title: { zh: "设计目标", en: "Design Intent" },

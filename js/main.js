@@ -36,6 +36,7 @@ const PROJECTS = [
   },
   {
     slug: "rhythm-arcade",
+    style: "arcade", // 音游风：手绘漫画横幅 + 霓虹音符
     title: "Home-Scale Rhythm Arcade",
     subtitle: "家用尺寸的音游街机控制器",
     label: "Interaction",
@@ -333,7 +334,7 @@ function noteHTML(p, i) {
     .map((l) => `<a href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(l.text)}</a>`)
     .join("");
   return `
-    <article class="note note-${color}${p.style === "pixel" ? " note-pixel" : ""}" data-index="${i}" style="--r:${NOTE_TILT[i % NOTE_TILT.length]}deg;--pr:${i % 2 ? -1.5 : 1.2}deg">
+    <article class="note note-${color}${p.style ? ` note-${p.style}` : ""}" data-index="${i}" style="--r:${NOTE_TILT[i % NOTE_TILT.length]}deg;--pr:${i % 2 ? -1.5 : 1.2}deg">
       <span class="tape ${TAPES[i % TAPES.length]}" style="--tr:${i % 2 ? 4 : -3}deg"></span>
       <button type="button" class="note-open" aria-label="${escapeHTML(t("openNote")(p.title))}"><span>${t("noteMore")}</span></button>
       <div class="note-top"><span>No.${num}${p.label ? ` · ${escapeHTML(p.label)}` : ""}</span>${meta ? `<span>${meta}</span>` : ""}</div>
@@ -453,6 +454,38 @@ function initJournal() {
 const L = (o) => (o ? (LANG === "en" && o.en !== undefined ? o.en : o.zh) : "");
 let refreshDetail = () => {};
 
+// 霓虹判定圈：自己画的音符示意（TAP / HOLD / SLIDE / BREAK / 双押）
+function ringArt() {
+  const dots = Array.from({ length: 8 }, (_, k) => {
+    const a = (k / 8) * Math.PI * 2 - Math.PI / 8;
+    return `<circle cx="${(200 + 150 * Math.cos(a)).toFixed(1)}" cy="${(200 + 150 * Math.sin(a)).toFixed(1)}" r="5" fill="#a46bff"/>`;
+  }).join("");
+  const chev = Array.from({ length: 11 }, (_, k) =>
+    `<path d="M262 ${68 + k * 22} l14 10 l14 -10" fill="none" stroke="#2fd7e6" stroke-width="6" stroke-linejoin="round"/>`).join("");
+  return `
+    <figure class="ring-art" aria-hidden="true">
+      <svg viewBox="-150 0 700 400">
+        <circle cx="200" cy="200" r="150" fill="none" stroke="#a46bff" stroke-width="4"/>
+        <circle cx="200" cy="200" r="122" fill="none" stroke="#e6c63a" stroke-width="2" stroke-dasharray="190 580" transform="rotate(200 200 200)"/>
+        ${dots}
+        <rect x="258" y="56" width="36" height="250" rx="4" fill="#0f2a33" stroke="#2fd7e6" stroke-width="3"/>
+        ${chev}
+        <path d="M276 312 l9 18 20 3 -15 13 4 20 -18 -10 -18 10 4 -20 -15 -13 20 -3z" fill="#2b3dc9" stroke="#8fb1ff" stroke-width="3"/>
+        <g fill="none" stroke-width="7"><circle cx="146" cy="88" r="16" stroke="#e6c63a"/><circle cx="104" cy="150" r="16" stroke="#e6c63a"/></g>
+        <circle cx="94" cy="262" r="16" fill="none" stroke="#ff7a3c" stroke-width="7"/><circle cx="94" cy="262" r="5" fill="#ff7a3c"/>
+        <circle cx="318" cy="246" r="16" fill="none" stroke="#ff7fb8" stroke-width="7"/>
+        <rect x="126" y="228" width="34" height="110" rx="17" fill="none" stroke="#ff7fb8" stroke-width="6" transform="rotate(32 143 283)"/>
+        <g font-family="Permanent Marker, ZCOOL KuaiLe, sans-serif" font-size="22">
+          <text x="-120" y="64" fill="#e6c63a">BOTH</text><path d="M-38 58 L128 84 M-38 58 L90 146" stroke="#e6c63a" stroke-width="2"/>
+          <text x="-120" y="250" fill="#ff7a3c">BREAK</text><path d="M-38 244 L76 260" stroke="#ff7a3c" stroke-width="2"/>
+          <text x="-120" y="356" fill="#ff7fb8">HOLD</text><path d="M-44 350 L128 318" stroke="#ff7fb8" stroke-width="2"/>
+          <text x="440" y="150" fill="#2fd7e6">SLIDE</text><path d="M436 144 L300 172" stroke="#2fd7e6" stroke-width="2"/>
+          <text x="440" y="300" fill="#ff7fb8">TAP</text><path d="M436 294 L336 252" stroke="#ff7fb8" stroke-width="2"/>
+        </g>
+      </svg>
+    </figure>`;
+}
+
 function detailHTML(i, dims) {
   const p = PROJECTS[i];
   const d = (typeof DETAILS !== "undefined" && DETAILS[p.slug]) || { tools: [], sections: [] };
@@ -501,9 +534,11 @@ function detailHTML(i, dims) {
       </header>
     </div>
     <div class="detail-content">
+      ${d.banner ? `<p class="detail-banner"><span>${L(d.banner)}</span></p>` : ""}
       <p class="detail-lead">${escapeHTML(field(p, "description"))}</p>
       ${links ? `<p class="detail-links">${links}</p>` : ""}
       ${sections}
+      ${d.art === "ring" ? ringArt() : ""}
       ${d.mascot ? `<img class="detail-mascot" src="${escapeHTML(d.mascot)}" alt="" aria-hidden="true" />` : ""}
       <nav class="detail-pager" aria-label="${escapeHTML(t("pager"))}">
         <a href="#work-${prev.slug}" data-go="${PROJECTS.indexOf(prev)}"><span>← ${t("prev")}</span><b>${escapeHTML(prev.title)}</b></a>
@@ -567,7 +602,7 @@ function initDetail() {
     current = i;
     const p = PROJECTS[i];
     const color = NOTE_COLORS.includes(p.color) ? p.color : NOTE_COLORS[i % NOTE_COLORS.length];
-    root.className = `detail note-${color}${p.style === "pixel" ? " detail-pixel" : ""}`;
+    root.className = `detail note-${color}${p.style ? ` detail-${p.style}` : ""}`;
     page.innerHTML = detailHTML(i, pinDims());
     closeBtn.setAttribute("aria-label", t("close"));
     alignToRules();
@@ -915,6 +950,8 @@ function initDetail() {
     document.fonts.load(`900 16px "Archivo"`, text).catch(() => {});
     document.fonts.load(`700 16px "Caveat"`, text).catch(() => {});
     document.fonts.load(`700 16px "Pixelify Sans"`, text).catch(() => {});
+    document.fonts.load(`400 16px "Permanent Marker"`, text).catch(() => {});
+    document.fonts.load(`400 16px "ZCOOL KuaiLe"`, text).catch(() => {});
   }
   (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(preloadFonts, { timeout: 2500 });
 
