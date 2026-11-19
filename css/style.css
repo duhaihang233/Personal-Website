@@ -2378,17 +2378,15 @@ html.fx-prep .site-header {
   border-width: 2px;
 }
 
-/* 胶带：实色 + 描边，三原色轮换 */
+/* 胶带：实色 + 描边，颜色和顶部横条一致 */
 .note .tape {
-  --tape: var(--bh-yellow);
+  --tape: var(--note-bar);
   background: var(--tape);
   clip-path: none;
   border: 2px solid #1f1c06;
   height: 1.5em;
 }
-.note .tape.tape-cyan { --tape: var(--bh-blue); }
-.note .tape.tape-lime { --tape: var(--bh-red); }
-.note-pixel .tape { --tape: var(--px-yellow); border-color: var(--px-navy); }
+.note-pixel .tape { border-color: var(--px-navy); }
 
 /* 动画用的阴影层也改成硬投影 */
 .fx-shade {
