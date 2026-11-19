@@ -516,6 +516,104 @@ function ringArt() {
     </figure>`;
 }
 
+/* ---------- 详情页里“拆开”的演示稿：步骤、画布、表格、图表 ----------
+   在 js/details.js 的某一段里写 blocks: [{ type, ... }]，这里负责渲染 */
+const TX = (x) => escapeHTML(typeof x === "string" ? x : L(x));
+const RATE = {
+  s: { zh: "强", en: "Strong" },
+  m: { zh: "中", en: "Moderate" },
+  w: { zh: "弱", en: "Weak" },
+};
+
+function lineChartSVG(b) {
+  const W = 760, H = 340, l = 44, r = 16, top = 16, bot = 40;
+  const n = b.categories.length, max = b.max || 5;
+  const X = (i) => l + ((W - l - r) * (i + 0.5)) / n;
+  const Y = (v) => top + ((H - top - bot) * (max - v)) / (max - 1);
+  let g = "";
+  for (let v = 1; v <= max; v++) g += `<line class="lc-grid" x1="${l}" x2="${W - r}" y1="${Y(v)}" y2="${Y(v)}"/><text class="lc-tick" x="${l - 10}" y="${Y(v) + 4}">${v}</text>`;
+  // 最后一列（长期总价值）高亮
+  g += `<rect class="lc-band" x="${X(n - 1) - (W - l - r) / n / 2}" y="${top}" width="${(W - l - r) / n}" height="${H - top - bot}"/>`;
+  const mark = (sr, x, y) => {
+    if (sr.marker === "square") return `<rect x="${x - 5}" y="${y - 5}" width="10" height="10"/>`;
+    if (sr.marker === "diamond") return `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" transform="rotate(45 ${x} ${y})"/>`;
+    if (sr.marker === "triangle") return `<path d="M${x} ${y - 6}L${x + 6} ${y + 5}H${x - 6}Z"/>`;
+    return `<circle cx="${x}" cy="${y}" r="${sr.hl ? 7 : 5}"/>`;
+  };
+  b.series.forEach((sr) => {
+    const pts = sr.values.map((v, i) => [X(i), Y(v)]);
+    const d = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join("");
+    if (sr.hl) g += `<path class="lc-area" d="${d}L${pts[pts.length - 1][0]} ${Y(1)}L${pts[0][0]} ${Y(1)}Z" fill="${sr.color}"/>`;
+    g += `<g class="lc-series${sr.hl ? " hl" : ""}" stroke="${sr.color}" fill="${sr.hl ? "#fff" : sr.color}">
+      <path d="${d}" fill="none" ${sr.dash ? 'stroke-dasharray="7 6"' : ""}/>${pts.map((p) => mark(sr, p[0], p[1])).join("")}</g>`;
+  });
+  const cats = b.categories.map((c, i) => `<span style="left:${(X(i) / W) * 100}%">${TX(c)}</span>`).join("");
+  return `<div class="lc-plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${TX(b.yLabel)}">${g}</svg><div class="lc-cats">${cats}</div></div>`;
+}
+
+function blockHTML(b) {
+  switch (b.type) {
+    case "steps":
+      return `<div class="bk bk-steps">${b.items.map((it, i) => `
+        <div class="bk-step">
+          <img src="${escapeHTML(it.img)}" alt="" loading="lazy" />
+          <p class="bk-step-no">${L({ zh: "第 " + (i + 1) + " 步", en: "Step " + (i + 1) })}</p>
+          <h4>${TX(it.title)}</h4>
+          <p>${TX(it.body)}</p>
+        </div>`).join("")}</div>${b.result ? `<p class="bk-result">${TX(b.result)}</p>` : ""}`;
+    case "canvas":
+      return `<div class="bk bk-canvas">${b.groups.map((g) => `
+        <div class="bk-group bk-${g.kind}"><h4>${TX(g.title)}</h4><ul>${g.items.map((x) => `<li>${TX(x)}</li>`).join("")}</ul></div>`).join("")}</div>`;
+    case "defs":
+      return `<div class="bk bk-defs">${b.title ? `<h4>${TX(b.title)}</h4>` : ""}<dl>${b.rows.map((r) => `
+        <div><dt>${TX(r.k)}</dt><dd><b>${TX(r.lead)}</b> ${TX(r.v)}</dd></div>`).join("")}</dl></div>`;
+    case "profile":
+      return `<dl class="bk bk-profile">${b.cells.map((c) => `<div><dt>${TX(c.k)}</dt><dd>${TX(c.v)}</dd></div>`).join("")}</dl>`;
+    case "rings":
+      return `<div class="bk bk-rings">
+        <div class="bk-rings-art" aria-hidden="true">${b.items.map((it, i) => `<span class="ring ring-${i}"><b>${escapeHTML(it.k)}</b><i>${escapeHTML(it.value)}</i></span>`).join("")}</div>
+        <dl>${b.items.map((it, i) => `<div class="ring-row rr-${i}"><dt><span>${escapeHTML(it.k)}</span> ${TX(it.name)}</dt><dd class="ring-val">${escapeHTML(it.value)}</dd><dd class="ring-how">${TX(it.how)}</dd></div>`).join("")}</dl>
+      </div>`;
+    case "linechart":
+      return `<figure class="bk bk-chart">
+        <p class="bk-ylabel">${TX(b.yLabel)}</p>${lineChartSVG(b)}
+        <figcaption><ul class="bk-legend">${b.series.map((sr) => `<li${sr.hl ? ' class="hl"' : ""}><i style="--c:${sr.color}"${sr.dash ? ' class="dash"' : ""}></i>${TX(sr.name)}</li>`).join("")}</ul>
+        ${b.note ? `<span class="bk-note">${TX(b.note)}</span>` : ""}</figcaption>
+      </figure>`;
+    case "chips":
+      return `<ul class="bk bk-chips">${b.items.map((c) => `<li><b>${TX(c.k)}</b><span>${TX(c.v)}</span></li>`).join("")}</ul>`;
+    case "matrix":
+      return `<div class="bk bk-matrix"><div class="bk-scroll"><table>
+        <thead><tr><th></th>${b.cols.map((c) => `<th${c.hl ? ' class="hl"' : ""}>${TX(c.name)}${c.src ? `<small>${escapeHTML(c.src)}</small>` : ""}</th>`).join("")}</tr></thead>
+        <tbody>${b.rows.map((r) => `<tr><th scope="row">${TX(r.label)}</th>${r.cells.map((c, i) => {
+          const [k, note] = Array.isArray(c) ? c : [c];
+          return `<td class="${b.cols[i].hl ? "hl " : ""}rate-${k}"><i aria-hidden="true"></i>${TX(RATE[k])}${note ? ` <small>(${TX(note)})</small>` : ""}</td>`;
+        }).join("")}</tr>`).join("")}</tbody>
+      </table></div>${b.note ? `<p class="bk-note">${TX(b.note)}</p>` : ""}</div>`;
+    case "quad":
+      return `<div class="bk bk-quad-wrap"><div class="bk-quad" role="img" aria-label="${TX(b.y)} / ${TX(b.x)}">
+        <span class="q-axis q-y">${TX(b.y)}</span><span class="q-axis q-x">${TX(b.x)}</span>
+        <span class="q-end q-top">${L({ zh: "高", en: "High" })}</span><span class="q-end q-bottom">${L({ zh: "低", en: "Low" })}</span>
+        <span class="q-end q-left">${L({ zh: "低", en: "Low" })}</span><span class="q-end q-right">${L({ zh: "高", en: "High" })}</span>
+        ${b.points.map((p) => `<div class="q-pt${p.hl ? " hl" : ""}" style="--x:${(p.x + 1) * 50}%;--y:${(1 - p.y) * 50}%;--c:${p.color || "var(--bh-blue)"}"><i></i><b>${TX(p.name)}</b><small>${TX(p.sub)}</small></div>`).join("")}
+      </div></div>`;
+    case "swot":
+      return `<div class="bk bk-swot">${b.items.map((q) => `
+        <div class="sw sw-${q.l.toLowerCase()}"><p class="sw-head"><span>${q.l}</span><b>${TX(q.title)}</b><small>${TX(q.tag)}</small></p>
+        <ul>${q.items.map((x) => `<li>${TX(x)}</li>`).join("")}</ul></div>`).join("")}</div>`;
+    case "donut": {
+      let acc = 0;
+      const stops = b.items.map((it) => `${it.color} ${acc}% ${(acc += it.pct)}%`).join(", ");
+      return `<div class="bk bk-donut">
+        <div class="donut" style="background:conic-gradient(${stops})" role="img" aria-label="${escapeHTML(b.total)}"><span><small>${TX(b.totalLabel)}</small><b>${escapeHTML(b.total)}</b></span></div>
+        <ul>${b.items.map((it) => `<li style="--c:${it.color}"><i></i><b>${escapeHTML(it.value)}</b><strong class="pct">${it.pct.toFixed(1)}%</strong><span>${TX(it.label)}</span></li>`).join("")}</ul>
+      </div>`;
+    }
+    default:
+      return "";
+  }
+}
+
 // 网点卡片右下角的白色圆形箭头
 const HT_ARROW = `<i class="ht-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`;
 
@@ -546,8 +644,10 @@ function detailHTML(i, dims) {
       <h3 class="detail-h rough">${escapeHTML(L(sec.title))}</h3>
       ${sec.body ? `<p class="detail-body">${escapeHTML(L(sec.body))}</p>` : ""}
       ${sec.stats ? `<div class="detail-stats">${sec.stats.map((x) => `<div class="detail-stat${x.hl ? " hl" : ""}"><b>${escapeHTML(x.value)}</b><span>${escapeHTML(L(x))}</span></div>`).join("")}</div>` : ""}
-      ${sec.note ? `<p class="detail-note">${escapeHTML(L(sec.note))}</p>` : ""}
+      ${sec.note && !sec.blocks ? `<p class="detail-note">${escapeHTML(L(sec.note))}</p>` : ""}
       ${sec.points ? `<ul class="detail-points">${sec.points.map((x) => `<li>${escapeHTML(L(x))}</li>`).join("")}</ul>` : ""}
+      ${sec.blocks ? sec.blocks.map(blockHTML).join("") : ""}
+      ${sec.note && sec.blocks ? `<p class="detail-note">${escapeHTML(L(sec.note))}</p>` : ""}
       ${sec.images ? `<div class="detail-figs${sec.images.length === 1 ? " single" : ""}">${sec.images.map(fig).join("")}</div>` : ""}
     </section>`).join("");
 

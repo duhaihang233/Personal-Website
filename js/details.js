@@ -8,6 +8,8 @@
        body     { zh, en }   正文（可省略）
        points   [{ zh, en }] 要点列表（可省略）
        images   [{ src, zh, en }] 图片和图注（可省略）
+       blocks   [{ type, ... }] 拆开的图表（steps / canvas / defs / profile / rings /
+                linechart / chips / matrix / quad / swot / donut，渲染见 main.js 的 blockHTML）
    图片放在 assets/projects/<slug>/ 下
    ========================================================= */
 const DETAILS = {
@@ -348,6 +350,7 @@ const DETAILS = {
   },
   "blue-lens": {
     tools: ["Google Sheets", "Keynote"],
+    // 演示稿里的每页都拆成网页元素：blocks 由 main.js 的 blockHTML() 渲染
     sections: [
       {
         title: { zh: "问题：海水正在渗进海岛的淡水", en: "The Problem: Saltwater Is Reaching Island Freshwater" },
@@ -362,41 +365,89 @@ const DETAILS = {
       {
         title: { zh: "方案：收集、净化、监测", en: "The Solution: Collect, Treat, Monitor" },
         body: {
-          zh: "Blue Lens 是一套由当地管理的活体海堤系统。种着耐盐植物的海堤先拦下漫过来的海水，流进收集池；太阳能系统把它过滤、淡化成可用的淡水；盐度传感井实时监测地下水，一旦海水入侵有上升趋势就提前报警。",
-          en: "Blue Lens is a locally managed living sea wall system. A wall planted with salt-tolerant vegetation stops overwash and channels it into a capture basin; a solar-powered unit filters and desalinates it into usable freshwater; salinity sensor wells watch the groundwater and raise an early warning when intrusion starts to climb.",
+          zh: "Blue Lens 是一套由当地管理的活体海堤系统，在海水渗进含水层之前就把它拦下来，变成可以用的淡水。",
+          en: "Blue Lens is a locally managed living sea wall system that stops saltwater before it reaches the aquifer and turns it into usable freshwater.",
         },
-        points: [
-          { zh: "01 收集：海水渗进含水层之前就把它拦下", en: "01 Collect: capture coastal floodwater before it seeps into the aquifer" },
-          { zh: "02 净化：过滤并淡化成可用的淡水", en: "02 Treat: filter and desalinate it into usable freshwater" },
-          { zh: "03 监测：追踪地下水盐度，提前预警", en: "03 Monitor: track groundwater salinity for early warning" },
+        blocks: [
+          {
+            type: "steps",
+            items: [
+              { img: "assets/projects/blue-lens/step-collect.jpg", title: { zh: "收集", en: "Collect" }, body: { zh: "种着耐盐植物的活体海堤拦下漫过海岸的海水，引进收集池，不让它渗进含水层。", en: "A living sea wall planted with salt-tolerant vegetation captures coastal floodwater before it seeps into the aquifer." } },
+              { img: "assets/projects/blue-lens/step-treat.jpg", title: { zh: "净化", en: "Treat" }, body: { zh: "太阳能系统把收集到的海水过滤、淡化成可用的淡水。", en: "A solar-powered unit filters and desalinates the captured seawater into usable freshwater." } },
+              { img: "assets/projects/blue-lens/step-monitor.jpg", title: { zh: "监测", en: "Monitor" }, body: { zh: "盐度传感井实时追踪地下水，海水入侵有上升趋势时提前报警。", en: "Salinity sensor wells track groundwater and send an early warning when intrusion starts to rise." } },
+            ],
+            result: { zh: "结果：淡水得到保护，海岸生态更健康，维护和进口淡水的成本更低。", en: "The result: protected freshwater, a healthier habitat, and lower maintenance and import costs." },
+          },
         ],
-        images: [
-          { src: "assets/projects/blue-lens/overview.jpg", zh: "产品概览", en: "Product overview" },
-          { src: "assets/projects/blue-lens/solution.jpg", zh: "方案说明：三个步骤", en: "Solution in three steps" },
+        images: [{ src: "assets/projects/blue-lens/system.jpg", zh: "整套系统：活体海堤 → 收集池 → 太阳能净化 → 淡水供应，盐度传感器守着地下的淡水透镜", en: "The full system: living sea wall → capture basin → solar treatment → freshwater supply, with salinity sensors guarding the freshwater lens" }],
+      },
+      {
+        title: { zh: "价值主张", en: "Value Proposition" },
+        blocks: [
+          {
+            type: "canvas",
+            groups: [
+              { kind: "product", title: { zh: "产品与服务", en: "Products & Services" }, items: [
+                { zh: "种着耐盐植物的活体海堤", en: "Living sea wall with salt-tolerant plants" },
+                { zh: "收集池 + 太阳能净化", en: "Capture basin & solar-powered treatment" },
+                { zh: "盐度传感井 + 提前预警", en: "Salinity sensor wells & early-warning alerts" },
+              ] },
+              { kind: "gain", title: { zh: "创造收益", en: "Gain Creators" }, items: [
+                { zh: "把收集的海水变成淡水", en: "Freshwater from captured seawater" },
+                { zh: "支持海岸栖息地和生物多样性", en: "Habitat & biodiversity support" },
+              ] },
+              { kind: "pain", title: { zh: "缓解痛点", en: "Pain Relievers" }, items: [
+                { zh: "阻止漫过来的海水进入含水层", en: "Stops overwash from reaching the aquifer" },
+                { zh: "在供水受影响前提前预警", en: "Early warning before supply is affected" },
+                { zh: "降低维护和进口淡水的成本", en: "Lower maintenance & import costs" },
+              ] },
+            ],
+          },
+          {
+            type: "defs",
+            title: { zh: "一句话价值主张", en: "Unique Value Proposition" },
+            rows: [
+              { k: { zh: "目标客户", en: "Target customer" }, lead: { zh: "面向", en: "For" }, v: { zh: "小岛屿发展中国家的国家水务和海岸管理部门，", en: "national water and coastal management agencies in small island developing states" } },
+              { k: { zh: "需求", en: "Need" }, lead: { zh: "他们", en: "who" }, v: { zh: "难以保护淡水不被海水入侵。", en: "struggle to protect freshwater supplies from saltwater intrusion" } },
+              { k: { zh: "产品类别", en: "Product category" }, lead: { zh: "Blue Lens 是", en: "Blue Lens is" }, v: { zh: "一套活体海堤系统，", en: "a living sea wall system" } },
+              { k: { zh: "好处", en: "Benefit" }, lead: { zh: "它", en: "that" }, v: { zh: "在一个由当地管理的方案里同时收集、监测和净化海水，降低长期维护和进口淡水的成本。", en: "captures, monitors and treats seawater in one locally managed solution, lowering long-term maintenance and water import costs." } },
+            ],
+          },
         ],
       },
       {
-        title: { zh: "价值主张与目标客户", en: "Value Proposition & Customer" },
-        body: {
-          zh: "目标客户是小岛屿发展中国家的国家水务和海岸管理部门。他们预算紧张、进口淡水成本高，通常先做试点再扩大，资金常来自气候基金和开发银行。Blue Lens 在一套系统里同时保护含水层、产出淡水、改善海岸生态，这是单独的海堤或淡化厂做不到的。",
-          en: "Our customers are national water and coastal management agencies in SIDS: tight public budgets, high costs for imported water, and a habit of piloting first and then expanding, often co-funded by climate funds and development banks. Blue Lens protects the aquifer, produces water and restores the shoreline in one system, which standalone seawalls or desalination plants can't do.",
-        },
-        images: [
-          { src: "assets/projects/blue-lens/value-prop.jpg", zh: "价值主张画布", en: "Visual value proposition" },
-          { src: "assets/projects/blue-lens/uvp.jpg", zh: "独特价值主张", en: "Unique value proposition" },
-          { src: "assets/projects/blue-lens/customer.jpg", zh: "客户画像", en: "Customer profile" },
+        title: { zh: "客户画像", en: "Customer Profile" },
+        blocks: [
+          {
+            type: "profile",
+            cells: [
+              { k: { zh: "机构", en: "Organization" }, v: { zh: "国家水务和海岸管理部门", en: "National water & coastal management agencies" } },
+              { k: { zh: "地区", en: "Location" }, v: { zh: "小岛屿发展中国家", en: "Small island developing states" } },
+              { k: { zh: "预算", en: "Budget" }, v: { zh: "公共预算紧张，进口淡水成本高", en: "Tight public budgets, high costs for imported water" } },
+              { k: { zh: "日常使用者", en: "Daily users" }, v: { zh: "当地技术员和水务操作员", en: "Local technicians & water operators" } },
+              { k: { zh: "决策者", en: "Decision makers" }, v: { zh: "部门主管和高级工程师", en: "Agency directors & senior engineers" } },
+              { k: { zh: "采购习惯", en: "Purchase habits" }, v: { zh: "先试点再扩大；常由气候基金和开发银行共同出资", en: "Pilot first, then expand; often co-funded by climate funds & development banks" } },
+              { k: { zh: "目标", en: "Goals" }, v: { zh: "保护淡水、守住海岸线、减少进口成本", en: "Protect freshwater, defend the coastline & cut import costs" } },
+              { k: { zh: "挑战", en: "Challenges" }, v: { zh: "海平面上升、替代方案昂贵、海水入侵没有预警", en: "Rising seas, costly alternatives & no early warning of intrusion" } },
+            ],
+          },
         ],
       },
       {
         title: { zh: "市场规模", en: "Market Sizing" },
         body: {
-          zh: "以小岛屿发展中国家 51,587 公里海岸线、每公里约 148 万美元的建造成本估算总市场；再按约 6,500 万居民中能服务的 20% 估算可服务市场。",
-          en: "We sized the total market from 51,587 km of SIDS coastline at about $1.48M per km to build, then estimated the serviceable share from the roughly 65M SIDS residents we could serve (20%).",
+          zh: "Blue Lens 在小岛屿发展中国家可以获得约 121.9 亿美元的市场。",
+          en: "Blue Lens can obtain a $12.19B market across small island developing states.",
         },
-        stats: [
-          { value: "$76.16B", zh: "TAM 总可达市场", en: "TAM: total addressable market", hl: true },
-          { value: "$15.23B", zh: "SAM 可服务市场", en: "SAM: serviceable addressable market" },
-          { value: "$12.19B", zh: "SOM 可获得市场", en: "SOM: serviceable obtainable market" },
+        blocks: [
+          {
+            type: "rings",
+            items: [
+              { k: "TAM", value: "$76.16B", name: { zh: "总可达市场", en: "Total addressable market" }, how: { zh: "51,587 公里海岸线 × 每公里约 148 万美元建造成本（每英尺 450 美元）", en: "51,587 km of SIDS coastline × $1.48M per km to install ($450 per linear foot)" } },
+              { k: "SAM", value: "$15.23B", name: { zh: "可服务市场", en: "Serviceable addressable market" }, how: { zh: "约 6,500 万居民 × 可服务的 20% × 人均 1,171.72 美元", en: "~65M SIDS residents × 20% we can serve × $1,171.72 per person" } },
+              { k: "SOM", value: "$12.19B", name: { zh: "可获得市场", en: "Serviceable obtainable market" }, how: { zh: "SAM × 可以拿下的 80%", en: "SAM × 80% of the serviceable market we can capture" } },
+            ],
+          },
         ],
         note: {
           zh: "来源：UN-OHRLLS、世界银行（2024）、MDPI Coasts、ShoreProtect 海堤成本计算器；百分比为团队估算。",
@@ -404,29 +455,114 @@ const DETAILS = {
         },
       },
       {
-        title: { zh: "竞争分析", en: "Competitive Analysis" },
+        title: { zh: "蓝海价值曲线", en: "Blue Ocean Value Map" },
         body: {
-          zh: "我们把 Blue Lens 和混凝土海堤、红树林等活体海岸线、海水淡化厂放在一起比较。混凝土海堤挡浪强但不产水、维护贵；淡化厂能产水但成本和能耗都很高；活体海岸线生态好但不能产水。Blue Lens 的定位是“多重收益、中高投入”，长期总价值最高。",
-          en: "We compared Blue Lens with concrete seawalls, living shorelines and mangroves, and desalination plants. Seawalls block waves but make no water and cost a lot to maintain; desalination makes water at high cost and energy use; living shorelines help habitat but produce no water. Blue Lens sits at high multi-benefit value with moderate capital intensity, and leads on long-term total value.",
+          zh: "从“行业里该去掉什么”到“没人做到的价值”：在长期总价值上，活体海堤方案明显领先。",
+          en: "From industry elimination to uncontested value: our solution leads where it matters most, especially in long-term value.",
         },
-        images: [
-          { src: "assets/projects/blue-lens/value-map.jpg", zh: "蓝海价值曲线", en: "Blue ocean value map" },
-          { src: "assets/projects/blue-lens/comparison.jpg", zh: "对比表", en: "Comparison chart" },
-          { src: "assets/projects/blue-lens/landscape.jpg", zh: "竞争格局", en: "Competitive landscape" },
+        blocks: [
+          {
+            type: "linechart",
+            max: 5,
+            yLabel: { zh: "相对投入 / 重视程度", en: "Relative offering / emphasis" },
+            categories: [
+              { zh: "建造与安装成本", en: "Start-up & installation costs" },
+              { zh: "日常维护与维修", en: "Ongoing maintenance & repairs" },
+              { zh: "环境影响与节水", en: "Environmental impact / water conservation" },
+              { zh: "法规合规", en: "Regulatory compliance" },
+              { zh: "服务与支持", en: "Service & support" },
+              { zh: "净化效果与可靠性", en: "Treatment effectiveness & reliability" },
+              { zh: "总价值与长期节省", en: "Total value & long-term savings" },
+            ],
+            series: [
+              { name: { zh: "混凝土海堤", en: "Concrete seawall" }, color: "#7a7f8c", dash: true, marker: "square", values: [5, 1.3, 1.55, 1.05, 1.05, 1] },
+              { name: { zh: "海水淡化厂（RO）", en: "Standalone desalination (RO)" }, color: "#e5813a", dash: true, marker: "diamond", values: [1.75, 4.1, 1.2, 1.05, 1.05, 1] },
+              { name: { zh: "普通活体海堤", en: "Standard living sea wall" }, color: "#2f9a5c", dash: true, marker: "triangle", values: [1.4, 2.35, 1.95, 1.5, 1.2, 1] },
+              { name: { zh: "我们的方案：Blue Lens", en: "Proposed: Blue Lens" }, color: "#2c4fb3", hl: true, values: [2.1, 2.8, 3.35, 3.15, 3.45, 3.7, 5] },
+            ],
+            note: { zh: "数值按演示稿中的曲线读取。", en: "Values read from the chart in the deck." },
+          },
+          {
+            type: "chips",
+            items: [
+              { k: { zh: "成本更低", en: "Lower costs" }, v: { zh: "安装和维护更有竞争力", en: "More competitive installation and maintenance" } },
+              { k: { zh: "更可持续", en: "Greater sustainability" }, v: { zh: "改善环境、节约用水", en: "Better environmental impact and water conservation" } },
+              { k: { zh: "合规更强", en: "Stronger compliance" }, v: { zh: "达到并超过法规标准", en: "Meets and exceeds regulatory standards" } },
+              { k: { zh: "支持更好", en: "Superior support" }, v: { zh: "更全面的服务和支持", en: "More comprehensive service and support" } },
+              { k: { zh: "性能更高", en: "Higher performance" }, v: { zh: "净化更可靠、更耐用", en: "More reliable, longer-lasting treatment" } },
+              { k: { zh: "长期价值最大", en: "Maximum long-term value" }, v: { zh: "总价值和长期节省最高", en: "Highest total value and savings over time" } },
+            ],
+          },
         ],
       },
       {
-        title: { zh: "SWOT 与资金用途", en: "SWOT & Use of Funds" },
-        points: [
-          { zh: "优势：一体化、基于自然、把海水收集起来再利用", en: "Strengths: all-in-one, nature-based, captures and reuses saltwater" },
-          { zh: "劣势：维护难度大，需要较大的土地面积", en: "Weaknesses: hard to maintain, needs a large area of land" },
-          { zh: "机会：耐盐植物的新市场；海平面上升带来的海堤需求", en: "Opportunities: a new market for salt-tolerant plants; sea walls needed as seas rise" },
-          { zh: "威胁：极端天气，更便宜的竞争方案", en: "Threats: extreme weather, cheaper competing solutions" },
+        title: { zh: "对比与竞争格局", en: "Comparison & Competitive Landscape" },
+        body: {
+          zh: "从海岸保护、供水安全、成本和韧性几个方面，把 Blue Lens 和现有方案放在一起比。",
+          en: "Evaluating coastal protection, water security, cost and resilience against existing options.",
+        },
+        blocks: [
+          {
+            type: "matrix",
+            cols: [
+              { name: "Blue Lens", hl: true },
+              { name: { zh: "传统混凝土海堤", en: "Traditional concrete seawall" }, src: "ShoreProtect.com" },
+              { name: { zh: "活体海岸线 / 红树林", en: "Living shoreline / mangroves" }, src: "livingshorelines.org" },
+              { name: { zh: "海水淡化厂（RO）", en: "Desalination plant (RO)" }, src: "idetech.com" },
+            ],
+            rows: [
+              { label: { zh: "海水入侵 / 海岸保护", en: "Saltwater intrusion / coastal protection" }, cells: ["s", "s", ["m", { zh: "不稳定", en: "Variable" }], ["w", { zh: "无", en: "None" }]] },
+              { label: { zh: "栖息地与生物多样性", en: "Habitat & biodiversity support" }, cells: ["s", "w", "s", ["w", { zh: "无", en: "None" }]] },
+              { label: { zh: "淡水生产或再利用", en: "Freshwater production or reuse" }, cells: ["s", ["w", { zh: "无", en: "None" }], ["w", { zh: "无", en: "None" }], "s"] },
+              { label: { zh: "为工业回收盐", en: "Salt recovery for industry" }, cells: ["s", ["w", { zh: "无", en: "None" }], ["w", { zh: "无", en: "None" }], ["m", { zh: "可能", en: "Possible" }]] },
+              { label: { zh: "实时监测与预测分析", en: "Real-time monitoring & predictive analytics" }, cells: ["s", ["w", { zh: "有限", en: "Limited" }], ["m", { zh: "有限", en: "Limited" }], "s"] },
+              { label: { zh: "相对建设成本", en: "Relative capital cost" }, cells: [["s", { zh: "较低", en: "Lower" }], ["m", { zh: "不稳定", en: "Variable" }], ["s", { zh: "较低", en: "Lower" }], ["w", { zh: "很高", en: "Very high" }]] },
+              { label: { zh: "维护与气候韧性", en: "Maintenance & climate resilience" }, cells: ["s", "m", "s", ["w", { zh: "耗能高", en: "Energy intensive" }]] },
+              { label: { zh: "是否适合小岛屿国家", en: "Suitability for SIDS" }, cells: ["s", ["m", { zh: "有限", en: "Limited" }], "s", ["m", { zh: "有限", en: "Limited" }]] },
+            ],
+            note: { zh: "来源：Living Seawalls 项目（生物多样性最多提升 3 倍）、ShoreProtect 成本计算器、联合国与世界银行的淡水透镜数据、活体海岸线与硬质结构的对比研究、海水淡化行业报告。", en: "Sources: Melanie Bishop / Living Seawalls Project (biodiversity gains up to 3×); ShoreProtect seawall cost calculator; UN & World Bank SIDS freshwater lens data; literature on living shorelines vs hard structures; desalination industry reports." },
+          },
+          {
+            type: "quad",
+            x: { zh: "资本投入", en: "Capital intensity" },
+            y: { zh: "多重收益", en: "Multi-benefit value" },
+            points: [
+              { name: "Blue Lens", sub: { zh: "活体海堤 + 净化 + 监测", en: "Living sea wall + treatment + monitoring" }, x: 0.32, y: 0.64, hl: true },
+              { name: "NOAA Living Shorelines", sub: { zh: "活体海岸线与红树林", en: "Living shorelines & mangroves" }, x: -0.53, y: 0.45, color: "#2f9a5c" },
+              { name: "IDE Technologies", sub: { zh: "大型海水淡化厂", en: "Large desalination plants" }, x: 0.47, y: -0.28, color: "#e5813a" },
+              { name: "ShoreProtect", sub: { zh: "传统混凝土海堤", en: "Traditional concrete seawalls" }, x: 0.27, y: -0.6, color: "#7a7f8c" },
+              { name: { zh: "简易屏障", en: "Soft barriers" }, sub: { zh: "基础屏障 / 雨水收集", en: "Basic barriers / rainwater harvesting" }, x: -0.57, y: -0.52, color: "#d4a514" },
+            ],
+          },
         ],
-        stats: [{ value: "$210,000", zh: "前 18 个月所需资金", en: "Funding for months 1–18", hl: true }],
-        images: [
-          { src: "assets/projects/blue-lens/swot.jpg", zh: "SWOT 分析", en: "SWOT analysis" },
-          { src: "assets/projects/blue-lens/funds.jpg", zh: "资金用途：团队运营 55%、工程验证 33%、现金储备 12%", en: "Use of funds: team & operations 55%, engineering & validation 33%, cash reserve 12%" },
+      },
+      {
+        title: { zh: "SWOT 分析", en: "SWOT Analysis" },
+        blocks: [
+          {
+            type: "swot",
+            items: [
+              { l: "S", title: { zh: "优势", en: "Strengths" }, tag: { zh: "内部 · 有利", en: "Internal / helpful" }, items: [{ zh: "一体化方案", en: "All-in-one solution" }, { zh: "基于自然的方案", en: "Natural solution" }, { zh: "收集海水并再利用", en: "Captures saltwater and reuses it" }] },
+              { l: "W", title: { zh: "劣势", en: "Weaknesses" }, tag: { zh: "内部 · 不利", en: "Internal / harmful" }, items: [{ zh: "维护难度大", en: "Difficult to maintain" }, { zh: "需要较大的土地面积", en: "Needs a large area of land" }, { zh: "可行性还没有验证", en: "Availability has not been checked" }] },
+              { l: "O", title: { zh: "机会", en: "Opportunities" }, tag: { zh: "外部 · 有利", en: "External / helpful" }, items: [{ zh: "耐盐植物的新市场", en: "New market for salt-tolerant plants" }, { zh: "海平面上升，海堤需求增加：到 2100 年 77% 的沿海流域预计面临海水入侵", en: "Sea walls needed as seas rise: 77% of coastal watersheds projected to face saltwater intrusion by 2100" }] },
+              { l: "T", title: { zh: "威胁", en: "Threats" }, tag: { zh: "外部 · 不利", en: "External / harmful" }, items: [{ zh: "极端天气", en: "Extreme weather" }, { zh: "更便宜的竞争方案", en: "Competitors with cheaper solutions" }] },
+            ],
+          },
+        ],
+      },
+      {
+        title: { zh: "资金用途：前 18 个月", en: "Use of Funds: Months 1–18" },
+        blocks: [
+          {
+            type: "donut",
+            total: "$210,000",
+            totalLabel: { zh: "总计", en: "Total" },
+            items: [
+              { value: "$115,500", pct: 55.0, label: { zh: "团队与运营（净额）", en: "Team and operations, net" }, color: "#2c4fb3" },
+              { value: "$69,000", pct: 32.9, label: { zh: "工程与验证（净额）", en: "Engineering and validation, net" }, color: "#e5813a" },
+              { value: "$25,500", pct: 12.1, label: { zh: "第 18 个月的现金储备", en: "Cash reserve at month 18" }, color: "#2fb5a3" },
+            ],
+          },
         ],
       },
     ],
