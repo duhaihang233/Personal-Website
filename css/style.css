@@ -2647,43 +2647,82 @@ html.fx-prep .site-header {
   outline-offset: 4px;
 }
 
-/* 详情页底部：两张方卡 */
+/* 长方形窄条：详情页底部、联系区都竖着叠放 */
+.ht-row .ht-card,
+.detail .detail-pager .ht-card {
+  aspect-ratio: auto;
+  height: clamp(6.5rem, 11vw, 8.5rem);
+  padding: 0 6.5rem 1rem 1.2rem;
+  justify-content: flex-end;
+  background-size: 100% auto;
+}
+.ht-row .ht-card.ht-flip { background-size: 150% auto; background-position: right 70%; }
+/* 窄条高度不够竖排：小字改成横排，放在左上 */
+.ht-row .ht-side,
+.detail .detail-pager .ht-side {
+  top: 0.9rem;
+  left: 1.2rem;
+  writing-mode: horizontal-tb;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+}
+.ht-row .ht-side::before,
+.detail .detail-pager .ht-side::before {
+  margin: 0 0.7em 0.1em 0;
+  vertical-align: middle;
+}
+/* 蓝色窄条取图片里颜色最深的一段，白字更清楚 */
+.detail .detail-pager .ht-blue {
+  background-size: 150% auto;
+  background-position: 100% 30%;
+}
+.ht-row .ht-title,
+.detail .detail-pager .ht-title {
+  max-width: none;
+  font-size: clamp(1.4rem, 3.4vw, 2.4rem);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ht-row .ht-arrow,
+.detail .detail-pager .ht-arrow {
+  top: 50%;
+  bottom: auto;
+  right: 1.2rem;
+  width: clamp(2.8rem, 5vw, 3.6rem);
+  translate: 0 -50%;
+}
+
+/* 详情页底部 */
 .detail .detail-pager {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.8rem, 2.5vw, 1.6rem);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
   border-top: 0;
 }
 .detail .detail-pager .ht-card { text-align: left; }
 .detail-pixel .detail-pager .ht-card { border: 3px solid var(--px-navy); }
 .detail-arcade .detail-pager .ht-card { box-shadow: 0 0 0 2px var(--neon-purple), 0 0 22px rgba(164, 107, 255, 0.45); }
 
-/* 联系区：三张方卡一排 */
+/* 联系区 */
 .contact-links.ht-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 13.5rem));
-  gap: 1rem;
+  grid-template-columns: minmax(0, 36rem);
+  gap: 0.8rem;
 }
 .ht-row .ht-card {
   box-shadow: 0.4rem 0.4rem 0 var(--klein-ink);
 }
-/* 手机：卡片改成一列横向长方形，标题不和竖排字、箭头挤在一起 */
 @media (max-width: 560px) {
-  .contact-links.ht-row,
-  .detail .detail-pager {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .ht-row .ht-card,
   .detail .detail-pager .ht-card {
-    aspect-ratio: 2 / 1;
-    padding-left: 3.4rem;
+    height: 6.5rem;
+    padding-right: 4.6rem;
   }
-  .ht-row .ht-card .ht-title,
+  .ht-row .ht-title,
   .detail .detail-pager .ht-title {
-    font-size: clamp(1.4rem, 8cqi, 2rem);
-  }
-  .ht-side {
-    top: 1rem;
-    left: 1rem;
+    white-space: normal;
+    font-size: 1.35rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
