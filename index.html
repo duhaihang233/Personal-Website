@@ -97,13 +97,19 @@
           <h2 class="section-title rough" data-i18n="workTitle">作品</h2>
         </header>
       </div>
-      <!-- 手账本：由 js/main.js 中的 PROJECTS 数据渲染，每个对开页放两个作品，向下滚动翻页 -->
+      <!-- 长白板：由 js/main.js 中的 PROJECTS 数据渲染，便签从左到右贴；
+           向下滚动时页面不动，白板向左平移 -->
       <div class="journal-track" id="journal-track">
         <div class="journal-sticky">
-          <div class="book" id="book">
-            <noscript><p>请启用 JavaScript 以查看作品。Please enable JavaScript to see the projects.</p></noscript>
+          <div class="board" id="board">
+            <div class="board-surface">
+              <div class="board-strip" id="board-strip">
+                <noscript><p>请启用 JavaScript 以查看作品。Please enable JavaScript to see the projects.</p></noscript>
+              </div>
+            </div>
+            <div class="board-tray" aria-hidden="true"><i class="marker m-red"></i><i class="marker m-blue"></i><i class="eraser"></i></div>
           </div>
-          <div class="journal-nav" id="journal-nav" aria-label="翻页" data-i18n-aria="pager"></div>
+          <div class="journal-nav" id="journal-nav"></div>
         </div>
       </div>
     </section>

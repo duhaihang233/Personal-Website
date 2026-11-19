@@ -36,7 +36,7 @@ python3 -m http.server 8000
 ## 修改内容
 
 1. **个人信息**：在 `index.html` 中搜索 `you@example.com`、`your-username` 并替换。
-2. **作品**：编辑 `js/main.js` 顶部的 `PROJECTS` 数组，封面图放进 `assets/projects/`。作品以手账本形式展示：每个对开页两个作品，向下滚动翻页；顺序就是数组顺序。
+2. **作品**：编辑 `js/main.js` 顶部的 `PROJECTS` 数组，封面图放进 `assets/projects/`。作品以长白板形式展示：便签从左到右贴，向下滚动时页面不动、白板向左平移；顺序就是数组顺序。
    点击便签会展开成详情页（地址 `#work-<slug>`），详情页的文字和图片在 `js/details.js`，图片放在 `assets/projects/<slug>/`。
 3. **配色**：修改 `css/style.css` 顶部的 `--red`、`--cyan`、`--ink` 等变量；作品卡片颜色在 `PROJECTS` 的 `color` 字段里选。
 4. **中英文**：页面文字在 `js/main.js` 的 `I18N` 里（`zh` / `en` 两套），HTML 里用 `data-i18n="key"` 标记；作品的英文写在每个作品的 `en` 字段里。

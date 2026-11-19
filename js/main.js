@@ -180,8 +180,9 @@ const I18N = {
     photo: "Thomas Du 的照片",
     workTitle: "作品",
     pager: "翻页",
-    pagerHint: "向下滚动翻页 ↓",
-    spread: (k) => `第 ${k} 个对开页`,
+    pagerHint: "向下滚动，白板向左移 →",
+    boardStart: "从这里开始",
+    boardLabel: "作品白板",
     tbc: "未完待续…",
     halftone: "Thomas Du 的网点肖像",
     aboutBody:
@@ -225,8 +226,9 @@ const I18N = {
     photo: "Photo of Thomas Du",
     workTitle: "Projects",
     pager: "Page navigation",
-    pagerHint: "Scroll to turn the page ↓",
-    spread: (k) => `Spread ${k}`,
+    pagerHint: "Scroll down to slide the board →",
+    boardStart: "Start here",
+    boardLabel: "Project whiteboard",
     tbc: "To be continued…",
     halftone: "Halftone portrait of Thomas Du",
     aboutBody:
@@ -322,29 +324,23 @@ function noteHTML(p, i) {
     </article>`;
 }
 
-// 第 n 页（从 0 开始）：偶数页在 A 侧（左/上），奇数页在 B 侧（右/下）
-function pageHTML(n, extraClass = "") {
-  const side = n % 2 === 0 ? "side-a" : "side-b";
-  return `<div class="page ${side} ${extraClass}" data-page="${n}">
-      ${noteHTML(PROJECTS[n], n)}
-      <span class="page-no">— ${String(n + 1).padStart(2, "0")} —</span>
-    </div>`;
-}
+/* ---------- 长白板：便签从左到右贴，向下滚动时白板向左平移 ---------- */
+const SLOT_Y = [-4, 5, -2, 6, -5, 3];     // 每张便签上下错落（占白板高度的 %）
 
-function renderJournal() {
-  const book = document.getElementById("book");
-  if (!book) return null;
-  const spreads = Math.max(1, Math.ceil(PROJECTS.length / 2));
-  const lastPage = spreads * 2 - 1;
-
-  // 底页：第一页（A 侧）和最后一页（B 侧）；中间每张翻页纸：正面是 B 侧，背面是下一个对开的 A 侧
-  let html = pageHTML(0, "page-a base") + pageHTML(lastPage, "page-b base");
-  for (let i = 0; i < spreads - 1; i++) {
-    html += `<div class="leaf" data-leaf="${i}">${pageHTML(2 * i + 1)}${pageHTML(2 * i + 2)}</div>`;
-  }
-  html += `<span class="spine" aria-hidden="true"></span><span class="ribbon" aria-hidden="true"></span>`;
-  book.innerHTML = html;
-  return spreads;
+// 每张便签放在一个“纸槽”里（.page），便签的字号按纸槽尺寸缩放
+function boardHTML() {
+  const notes = PROJECTS.map((p, i) => `
+    <div class="page board-slot" style="--y:${SLOT_Y[i % SLOT_Y.length]}%">
+      ${noteHTML(p, i)}
+      <span class="board-num" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
+    </div>`).join("");
+  return `
+    <div class="board-start" aria-hidden="true">
+      <span class="board-doodle-text">${t("boardStart")}</span>
+      <svg viewBox="0 0 120 40" class="board-arrow"><path d="M4 26 C 30 6, 70 6, 104 20 M92 10 L106 21 L90 30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    ${notes}
+    <div class="board-end" aria-hidden="true"><span class="board-doodle-text">${t("tbc")}</span></div>`;
 }
 
 let refreshJournal = () => {};
@@ -352,78 +348,63 @@ let refreshJournal = () => {};
 function initJournal() {
   const track = document.getElementById("journal-track");
   const sticky = track && track.querySelector(".journal-sticky");
+  const board = document.getElementById("board");
+  const strip = document.getElementById("board-strip");
   const nav = document.getElementById("journal-nav");
-  if (!track || !sticky || !document.getElementById("book")) return;
+  if (!track || !sticky || !board || !strip) return;
 
-  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  let spreads = 1, flips = 0, leaves = [], baseA = null, baseB = null;
-  let count = null, dots = [], hint = null, seg = 0, current = -1;
+  board.setAttribute("role", "region");
+  let dist = 0, extra = 0, bar = null, hint = null, last = -1;
 
-  // 渲染书页和翻页导航（切换语言时会再次调用，结构不变，滚动位置保持）
   function build() {
-    spreads = renderJournal();
-    flips = spreads - 1;
-    leaves = [...document.querySelectorAll(".leaf")];
-    baseA = document.querySelector(".page-a.base");
-    baseB = document.querySelector(".page-b.base");
+    strip.innerHTML = boardHTML();
+    board.setAttribute("aria-label", t("boardLabel"));
     nav.innerHTML = `
-      <span class="journal-count" aria-live="polite"></span>
-      <span class="journal-dots">${Array.from({ length: spreads }, (_, k) =>
-        `<button type="button" aria-label="${escapeHTML(t("spread")(k + 1))}"></button>`).join("")}</span>
-      ${flips ? `<span class="journal-hint">${t("pagerHint")}</span>` : ""}`;
-    count = nav.querySelector(".journal-count");
-    dots = [...nav.querySelectorAll(".journal-dots button")];
+      <span class="board-progress" aria-hidden="true"><i></i></span>
+      <span class="journal-hint">${t("pagerHint")}</span>`;
+    bar = nav.querySelector(".board-progress i");
     hint = nav.querySelector(".journal-hint");
-    dots.forEach((d, k) =>
-      d.addEventListener("click", () => {
-        const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-        const top = track.getBoundingClientRect().top + window.scrollY - stickyTop + k * seg + 1;
-        window.scrollTo({ top, behavior: reduceMotion.matches ? "auto" : "smooth" });
-      })
-    );
-    current = -1;
+    last = -1;
   }
 
+  // 白板需要平移的距离 = 便签条总宽 - 可见宽度；向下滚动这么多像素，白板就移完
   function layout() {
-    seg = window.innerHeight * 0.85; // 每翻一页需要滚动的距离
-    const endHold = window.innerHeight * 0.3;
-    track.style.height = `${sticky.offsetHeight + flips * seg + endHold}px`;
-    update();
+    const surface = board.querySelector(".board-surface");
+    dist = Math.max(0, strip.scrollWidth - surface.clientWidth);
+    extra = Math.round(innerHeight * 0.25); // 移完后再停留一小段
+    track.style.height = `${sticky.offsetHeight + dist + extra}px`;
+    update(true);
   }
 
-  function setInert(el, hidden) {
-    if (!el) return;
-    if (hidden) el.setAttribute("inert", "");
-    else el.removeAttribute("inert");
-  }
-
-  function update() {
+  function progress() {
     const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
     const scrolled = stickyTop - track.getBoundingClientRect().top;
-    const raw = Math.min(flips, Math.max(0, scrolled / seg));
-
-    leaves.forEach((leaf, i) => {
-      const u = raw - i;
-      let f = easeInOut(clamp01((u - 0.15) / 0.7));
-      if (reduceMotion.matches) f = u >= 0.5 ? 1 : 0;
-      leaf.style.setProperty("--flip", f.toFixed(4));
-      leaf.style.setProperty("--shade", (Math.sin(Math.PI * f) * 0.28).toFixed(3));
-      leaf.style.zIndex = f < 0.5 ? 100 - i : 100 + i;
-      // 看不到的那一面不能被键盘聚焦
-      setInert(leaf.children[0], f >= 0.5);
-      setInert(leaf.children[1], f < 0.5);
-    });
-    setInert(baseA, leaves.length && parseFloat(leaves[0].style.getPropertyValue("--flip")) >= 0.5);
-    setInert(baseB, leaves.length && parseFloat(leaves[leaves.length - 1].style.getPropertyValue("--flip")) < 0.5);
-
-    const k = Math.round(raw);
-    if (k !== current) {
-      current = k;
-      count.textContent = `${String(k + 1).padStart(2, "0")} / ${String(spreads).padStart(2, "0")}`;
-      dots.forEach((d, j) => d.setAttribute("aria-current", j === k ? "true" : "false"));
-    }
-    if (hint) hint.style.opacity = raw >= flips - 0.05 ? "0" : "1";
+    return dist ? Math.min(1, Math.max(0, scrolled / dist)) : 0;
   }
+
+  function update(force) {
+    if (sticky.dataset.frozen) return; // 详情页动画期间吸顶被临时固定，此时位置读数不准
+    const p = progress();
+    if (!force && p === last) return;
+    last = p;
+    strip.style.transform = `translate3d(${(-p * dist).toFixed(1)}px, 0, 0)`;
+    if (bar) bar.style.transform = `scaleX(${p.toFixed(4)})`;
+    if (hint) hint.style.opacity = p > 0.96 ? "0" : "1";
+  }
+
+  // 键盘 Tab 到一张便签时，把页面滚到这张便签可见的位置
+  strip.addEventListener("focusin", (e) => {
+    const note = e.target.closest(".note");
+    if (!note || !dist || document.body.dataset.quietFocus) return; // 关闭详情页时程序把焦点还给便签，不用移动白板
+    const slot = note.closest(".board-slot");
+    const surface = board.querySelector(".board-surface");
+    const want = slot.offsetLeft + slot.offsetWidth / 2 - surface.clientWidth / 2;
+    const p = Math.min(1, Math.max(0, want / dist));
+    const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+    const top = track.getBoundingClientRect().top + scrollY - stickyTop + p * dist;
+    surface.scrollLeft = 0;
+    window.scrollTo({ top, behavior: "auto" });
+  });
 
   let ticking = false;
   window.addEventListener("scroll", () => {
@@ -432,14 +413,15 @@ function initJournal() {
     requestAnimationFrame(() => { update(); ticking = false; });
   }, { passive: true });
   window.addEventListener("resize", layout);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
 
   build();
   layout();
-  refreshJournal = () => { build(); update(); };
+  refreshJournal = () => { build(); layout(); };
 }
 
 /* =========================================================
-   作品详情页：点击便签 → 便签抬起 → 书和背景向左滑走、横线纸滑入
+   作品详情页：点击便签 → 便签抬起 → 白板和背景向左滑走、横线纸滑入
    → 大头钉落下，把便签钉在横线纸左上角 → 显示详情
    地址：#work-<slug>（可分享、可用浏览器返回键关闭）
    ========================================================= */
@@ -528,7 +510,7 @@ function initDetail() {
   let pushed = false;    // 是否由点击便签打开（关闭时用返回键回到原地址）
   let busy = false;
 
-  const book = document.getElementById("book");
+  const book = document.getElementById("board");
   const noteFor = (i) => book.querySelector(`.page:not([inert]) .note[data-index="${i}"]`);
   // 主页面向左滑走时，书上元素的实际位置要加回这段位移
   const slidX = () => (document.documentElement.classList.contains("fx-slid") ? innerWidth : 0);
@@ -547,7 +529,7 @@ function initDetail() {
 
   // 钉住的便签的尺寸：和手账本的纸页同比例
   function pinDims() {
-    const pg = book.querySelector(".page-b.base") || book.querySelector(".page");
+    const pg = book.querySelector(".board-slot");
     const w0 = pg ? pg.offsetWidth : 300, h0 = pg ? pg.offsetHeight : 400;
     const w = innerWidth <= 720 ? Math.min(innerWidth - 56, 420) : Math.min(460, Math.max(300, innerWidth * 0.3));
     return { w: Math.round(w), h: Math.round((w * h0) / w0), src: w0, srcH: h0 };
@@ -626,6 +608,7 @@ function initDetail() {
         delete el.dataset.frozen;
       }
     });
+    if (!on) window.dispatchEvent(new Event("scroll")); // 恢复后让白板重新对齐
   }
   const prepSlide = (on) => {
     if (on) freezeSticky(true);
@@ -802,7 +785,11 @@ function initDetail() {
     prepSlide(false);
     book.querySelectorAll(".note.is-lifted").forEach((n) => n.classList.remove("is-lifted"));
     const focusTarget = note && note.querySelector(".note-open");
-    if (focusTarget) focusTarget.focus({ preventScroll: true });
+    if (focusTarget) {
+      document.body.dataset.quietFocus = "1";
+      focusTarget.focus({ preventScroll: true });
+      delete document.body.dataset.quietFocus;
+    }
     sourceNote = null;
     current = -1;
     busy = false;
@@ -836,7 +823,7 @@ function initDetail() {
   };
 
   // 点击便签
-  document.getElementById("book").addEventListener("click", (e) => {
+  book.addEventListener("click", (e) => {
     const btn = e.target.closest(".note-open");
     if (!btn) return;
     const note = btn.closest(".note");
@@ -917,7 +904,7 @@ function initLang() {
     try {
       localStorage.setItem("lang", LANG);
     } catch (e) {}
-    // 如果正在看作品（手账本区域内），切换后保持在同一页
+    // 如果正在看作品（白板区域内），切换后保持在同一位置
     const track = document.getElementById("journal-track");
     const top0 = track ? track.getBoundingClientRect().top : 0;
     const inBook = track && top0 <= 0 && -top0 < track.offsetHeight;

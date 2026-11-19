@@ -1726,3 +1726,180 @@ html.fx-prep .site-header {
     padding-right: max(calc(var(--ruled-x) + 24px), 5vw);
   }
 }
+
+/* =========================================================
+   13. 作品：长白板（替代手账本）
+   向下滚动时 .journal-sticky 固定，.board-strip 向左平移
+   ========================================================= */
+.board {
+  --board-h: min(600px, calc(100svh - var(--header-h) - 130px));
+  position: relative;
+  width: min(1440px, calc(100vw - 2 * max(16px, 2vw)));
+  padding: 12px 12px 0;
+  border-radius: 14px;
+  /* 铝合金边框 */
+  background: linear-gradient(180deg, #e6e8ea 0%, #c4c8cc 55%, #aeb3b8 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+    0 28px 44px -26px rgba(31, 28, 6, 0.55);
+}
+.board-surface {
+  position: relative;
+  height: var(--board-h);
+  overflow: hidden;
+  border-radius: 6px;
+  /* 白板：一点反光 + 几处擦过没擦干净的淡痕 */
+  background:
+    linear-gradient(112deg, transparent 28%, rgba(255, 255, 255, 0.75) 40%, transparent 52%),
+    radial-gradient(ellipse 18% 10% at 22% 30%, rgba(120, 130, 150, 0.07), transparent 70%),
+    radial-gradient(ellipse 14% 8% at 63% 72%, rgba(120, 130, 150, 0.06), transparent 70%),
+    radial-gradient(ellipse 20% 9% at 86% 22%, rgba(26, 60, 200, 0.04), transparent 70%),
+    linear-gradient(180deg, #fdfefe, #f1f3f4);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.14), inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+.board-strip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.6vw, 28px);
+  width: max-content;
+  height: 100%;
+  padding: 0 clamp(28px, 5vw, 80px);
+  will-change: transform;
+}
+/* 马克笔画的时间线 */
+.board-strip::before {
+  content: "";
+  position: absolute;
+  left: clamp(28px, 5vw, 80px);
+  right: clamp(28px, 5vw, 80px);
+  top: 95%;
+  border-top: 3px dashed rgba(26, 60, 200, 0.38);
+  border-radius: 2px;
+}
+/* 每张便签的纸槽：只用来确定尺寸，没有背景 */
+.board-slot {
+  position: relative;
+  flex: none;
+  height: calc(var(--board-h) * 0.8);
+  aspect-ratio: 0.76;
+  background: none;
+  overflow: visible;
+  transform: translateY(var(--y, 0%));
+}
+.board-slot::after {
+  display: none;
+}
+.board-num {
+  position: absolute;
+  left: 50%;
+  /* 抵消便签的上下错落，让编号都对齐在时间线上方 */
+  bottom: calc(var(--y, 0%) - 5.5%);
+  transform: translateX(-50%) rotate(-4deg);
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: clamp(1.1rem, calc(var(--board-h) * 0.045), 1.6rem);
+  color: #1a3cc8;
+}
+.board-start,
+.board-end {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: clamp(1.4rem, calc(var(--board-h) * 0.06), 2.2rem);
+  line-height: 1.1;
+}
+.board-start {
+  color: var(--red);
+  transform: rotate(-6deg);
+  margin-right: 0.5rem;
+}
+.board-end {
+  color: #1a3cc8;
+  transform: rotate(4deg);
+  padding: 0 1rem;
+}
+.board-arrow {
+  width: 4.2em;
+  height: auto;
+}
+/* 笔槽 */
+.board-tray {
+  position: relative;
+  height: 18px;
+  margin: 8px 6% 0;
+  border-radius: 4px 4px 8px 8px;
+  background: linear-gradient(180deg, #d5d8db, #a7acb1);
+  box-shadow: 0 6px 10px -6px rgba(31, 28, 6, 0.5);
+  transform: translateY(9px);
+}
+.marker,
+.eraser {
+  position: absolute;
+  top: -9px;
+  height: 12px;
+  border-radius: 6px;
+}
+.marker {
+  width: 92px;
+  background: linear-gradient(90deg, #f4f4f2 0 70%, var(--c) 70% 100%);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+.marker::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  top: 3px;
+  width: 10px;
+  height: 6px;
+  border-radius: 0 3px 3px 0;
+  background: var(--c);
+}
+.m-red { --c: var(--red); left: 12%; }
+.m-blue { --c: #1a3cc8; left: calc(12% + 112px); transform: rotate(-2deg); }
+.eraser {
+  right: 14%;
+  width: 70px;
+  height: 18px;
+  top: -14px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #2b2b2b 0 55%, #e9e2cf 55%);
+}
+
+/* 进度条 */
+.board-progress {
+  display: block;
+  width: clamp(120px, 18vw, 220px);
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.board-progress i {
+  display: block;
+  height: 100%;
+  background: var(--red);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+@media (max-width: 720px) {
+  .board {
+    --board-h: min(560px, calc(100svh - var(--header-h) - 150px));
+    padding: 8px 8px 0;
+  }
+  .board-tray {
+    margin: 6px 4% 0;
+  }
+  .board-slot {
+    height: min(calc(var(--board-h) * 0.8), calc((100vw - 72px) / 0.76));
+  }
+  .m-blue {
+    display: none;
+  }
+}
