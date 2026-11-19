@@ -1310,7 +1310,7 @@ html.detail-open {
 }
 
 .detail-lead {
-  max-width: 44rem;
+  max-width: 54rem;
   margin: -1rem 0 0;
   font-family: var(--font-serif);
   font-size: clamp(1.2rem, 2.3vw, 1.5rem);
@@ -1330,7 +1330,7 @@ html.detail-open {
   margin-bottom: 1rem;
 }
 .detail-body {
-  max-width: 44rem;
+  max-width: 54rem;
   margin: 0 0 1rem;
   font-family: var(--font-serif);
   font-size: 1.15rem;
@@ -1340,7 +1340,7 @@ html.detail-open {
   list-style: none;
   margin: 0 0 1rem;
   padding: 0;
-  max-width: 44rem;
+  max-width: 54rem;
   display: grid;
   gap: 0.55rem;
 }
@@ -1456,14 +1456,16 @@ html.detail-open {
   background: var(--ruled-bg);
   background-attachment: local;
 }
+/* 内容在横线纸上居中，左边至少让开红色页边线 */
 .detail-page {
-  padding-left: calc(var(--ruled-x) + clamp(20px, 3vw, 40px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px), 4vw);
+  padding-left: max(calc(var(--ruled-x) + 24px), 5vw);
+  padding-right: max(16px, env(safe-area-inset-right, 0px), 5vw);
   padding-bottom: 5rem;
 }
 .detail-top,
 .detail-content {
-  max-width: 1080px;
+  max-width: 1280px;
+  margin-inline: auto;
 }
 
 /* 顶部：左上角钉着便签，右边是标题 */
@@ -1670,4 +1672,15 @@ html.fx-prep body::before {
 html.fx-prep .site-header {
   backdrop-filter: none;
   background: var(--paper);
+}
+
+/* 宽屏：正文段落稍大，图片每行放更多 */
+@media (min-width: 1200px) {
+  .detail-lead {
+    font-size: 1.6rem;
+  }
+  .detail-figs {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2.5rem 2rem;
+  }
 }

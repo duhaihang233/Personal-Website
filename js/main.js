@@ -549,7 +549,7 @@ function initDetail() {
   function pinDims() {
     const pg = book.querySelector(".page-b.base") || book.querySelector(".page");
     const w0 = pg ? pg.offsetWidth : 300, h0 = pg ? pg.offsetHeight : 400;
-    const w = innerWidth <= 720 ? Math.min(innerWidth - 56, 420) : Math.min(380, Math.max(280, innerWidth * 0.3));
+    const w = innerWidth <= 720 ? Math.min(innerWidth - 56, 420) : Math.min(460, Math.max(300, innerWidth * 0.3));
     return { w: Math.round(w), h: Math.round((w * h0) / w0), src: w0, srcH: h0 };
   }
 
