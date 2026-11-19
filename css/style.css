@@ -2335,3 +2335,69 @@ html.fx-prep .site-header {
   .bh-square { left: -4%; bottom: -7%; }
   .bh-circle { right: -8%; }
 }
+
+/* =========================================================
+   16. 所有便签统一：高对比描边 + 硬投影 + 顶部横条 + 实色胶带
+   （像素便签保持深蓝描边和像素字体）
+   ========================================================= */
+.note {
+  --note-line: #1f1c06;
+  --note-bar: var(--bh-yellow);
+  border: 3px solid var(--note-line);
+  border-radius: 0;
+  background-image: linear-gradient(var(--note-bar), var(--note-bar));
+  background-size: calc(100% - 1.6em) 0.32em;
+  background-position: 0.8em 0.5em;
+  background-repeat: no-repeat;
+  box-shadow: 0.35em 0.35em 0 var(--note-line);
+}
+.note::after {
+  display: none;
+}
+.note:hover,
+.note:has(.note-open:focus-visible) {
+  box-shadow: 0.5em 0.6em 0 var(--note-line);
+}
+.note-lime,
+.note-cream,
+.note-sky { --note-bar: var(--bh-red); }
+.note-pixel { --note-line: var(--px-navy); --note-bar: var(--px-yellow); }
+/* 深色便签：描边用深色、投影仍是墨色，横条用黄色 */
+.note-ink { --note-bar: var(--bh-yellow); }
+
+.note .note-photo {
+  border: 2px solid var(--note-line);
+  box-shadow: 0.25em 0.25em 0 var(--note-line);
+}
+.note-ink .note-photo {
+  border-color: #f4f0dc;
+  box-shadow: 0.25em 0.25em 0 #f4f0dc;
+}
+.note .tag-list li {
+  border-radius: 0;
+  border-width: 2px;
+}
+
+/* 胶带：实色 + 描边，三原色轮换 */
+.note .tape {
+  --tape: var(--bh-yellow);
+  background: var(--tape);
+  clip-path: none;
+  border: 2px solid #1f1c06;
+  height: 1.5em;
+}
+.note .tape.tape-cyan { --tape: var(--bh-blue); }
+.note .tape.tape-lime { --tape: var(--bh-red); }
+.note-pixel .tape { --tape: var(--px-yellow); border-color: var(--px-navy); }
+
+/* 动画用的阴影层也改成硬投影 */
+.fx-shade {
+  box-shadow: 0.9em 1.1em 0 rgba(31, 28, 6, 0.85);
+}
+.pin-page .note,
+.pin-page .note:hover {
+  box-shadow: 0.35em 0.35em 0 var(--note-line);
+}
+.pin-page .note.pin-lifted {
+  box-shadow: 0.7em 0.9em 0 var(--note-line);
+}
