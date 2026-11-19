@@ -174,6 +174,29 @@ const PROJECTS = [
       tags: ["Figma", "Replit", "User research", "Pixel art"],
     },
   },
+  {
+    slug: "blue-lens",
+    title: "Blue Lens",
+    subtitle: "保护海岛淡水的活体海堤系统",
+    label: "Climate",
+    color: "cyan",
+    year: "2026",
+    team: "Kylie · Jerry · Sam · Thomas · Srinija",
+    field: "气候科技、商业分析与系统设计",
+    description:
+      "海平面上升让海水渗进小岛屿发展中国家的地下淡水层。Blue Lens 把活体海堤、太阳能净化和盐度监测做成一套系统：先拦截漫过海岸的海水，再把它变成可用的淡水，并在海水入侵前提前预警。这是 ACAD 183 的期末商业方案，包含市场规模、竞争分析和财务预测。",
+    image: "assets/projects/blue-lens.jpg",
+    tags: ["市场分析", "竞争分析", "财务预测", "信息图"],
+    links: [],
+    en: {
+      subtitle: "A living sea wall that protects island freshwater",
+      team: "Kylie · Jerry · Sam · Thomas · Srinija",
+      field: "Climate tech, business analysis & systems design",
+      description:
+        "Rising seas push saltwater into the groundwater that small island developing states drink. Blue Lens combines a living sea wall, solar-powered treatment and salinity monitoring in one system: it captures overwash, turns it into usable freshwater, and warns operators before intrusion reaches the aquifer. Final business pitch for ACAD 183, with market sizing, competitive analysis and a pro-forma.",
+      tags: ["Market sizing", "Competitive analysis", "Pro-forma", "Infographics"],
+    },
+  },
 ];
 
 /* =========================================================

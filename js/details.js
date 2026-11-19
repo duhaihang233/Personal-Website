@@ -346,4 +346,89 @@ const DETAILS = {
       },
     ],
   },
+  "blue-lens": {
+    tools: ["Google Sheets", "Keynote"],
+    sections: [
+      {
+        title: { zh: "问题：海水正在渗进海岛的淡水", en: "The Problem: Saltwater Is Reaching Island Freshwater" },
+        body: {
+          zh: "小岛屿发展中国家的饮用水大多来自地下的“淡水透镜”，一层浮在海水上方的淡水。海平面上升和风暴潮让海水漫过海岸、渗进这层淡水；传统混凝土海堤只能挡浪，海水淡化厂又贵又耗能，当地水务部门往往只能花高价进口淡水。",
+          en: "Small island developing states (SIDS) drink from a freshwater lens: a thin layer of fresh groundwater floating on seawater. Rising seas and storm surges wash saltwater over the coast and into that lens. Concrete seawalls only block waves, desalination plants are costly and energy-hungry, and water agencies often end up paying to import water.",
+        },
+        stats: [{ value: "77%", zh: "到 2100 年预计面临海水入侵的沿海流域", en: "of coastal watersheds projected to face saltwater intrusion by 2100", hl: true }],
+        note: { zh: "来源：Adams et al.（NASA JPL），GRL，2024。", en: "Source: Adams et al. (NASA JPL), GRL, 2024." },
+        images: [{ src: "assets/projects/blue-lens/coast.jpg", zh: "海岛海岸线", en: "An island coastline" }],
+      },
+      {
+        title: { zh: "方案：收集、净化、监测", en: "The Solution: Collect, Treat, Monitor" },
+        body: {
+          zh: "Blue Lens 是一套由当地管理的活体海堤系统。种着耐盐植物的海堤先拦下漫过来的海水，流进收集池；太阳能系统把它过滤、淡化成可用的淡水；盐度传感井实时监测地下水，一旦海水入侵有上升趋势就提前报警。",
+          en: "Blue Lens is a locally managed living sea wall system. A wall planted with salt-tolerant vegetation stops overwash and channels it into a capture basin; a solar-powered unit filters and desalinates it into usable freshwater; salinity sensor wells watch the groundwater and raise an early warning when intrusion starts to climb.",
+        },
+        points: [
+          { zh: "01 收集：海水渗进含水层之前就把它拦下", en: "01 Collect: capture coastal floodwater before it seeps into the aquifer" },
+          { zh: "02 净化：过滤并淡化成可用的淡水", en: "02 Treat: filter and desalinate it into usable freshwater" },
+          { zh: "03 监测：追踪地下水盐度，提前预警", en: "03 Monitor: track groundwater salinity for early warning" },
+        ],
+        images: [
+          { src: "assets/projects/blue-lens/overview.jpg", zh: "产品概览", en: "Product overview" },
+          { src: "assets/projects/blue-lens/solution.jpg", zh: "方案说明：三个步骤", en: "Solution in three steps" },
+        ],
+      },
+      {
+        title: { zh: "价值主张与目标客户", en: "Value Proposition & Customer" },
+        body: {
+          zh: "目标客户是小岛屿发展中国家的国家水务和海岸管理部门。他们预算紧张、进口淡水成本高，通常先做试点再扩大，资金常来自气候基金和开发银行。Blue Lens 在一套系统里同时保护含水层、产出淡水、改善海岸生态，这是单独的海堤或淡化厂做不到的。",
+          en: "Our customers are national water and coastal management agencies in SIDS: tight public budgets, high costs for imported water, and a habit of piloting first and then expanding, often co-funded by climate funds and development banks. Blue Lens protects the aquifer, produces water and restores the shoreline in one system, which standalone seawalls or desalination plants can't do.",
+        },
+        images: [
+          { src: "assets/projects/blue-lens/value-prop.jpg", zh: "价值主张画布", en: "Visual value proposition" },
+          { src: "assets/projects/blue-lens/uvp.jpg", zh: "独特价值主张", en: "Unique value proposition" },
+          { src: "assets/projects/blue-lens/customer.jpg", zh: "客户画像", en: "Customer profile" },
+        ],
+      },
+      {
+        title: { zh: "市场规模", en: "Market Sizing" },
+        body: {
+          zh: "以小岛屿发展中国家 51,587 公里海岸线、每公里约 148 万美元的建造成本估算总市场；再按约 6,500 万居民中能服务的 20% 估算可服务市场。",
+          en: "We sized the total market from 51,587 km of SIDS coastline at about $1.48M per km to build, then estimated the serviceable share from the roughly 65M SIDS residents we could serve (20%).",
+        },
+        stats: [
+          { value: "$76.16B", zh: "TAM 总可达市场", en: "TAM: total addressable market", hl: true },
+          { value: "$15.23B", zh: "SAM 可服务市场", en: "SAM: serviceable addressable market" },
+          { value: "$12.19B", zh: "SOM 可获得市场", en: "SOM: serviceable obtainable market" },
+        ],
+        note: {
+          zh: "来源：UN-OHRLLS、世界银行（2024）、MDPI Coasts、ShoreProtect 海堤成本计算器；百分比为团队估算。",
+          en: "Sources: UN-OHRLLS, World Bank (2024), MDPI Coasts, ShoreProtect seawall cost calculator. Percentages are team estimates.",
+        },
+      },
+      {
+        title: { zh: "竞争分析", en: "Competitive Analysis" },
+        body: {
+          zh: "我们把 Blue Lens 和混凝土海堤、红树林等活体海岸线、海水淡化厂放在一起比较。混凝土海堤挡浪强但不产水、维护贵；淡化厂能产水但成本和能耗都很高；活体海岸线生态好但不能产水。Blue Lens 的定位是“多重收益、中高投入”，长期总价值最高。",
+          en: "We compared Blue Lens with concrete seawalls, living shorelines and mangroves, and desalination plants. Seawalls block waves but make no water and cost a lot to maintain; desalination makes water at high cost and energy use; living shorelines help habitat but produce no water. Blue Lens sits at high multi-benefit value with moderate capital intensity, and leads on long-term total value.",
+        },
+        images: [
+          { src: "assets/projects/blue-lens/value-map.jpg", zh: "蓝海价值曲线", en: "Blue ocean value map" },
+          { src: "assets/projects/blue-lens/comparison.jpg", zh: "对比表", en: "Comparison chart" },
+          { src: "assets/projects/blue-lens/landscape.jpg", zh: "竞争格局", en: "Competitive landscape" },
+        ],
+      },
+      {
+        title: { zh: "SWOT 与资金用途", en: "SWOT & Use of Funds" },
+        points: [
+          { zh: "优势：一体化、基于自然、把海水收集起来再利用", en: "Strengths: all-in-one, nature-based, captures and reuses saltwater" },
+          { zh: "劣势：维护难度大，需要较大的土地面积", en: "Weaknesses: hard to maintain, needs a large area of land" },
+          { zh: "机会：耐盐植物的新市场；海平面上升带来的海堤需求", en: "Opportunities: a new market for salt-tolerant plants; sea walls needed as seas rise" },
+          { zh: "威胁：极端天气，更便宜的竞争方案", en: "Threats: extreme weather, cheaper competing solutions" },
+        ],
+        stats: [{ value: "$210,000", zh: "前 18 个月所需资金", en: "Funding for months 1–18", hl: true }],
+        images: [
+          { src: "assets/projects/blue-lens/swot.jpg", zh: "SWOT 分析", en: "SWOT analysis" },
+          { src: "assets/projects/blue-lens/funds.jpg", zh: "资金用途：团队运营 55%、工程验证 33%、现金储备 12%", en: "Use of funds: team & operations 55%, engineering & validation 33%, cash reserve 12%" },
+        ],
+      },
+    ],
+  },
 };
