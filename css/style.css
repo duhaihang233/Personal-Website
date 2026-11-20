@@ -2732,11 +2732,28 @@ html.fx-prep .site-header {
   translate: 0 -50%;
 }
 
-/* 详情页底部 */
+/* 详情页底部：上一个 / 下一个并排 */
 .detail .detail-pager {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.9rem;
   border-top: 0;
+}
+.detail .detail-pager .ht-card {
+  padding-right: 4.8rem;
+}
+/* 并排后每块变窄：标题最多两行，不截断 */
+.detail .detail-pager .ht-title {
+  font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+  line-height: 1.05;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.detail .detail-pager .ht-arrow {
+  right: 1rem;
+  width: clamp(2.6rem, 4vw, 3.2rem);
 }
 .detail .detail-pager .ht-card { text-align: left; }
 .detail-pixel .detail-pager .ht-card { border: 3px solid var(--px-navy); }
@@ -2761,7 +2778,14 @@ html.fx-prep .site-header {
   .detail .detail-pager .ht-title {
     white-space: normal;
     font-size: 1.35rem;
+  }  .detail .detail-pager { gap: 0.6rem; }
+  .detail .detail-pager .ht-card {
+    height: 7.5rem;
+    padding: 0 2.9rem 0.8rem 0.8rem;
   }
+  .detail .detail-pager .ht-title { font-size: 1.05rem; -webkit-line-clamp: 3; line-clamp: 3; }
+  .detail .detail-pager .ht-side { left: 0.8rem; top: 0.7rem; font-size: 0.62rem; }
+  .detail .detail-pager .ht-arrow { top: auto; bottom: 0.6rem; right: 0.6rem; width: 2.1rem; translate: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ht-card::before,
