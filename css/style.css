@@ -4406,17 +4406,17 @@ html.fx-prep .site-header {
   transform-origin: 50% 50%;
 }
 /* 作品：右上角，黄色 */
-.rz-projects { top: 0; right: 0; width: 40%; height: 16rem; }
-.rz-projects .ribbon { --cx: 72%; --cy: 40%; --ang: 28deg; }
+.rz-projects { top: 0; right: 0; width: 60%; height: 16rem; }
+.rz-projects .ribbon { --cx: 50%; --cy: 45%; --ang: 16deg; }
 /* 关于：右下角，深色带黄字 */
-.rz-about { right: 0; bottom: 0; width: 38%; height: 10rem; }
-.rz-about .ribbon { --rb-bg: var(--ink); --rb-fg: var(--bh-yellow); --cx: 70%; --cy: 65%; --ang: -22deg; }
+.rz-about { right: 0; bottom: 0; width: 50%; height: 10rem; }
+.rz-about .ribbon { --rb-bg: var(--ink); --rb-fg: var(--bh-yellow); --cx: 50%; --cy: 60%; --ang: -16deg; }
 /* 技能：右上角，粉红 */
-.rz-skills { top: 0; right: 0; width: 40%; height: 16rem; }
-.rz-skills .ribbon { --rb-bg: var(--pink); --cx: 72%; --cy: 40%; --ang: 30deg; }
+.rz-skills { top: 0; right: 0; width: 60%; height: 16rem; }
+.rz-skills .ribbon { --rb-bg: var(--pink); --cx: 50%; --cy: 45%; --ang: 16deg; }
 /* 联系：右上角，红色带白字 */
-.rz-contact { top: 0; right: 0; width: 30%; height: 13rem; }
-.rz-contact .ribbon { --rb-bg: var(--bh-red); --rb-fg: #fff; --cx: 72%; --cy: 30%; --ang: 26deg; }
+.rz-contact { top: 0; right: 0; width: 45%; height: 13rem; }
+.rz-contact .ribbon { --rb-bg: var(--bh-red); --rb-fg: #fff; --cx: 55%; --cy: 29%; --ang: 16deg; }
 @media (max-width: 720px) {
   .ribbon { font-size: 0.66rem; padding: 0.4rem 0; }
   .rz-about { width: 100%; height: 3.5rem; }
