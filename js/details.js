@@ -145,6 +145,7 @@ const DETAILS = {
 
   "diy-guitar": {
     tools: [],
+    art: "amp",
     sections: [
       {
         title: { zh: "过程", en: "Process" },

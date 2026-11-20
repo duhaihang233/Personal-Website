@@ -3696,3 +3696,247 @@ html.fx-prep .site-header {
   height: 0.6rem;
   background: var(--cad-blue);
 }
+
+/* =========================================================
+   23. 复古吉他 / 音箱风（DIY Guitar）
+   奶油白琴身、护板螺丝、镀铬面板、斜纹网布、金色、克莱因蓝闪粉、斜体手写标题
+   ========================================================= */
+:root {
+  --font-script: "Yellowtail", "Caveat", cursive;
+  --amp-cream: #f3ead3;
+  --amp-tweed: #c9a66b;
+  --amp-gold: #d4a62a;
+  --amp-klein: #1e3fae;
+  --amp-chrome: linear-gradient(180deg, #fbfbfb 0%, #c9ccd0 45%, #eef0f2 55%, #a9adb3 100%);
+  --amp-sparkle:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.85) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.7) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 45% 80%, rgba(212, 166, 42, 0.9) 0 1px, transparent 1.5px);
+}
+/* 螺丝钉：四个角各一颗 */
+.amp-screws {
+  background:
+    radial-gradient(circle at 0.55em 0.55em, #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em),
+    radial-gradient(circle at calc(100% - 0.55em) 0.55em, #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em),
+    radial-gradient(circle at 0.55em calc(100% - 0.55em), #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em),
+    radial-gradient(circle at calc(100% - 0.55em) calc(100% - 0.55em), #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em);
+}
+
+/* ---------- 白板便签 ---------- */
+.note-amp {
+  --note-bg: var(--amp-cream);
+  --note-text: #2a2116;
+  --note-bar: var(--amp-gold);
+  --note-line: #2a2116;
+  background-color: var(--amp-cream);
+  /* 顶部横条 + 底部一条斜纹网布 */
+  background-image:
+    linear-gradient(var(--note-bar), var(--note-bar)),
+    repeating-linear-gradient(45deg, rgba(90, 60, 25, 0.35) 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(-45deg, rgba(90, 60, 25, 0.25) 0 2px, transparent 2px 5px),
+    linear-gradient(var(--amp-tweed), var(--amp-tweed));
+  background-size: calc(100% - 1.6em) 0.32em, 100% 0.9em, 100% 0.9em, 100% 0.9em;
+  background-position: 0.8em 0.5em, 0 100%, 0 100%, 0 100%;
+  background-repeat: no-repeat;
+}
+/* 胶带：克莱因蓝 + 闪粉 */
+.note-amp .tape,
+.note .tape.tape-lime.amp-tape {
+  background: var(--amp-sparkle), var(--amp-klein);
+  background-size: 9px 9px, 13px 11px, 7px 13px, auto;
+}
+/* 相框 = 护板：奶油色、圆角、黑色包边、四颗螺丝 */
+.note-amp .note-photo {
+  transform: rotate(var(--pr, 1deg));
+  padding: 0.75em 0.75em 0.9em;
+  border: 2px solid #2a2116;
+  border-radius: 1.1em 1.1em 1.6em 1.6em;
+  background-color: #fbf6e8;
+  background-image:
+    radial-gradient(circle at 0.55em 0.55em, #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em),
+    radial-gradient(circle at calc(100% - 0.55em) 0.55em, #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em),
+    radial-gradient(circle at 0.55em calc(100% - 0.55em), #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em),
+    radial-gradient(circle at calc(100% - 0.55em) calc(100% - 0.55em), #8d9096 0 0.16em, #e9eaec 0.18em 0.28em, transparent 0.3em);
+  box-shadow: 0.25em 0.25em 0 var(--amp-klein);
+}
+.note-amp .note-photo img {
+  border-radius: 0.6em;
+}
+.note-amp .note-top {
+  font-family: var(--font-sans);
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+/* 标题：五十年代琴头贴花那样的斜体手写字 */
+.note-amp h3 {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: 2em;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--amp-klein);
+  text-shadow: 0.06em 0.06em 0 var(--amp-gold);
+}
+/* 标签 = 镀铬铭牌 */
+.note-amp .tag-list li {
+  background: var(--amp-chrome);
+  border: 1.5px solid #2a2116;
+  border-radius: 0.35em;
+  color: #2a2116;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+/* 底部网布条留出空间，标签和链接不压在上面 */
+.note-amp .tag-list,
+.note-amp .note-links {
+  margin-bottom: 0.3em;
+}
+
+/* ---------- 详情页 ---------- */
+.detail-amp .detail-no {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amp-gold);
+}
+.detail-amp .detail-title {
+  font-family: var(--font-script);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--amp-klein);
+  text-shadow: 0.05em 0.05em 0 var(--amp-gold);
+}
+.detail-amp .detail-h {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  color: var(--amp-klein);
+  filter: none;
+  text-decoration: underline var(--amp-gold);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: none;
+}
+/* 图片 = 护板：奶油色圆角框 + 四颗螺丝 + 克莱因蓝投影 */
+.detail-amp .detail-fig {
+  padding: 1rem 1rem 0;
+  border: 2px solid #2a2116;
+  border-radius: 1.2rem 1.2rem 1.8rem 1.8rem;
+  background-color: #fbf6e8;
+  background-image:
+    radial-gradient(circle at 0.6rem 0.6rem, #8d9096 0 2.5px, #e9eaec 3px 4.5px, transparent 5px),
+    radial-gradient(circle at calc(100% - 0.6rem) 0.6rem, #8d9096 0 2.5px, #e9eaec 3px 4.5px, transparent 5px),
+    radial-gradient(circle at 0.6rem calc(100% - 0.6rem), #8d9096 0 2.5px, #e9eaec 3px 4.5px, transparent 5px),
+    radial-gradient(circle at calc(100% - 0.6rem) calc(100% - 0.6rem), #8d9096 0 2.5px, #e9eaec 3px 4.5px, transparent 5px);
+  box-shadow: 0.4rem 0.4rem 0 var(--amp-klein);
+}
+.detail-amp .detail-fig img {
+  border-radius: 0.7rem;
+  background: #efe6cf;
+}
+.detail-amp .detail-fig figcaption {
+  padding: 0.55rem 0.4rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 音箱控制面板 */
+.amp-panel {
+  max-width: 54rem;
+  margin: 0 auto 2.5rem;
+  border: 3px solid #2a2116;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  box-shadow: 0.4rem 0.4rem 0 #2a2116;
+}
+.amp-grill {
+  display: grid;
+  place-items: center;
+  height: 6.5rem;
+  background:
+    repeating-linear-gradient(45deg, rgba(90, 60, 25, 0.4) 0 3px, transparent 3px 7px),
+    repeating-linear-gradient(-45deg, rgba(90, 60, 25, 0.3) 0 3px, transparent 3px 7px),
+    var(--amp-tweed);
+}
+.amp-script {
+  font-family: var(--font-script);
+  font-size: 3.4rem;
+  line-height: 1;
+  color: var(--amp-cream);
+  text-shadow: 0.05em 0.05em 0 #5a3c19;
+  transform: rotate(-6deg);
+}
+.amp-plate {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  gap: 1rem;
+  padding: 1rem 1.5rem 0.8rem;
+  background: var(--amp-chrome);
+  border-top: 3px solid #2a2116;
+}
+.amp-jewel {
+  align-self: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd0c4, #e2361f 55%, #7a120a);
+  border: 3px solid #8d9096;
+  box-shadow: 0 0 10px rgba(226, 54, 31, 0.7);
+}
+.amp-knob {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+}
+.amp-knob b {
+  position: relative;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #4a4a4a, #111 70%);
+  border: 2px solid #2a2116;
+  box-shadow: 0 0 0 3px var(--amp-cream), 0 0 0 4px #2a2116;
+  transform: rotate(var(--turn));
+}
+.amp-knob b::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.2rem;
+  width: 3px;
+  height: 0.8rem;
+  margin-left: -1.5px;
+  background: var(--amp-cream);
+}
+.amp-knob small {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a2116;
+}
+.amp-input {
+  align-self: center;
+  display: flex;
+  gap: 0.6rem;
+}
+.amp-input i {
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, #111 0 35%, #c9ccd0 40% 60%, #8d9096 65%);
+  border: 1.5px solid #2a2116;
+}
+@media (max-width: 560px) {
+  .amp-plate { flex-wrap: wrap; justify-content: center; }
+  .amp-input { display: none; }
+}

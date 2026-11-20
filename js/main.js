@@ -84,6 +84,7 @@ const PROJECTS = [
   },
   {
     slug: "diy-guitar",
+    style: "amp", // 复古吉他/音箱风：奶油白琴身、护板螺丝、金色、克莱因蓝闪粉、斜体手写标题
     title: "DIY Guitar",
     subtitle: "自己设计的 Telecaster",
     label: "Music",
@@ -518,6 +519,24 @@ const L = (o) => (o ? (LANG === "en" && o.en !== undefined ? o.en : o.zh) : "");
 let refreshDetail = () => {};
 
 // 霓虹判定圈：自己画的音符示意（TAP / HOLD / SLIDE / BREAK / 双押）
+// 复古音箱控制面板：奶油色网布 + 镀铬面板 + 旋钮 + 指示灯（纯装饰）
+function ampArt() {
+  const knobs = [
+    { zh: "音量", en: "Volume", v: 10 },
+    { zh: "音色", en: "Tone", v: 7 },
+    { zh: "克莱因蓝", en: "Klein Blue", v: 11 },
+    { zh: "金", en: "Gold", v: 8 },
+  ];
+  return `<div class="amp-panel" aria-hidden="true">
+    <div class="amp-grill"><span class="amp-script">DIY</span></div>
+    <div class="amp-plate">
+      <i class="amp-jewel"></i>
+      ${knobs.map((k) => `<span class="amp-knob" style="--turn:${-135 + (Math.min(k.v, 10) / 10) * 270}deg"><b></b><small>${L(k)}</small></span>`).join("")}
+      <span class="amp-input"><i></i><i></i></span>
+    </div>
+  </div>`;
+}
+
 function ringArt() {
   const dots = Array.from({ length: 8 }, (_, k) => {
     const a = (k / 8) * Math.PI * 2 - Math.PI / 8;
@@ -708,6 +727,7 @@ function detailHTML(i, dims) {
     </div>
     <div class="detail-content">
       ${d.banner ? `<p class="detail-banner"><span>${L(d.banner)}</span></p>` : ""}
+      ${d.art === "amp" ? ampArt() : ""}
       <p class="detail-lead">${escapeHTML(field(p, "description"))}</p>
       ${links ? `<p class="detail-links">${links}</p>` : ""}
       ${sections}
