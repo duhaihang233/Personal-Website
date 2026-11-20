@@ -155,7 +155,7 @@ const PROJECTS = [
     slug: "blue-lens",
     title: "Blue Lens",
     subtitle: "保护海岛淡水的活体海堤系统",
-    label: "Climate",
+    label: "Sustainability",
     color: "cyan",
     year: "2026",
     team: "Kylie · Jerry · Sam · Thomas · Srinija",
