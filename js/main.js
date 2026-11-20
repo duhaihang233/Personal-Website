@@ -174,6 +174,27 @@ const PROJECTS = [
       tags: ["Market sizing", "Competitive analysis", "Pro-forma", "Infographics"],
       links: [{ text: "Pro-forma spreadsheet", url: "https://docs.google.com/spreadsheets/d/1DIBeZI6tc56l4XhTHWjhpToqU5aBuMqbZ-E0cjgBqe8/edit?usp=sharing" }],
     },
+  },  {
+    slug: "troshare",
+    title: "TroShare",
+    subtitle: "USC 学生之间的宿舍用品租借平台",
+    label: "Product",
+    color: "pink",
+    year: "2026",
+    field: "产品设计、全栈开发与 AI 应用",
+    description:
+      "每到春天大家搬走，台灯、镜子、风扇被扔掉；每到秋天新生又重新买一遍。TroShare 让 USC 学生按学期互相租用宿舍用品：在宿舍地图上找到附近的东西，用 AR 先放进自己房间看看，上架时由 Claude 核对 USC 宿舍规定并生成 3D 模型。为 USC “Building for Trojans” 黑客松制作。",
+    image: "assets/projects/troshare.jpg",
+    tags: ["产品设计", "Web App", "AR", "Claude API"],
+    links: [{ text: "打开 TroShare", url: "https://duhaihang233.github.io/Trojan-Furniture/" }],
+    en: {
+      subtitle: "Peer-to-peer dorm rentals for USC students",
+      field: "Product design, full-stack development & applied AI",
+      description:
+        "Every spring a move, every fall another lamp. TroShare lets USC students rent dorm essentials from each other by the semester: find items near your hall on a campus map, preview them in your room in AR, and list your own with Claude checking USC Housing rules and building a 3D model. Built for USC's \"Building for Trojans\" hackathon.",
+      tags: ["Product design", "Web app", "AR", "Claude API"],
+      links: [{ text: "Open TroShare", url: "https://duhaihang233.github.io/Trojan-Furniture/" }],
+    },
   },
 ];
 
@@ -616,6 +637,12 @@ function blockHTML(b) {
         <ul>${b.items.map((it) => `<li style="--c:${it.color}"><i></i><b>${escapeHTML(it.value)}</b><strong class="pct">${it.pct.toFixed(1)}%</strong><span>${TX(it.label)}</span></li>`).join("")}</ul>
       </div>`;
     }
+    case "phones":
+      return `<div class="bk bk-phones"><ul>${b.items.map((it) => `
+        <li><img src="${escapeHTML(it.img)}" alt="${TX(it.cap)}" loading="lazy" width="163" height="294" /><span>${TX(it.cap)}</span></li>`).join("")}</ul></div>`;
+    case "video":
+      return `<figure class="bk bk-video"><video controls playsinline preload="metadata" poster="${escapeHTML(b.poster || "")}">
+        <source src="${escapeHTML(b.src)}" type="video/mp4" /></video>${b.cap ? `<figcaption>${TX(b.cap)}</figcaption>` : ""}</figure>`;
     default:
       return "";
   }

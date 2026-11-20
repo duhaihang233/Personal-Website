@@ -518,4 +518,79 @@ const DETAILS = {
       },
     ],
   },
+  troshare: {
+    tools: ["HTML / CSS / JS", "Cloudflare Workers", "Claude API", "model-viewer（AR）"],
+    sections: [
+      {
+        title: { zh: "演示视频", en: "Demo Video" },
+        blocks: [{ type: "video", src: "assets/projects/troshare/demo.mp4", poster: "assets/projects/troshare/poster.jpg", cap: { zh: "TroShare 演示（2 分 29 秒）", en: "TroShare demo (2:29)" } }],
+      },
+      {
+        title: { zh: "问题：每年春天搬走，每年秋天再买", en: "The Problem: Every Spring a Move, Every Fall Another Lamp" },
+        body: {
+          zh: "Jerry 需要一台微波炉，我需要一面镜子，而我们需要的东西其实就在另一栋宿舍里。入住前每个人都要买台灯、镜子、床垫、风扇；到了五月，很多东西直接进了垃圾桶。第二年你也不一定还住同一栋楼。对国际学生来说更难：他们没法把东西寄回家，也没地方存。",
+          en: "Jerry needs a microwave. I need a mirror. What we need is already in another dorm. Before move-in everyone buys a lamp, a mirror, a topper and a fan; in May a lot of it ends up in the trash, and next year you may not get the same building. It's hardest for international students, who can't ship things home or store them.",
+        },
+        stats: [{ value: "26%", zh: "的 USC 学生是国际学生，约 12,000 人", en: "of Trojans are international, about 12,000 students", hl: true }],
+      },
+      {
+        title: { zh: "方案：上架、按学期租、学期末还回去", en: "The Solution: Post It, Rent It for the Semester, Hand It Back" },
+        body: {
+          zh: "高年级学生把不用的台灯、风扇、懒人沙发和电视挂出来，其他同学按学期或全年租用，选择送货或自取，期末考最后一天还回去。中间没有公司，每一条信息都来自验证过的 USC 学生；个人资料只有名字、年级和宿舍楼。",
+          en: "Upperclassmen list the lamps, fans, bean bags and TVs they're not using. Other students rent them by the semester or year, choose delivery or pickup, and return them on the last day of finals. There's no company in the middle: every listing comes from a verified USC student, and your profile is just your name, year and building.",
+        },
+        blocks: [
+          { type: "phones", items: [
+            { img: "assets/projects/troshare/home-map.webp", cap: { zh: "在宿舍地图上找附近的东西", en: "Find it near your hall" } },
+            { img: "assets/projects/troshare/browse.webp", cap: { zh: "按宿舍楼浏览和筛选", en: "Browse by hall and category" } },
+            { img: "assets/projects/troshare/profile.webp", cap: { zh: "资料只有年级和宿舍楼", en: "Just your year and building" } },
+          ] },
+        ],
+      },
+      {
+        title: { zh: "租之前，先在 AR 里看看", en: "See It in Your Room Before You Rent" },
+        body: {
+          zh: "每个物品都可以用手机摄像头按真实尺寸放进自己的房间。“房间预览”里拍几张房间照片，Claude 会建议该租什么、匹配最近的 TroShare 物品，并且每一条建议都可以直接在 AR 里试摆。一次房间建议大约只花 4 美分。",
+          en: "Every item can be placed in your room at real size with the phone camera. In Room Preview, add a few photos of your room and Claude suggests what to rent, matched to the nearest TroShare listing, and you can try every suggestion in AR. A room suggestion costs about 4¢.",
+        },
+        blocks: [
+          { type: "phones", items: [
+            { img: "assets/projects/troshare/ar-lamp.webp", cap: { zh: "AR：台灯放在桌上", en: "AR: a desk lamp on the table" } },
+            { img: "assets/projects/troshare/room-plan.webp", cap: { zh: "上传房间照片", en: "Plan your room from photos" } },
+            { img: "assets/projects/troshare/suggestions.webp", cap: { zh: "Claude 的建议 + 在 AR 里试摆", en: "Claude's picks, ready for AR" } },
+          ] },
+        ],
+      },
+      {
+        title: { zh: "上架：AI 核对宿舍规定，再生成 3D 模型", en: "Listing: AI Checks Housing Rules, Then Builds a 3D Model" },
+        body: {
+          zh: "上架只需要 USC 账号、一张照片、一个价格和所在宿舍楼。Claude 先看照片和标题，对照 USC 宿舍的违禁物品规定（比如蜡烛、电暖器、卤素灯不能上架）；再根据照片生成一个可以在 AR 里摆放的 3D 模型，大约花 10 美分。买卖双方可以直接聊天，所有租借和上架都集中在“我的账户”里。",
+          en: "Listing needs a USC account, a photo, a price and a hall. Claude reads the photos and title and checks them against USC Housing's prohibited items (no candles, space heaters or halogen lamps), then builds a 3D model from the photos that you can place in AR, for about 10¢. Renters chat directly with sellers, and your rentals and listings live in one place under My Account.",
+        },
+        blocks: [
+          { type: "phones", items: [
+            { img: "assets/projects/troshare/list-camera.webp", cap: { zh: "拍照上架", en: "Snap a photo to list" } },
+            { img: "assets/projects/troshare/list-form.webp", cap: { zh: "核对 USC 宿舍规定", en: "Checked against USC Housing rules" } },
+            { img: "assets/projects/troshare/listing.webp", cap: { zh: "3D 模型生成中", en: "AR model in progress" } },
+            { img: "assets/projects/troshare/preview-ar.webp", cap: { zh: "AR 预览：真实尺寸", en: "AR preview at real size" } },
+            { img: "assets/projects/troshare/ar-floor.webp", cap: { zh: "落地灯放进房间", en: "The floor lamp in a room" } },
+            { img: "assets/projects/troshare/chat.webp", cap: { zh: "直接和卖家聊天", en: "Chat directly with sellers" } },
+            { img: "assets/projects/troshare/account.webp", cap: { zh: "租借和上架都在一处", en: "Rentals and listings in one place" } },
+          ] },
+        ],
+      },
+      {
+        title: { zh: "商业模式：一年只要几百美元", en: "Business Model: A Few Hundred Dollars a Year" },
+        body: {
+          zh: "2,000 名学生用一年的 AI 成本大约 480 美元，平均每人 25 美分。我们每笔租金抽 0.75%，40 美元的租金就是 30 美分；大约 1,600 笔租借就能覆盖一年的成本。平台跑起来之后，交给学生会运营。",
+          en: "AI costs for 2,000 students over a year come to about $480, about 25¢ each. We take 0.75% per rental, so a $40 rental brings in 30¢, and about 1,600 rentals cover the year. Once it's running, student government takes it over.",
+        },
+        stats: [
+          { value: "$480", zh: "2,000 名学生一年的成本（每人约 25¢）", en: "a year for 2,000 students (about 25¢ each)" },
+          { value: "0.75%", zh: "每笔租金的抽成（40 美元抽 30¢）", en: "per rental (30¢ on $40)" },
+          { value: "1,600", zh: "笔租借就能覆盖一年", en: "rentals cover the year", hl: true },
+        ],
+      },
+    ],
+  },
 };
