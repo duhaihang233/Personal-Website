@@ -3940,3 +3940,228 @@ html.fx-prep .site-header {
   .amp-plate { flex-wrap: wrap; justify-content: center; }
   .amp-input { display: none; }
 }
+
+/* =========================================================
+   24. 仿生风（Bio-Inspired Pipe-Cleaning Robot）
+   蚯蚓环节、细胞纹理、标本标签、斜体学名式标题、蠕动波动画
+   ========================================================= */
+:root {
+  --bio-flesh: #e3958c;
+  --bio-clay: #c4634f;
+  --bio-soil: #3b2a20;
+  --bio-moss: #5f7f43;
+  --bio-paper: #f8eee3;
+  /* 环节纹：一圈圈圆角色块，像蚯蚓身体 */
+  --bio-rings: repeating-linear-gradient(90deg, var(--bio-clay) 0 0.9em, #f3b8ae 0.9em 1.05em);
+}
+
+/* ---------- 白板便签 ---------- */
+.note-bio {
+  --note-bg: var(--bio-paper);
+  --note-text: var(--bio-soil);
+  --note-bar: var(--bio-clay);
+  --note-line: var(--bio-soil);
+  background-color: var(--bio-paper);
+  /* 顶部环节条 + 很淡的细胞纹 */
+  background-image:
+    var(--bio-rings),
+    radial-gradient(circle at 30% 40%, rgba(196, 99, 79, 0.045) 0 0.9em, transparent 0.95em),
+    radial-gradient(circle at 75% 70%, rgba(95, 127, 67, 0.05) 0 0.7em, transparent 0.75em);
+  background-size: calc(100% - 1.6em) 0.42em, 3.2em 3.4em, 2.6em 2.8em;
+  background-position: 0.8em 0.45em, 0 0, 1.1em 1.4em;
+  background-repeat: no-repeat, repeat, repeat;
+}
+.note-bio .note-top {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05em;
+  font-weight: 500;
+}
+/* 胶带 = 一小段环节 */
+.note-bio .tape {
+  background: var(--bio-rings);
+  background-size: 1.05em 100%;
+}
+/* 相框 = 标本卡：有机圆角 + 下沿标签 */
+.note-bio .note-photo {
+  position: relative;
+  transform: rotate(var(--pr, 1deg));
+  padding: 0.5em 0.5em 1.5em;
+  background: #fffaf3;
+  border: 1.5px solid var(--bio-soil);
+  border-radius: 1.6em 0.7em 1.8em 0.9em;
+  box-shadow: 0.25em 0.25em 0 var(--bio-moss);
+}
+.note-bio .note-photo img {
+  border-radius: 1.2em 0.4em 1.4em 0.5em;
+}
+.note-bio .note-photo::after {
+  content: "Lumbricus · fig. 1";
+  position: absolute;
+  left: 0.8em;
+  bottom: 0.25em;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.72em;
+  color: var(--bio-moss);
+}
+.note-bio h3 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.5em;
+  color: var(--bio-soil);
+}
+/* 标签 = 圆润的胶囊 + 前面一个小细胞 */
+.note-bio .tag-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  border: 1.5px solid var(--bio-soil);
+  border-radius: 999px;
+  background: #fffaf3;
+  color: var(--bio-soil);
+}
+.note-bio .tag-list li::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff 0 18%, var(--bio-flesh) 22%);
+  box-shadow: 0 0 0 1.5px var(--bio-clay);
+}
+
+/* ---------- 详情页 ---------- */
+.detail-bio .detail-no {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--bio-moss);
+}
+.detail-bio .detail-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--bio-soil);
+}
+.detail-bio .detail-h {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--bio-soil);
+  filter: none;
+  padding-bottom: 0.5rem;
+  background: var(--bio-rings) 0 100% / 7.5rem 0.4rem no-repeat;
+  background-size: 7.5rem 0.4rem;
+}
+/* 要点 = 解剖图标注：小细胞圆点 */
+.detail-bio .detail-points li::before {
+  width: 0.75rem;
+  height: 0.75rem;
+  top: calc(var(--ruled-gap) / 2 - 0.4rem);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff 0 18%, var(--bio-flesh) 22%);
+  box-shadow: 0 0 0 2px var(--bio-clay);
+}
+/* 图片 = 标本卡：有机圆角、细边、苔绿投影、斜体图号 */
+.detail-bio .detail-figs {
+  counter-reset: fig;
+}
+.detail-bio .detail-fig {
+  counter-increment: fig;
+  padding: 0.7rem 0.7rem 0;
+  background: #fffaf3;
+  border: 1.5px solid var(--bio-soil);
+  border-radius: 2rem 0.8rem 2.2rem 1rem;
+  box-shadow: 0.35rem 0.35rem 0 var(--bio-moss);
+}
+.detail-bio .detail-fig img {
+  border-radius: 1.5rem 0.5rem 1.7rem 0.6rem;
+  background: #f1e6d8;
+}
+.detail-bio .detail-fig figcaption {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  padding: 0.55rem 0.4rem 0.9rem;
+}
+.detail-bio .detail-fig figcaption::before {
+  content: "Fig. " counter(fig) " — ";
+  font-style: italic;
+  color: var(--bio-moss);
+}
+
+/* 蠕动波示意 */
+.worm-art {
+  max-width: 54rem;
+  margin: 0 auto 2.5rem;
+}
+.worm-pipe {
+  position: relative;
+  height: 7rem;
+  overflow: hidden;
+  border: 2px solid var(--bio-soil);
+  border-radius: 3.5rem;
+  background:
+    repeating-linear-gradient(90deg, rgba(59, 42, 32, 0.07) 0 1px, transparent 1px 1.6rem),
+    linear-gradient(#efe2d1, #f8eee3 50%, #efe2d1);
+  box-shadow: inset 0 0.5rem 0 rgba(59, 42, 32, 0.08), 0.35rem 0.35rem 0 var(--bio-moss);
+}
+.worm {
+  position: absolute;
+  left: 6%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  transform: translateY(-50%);
+  animation: worm-crawl 7s linear infinite;
+}
+.worm i {
+  width: 2.6rem;
+  height: 3.2rem;
+  margin-right: -0.5rem;
+  border: 2px solid var(--bio-soil);
+  border-radius: 45%;
+  background: radial-gradient(ellipse at 40% 30%, #f6c2b9, var(--bio-flesh) 55%, var(--bio-clay));
+  animation: worm-pulse 1.4s ease-in-out infinite;
+  animation-delay: calc(var(--k) * -0.1s);
+}
+.worm i:nth-child(5) {
+  background: radial-gradient(ellipse at 40% 30%, #f6c2b9, #d77a70 55%, #a84a3a);
+}
+.worm-head {
+  width: 2.2rem;
+  height: 2.4rem;
+  border: 2px solid var(--bio-soil);
+  border-radius: 40% 60% 60% 40%;
+  background: radial-gradient(ellipse at 40% 30%, #f6c2b9, var(--bio-flesh) 60%);
+}
+@keyframes worm-pulse {
+  0%, 100% { transform: scale(1.15, 1.35); }
+  50% { transform: scale(0.85, 0.75); }
+}
+@keyframes worm-crawl {
+  from { transform: translate(0, -50%); }
+  to { transform: translate(18%, -50%); }
+}
+.worm-art figcaption {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.worm-art figcaption strong {
+  display: block;
+  font-weight: 700;
+  color: var(--bio-clay);
+}
+@media (max-width: 560px) {
+  .worm-art figcaption { grid-template-columns: minmax(0, 1fr); gap: 0.4rem; }
+  .worm i { width: 1.8rem; height: 2.3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .worm,
+  .worm i { animation: none; }
+}

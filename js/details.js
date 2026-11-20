@@ -64,6 +64,7 @@ const DETAILS = {
 
   "pipe-robot": {
     tools: ["Onshape", "Illustrator", "Bambu Lab"],
+    art: "worm",
     sections: [
       {
         title: { zh: "概念与灵感", en: "Concept & Inspiration" },

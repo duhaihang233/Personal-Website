@@ -38,6 +38,7 @@ const PROJECTS = [
   },
   {
     slug: "pipe-robot",
+    style: "bio", // 仿生风：蚯蚓环节、细胞纹理、标本标签、蠕动波动画
     title: "Bio-Inspired Pipe-Cleaning Robot",
     subtitle: "仿生管道清洁机器人",
     label: "Robotics",
@@ -519,6 +520,19 @@ const L = (o) => (o ? (LANG === "en" && o.en !== undefined ? o.en : o.zh) : "");
 let refreshDetail = () => {};
 
 // 霓虹判定圈：自己画的音符示意（TAP / HOLD / SLIDE / BREAK / 双押）
+// 蠕动波示意：一排环节依次“收缩变粗（锚定）→ 伸长变细（前进）”
+function wormArt() {
+  const segs = Array.from({ length: 14 }, (_, k) => `<i style="--k:${k}"></i>`).join("");
+  return `<figure class="worm-art" aria-hidden="true">
+    <div class="worm-pipe"><div class="worm">${segs}<b class="worm-head"></b></div></div>
+    <figcaption>
+      <span><strong>${L({ zh: "收缩", en: "Shortening" })}</strong>${L({ zh: "变粗 · 锚定管壁", en: "wider · anchors to the wall" })}</span>
+      <span><strong>${L({ zh: "伸长", en: "Elongation" })}</strong>${L({ zh: "变细 · 向前伸出", en: "thinner · reaches forward" })}</span>
+      <span><strong>${L({ zh: "蠕动波", en: "Peristaltic wave" })}</strong>${L({ zh: "从尾到头依次传递", en: "travels tail to head" })}</span>
+    </figcaption>
+  </figure>`;
+}
+
 // 复古音箱控制面板：奶油色网布 + 镀铬面板 + 旋钮 + 指示灯（纯装饰）
 function ampArt() {
   const knobs = [
@@ -728,6 +742,7 @@ function detailHTML(i, dims) {
     <div class="detail-content">
       ${d.banner ? `<p class="detail-banner"><span>${L(d.banner)}</span></p>` : ""}
       ${d.art === "amp" ? ampArt() : ""}
+      ${d.art === "worm" ? wormArt() : ""}
       <p class="detail-lead">${escapeHTML(field(p, "description"))}</p>
       ${links ? `<p class="detail-links">${links}</p>` : ""}
       ${sections}
