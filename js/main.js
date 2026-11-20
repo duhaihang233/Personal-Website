@@ -61,6 +61,7 @@ const PROJECTS = [
   },
   {
     slug: "connect-hub",
+    style: "arch", // 现代建筑风：图纸网格、轴号圆圈、指北针、比例尺、图签栏
     title: "Connect Hub",
     subtitle: "Grow, Gather, Guide",
     label: "Space",
