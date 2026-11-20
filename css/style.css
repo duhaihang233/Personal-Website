@@ -3491,3 +3491,208 @@ html.fx-prep .site-header {
   }
   .bk-phones li { scroll-snap-align: center; }
 }
+
+/* =========================================================
+   22. Onshape 风作品（Wood Bookmark）
+   浅灰工作区 + 草图网格、Onshape 蓝、视图方块、特征树、底部标签页
+   ========================================================= */
+:root {
+  --cad-blue: #1c7dd8;
+  --cad-ink: #1b2430;
+  --cad-line: #b8c0c9;
+  --cad-panel: #eef1f4;
+  --cad-select: #d6e8fb;
+}
+/* 视图方块：两面不同灰度的小立方体 */
+.cad-cube,
+.note-cad .note-photo::before,
+.detail-cad .detail-fig::after {
+  content: "";
+  position: absolute;
+  width: 1.9em;
+  height: 1.9em;
+  background:
+    linear-gradient(135deg, transparent 50%, rgba(28, 125, 216, 0.25) 50%) 0 0 / 100% 100%,
+    linear-gradient(#f7f9fb, #dfe5eb);
+  border: 1.5px solid #8c97a3;
+  box-shadow: 0.28em -0.28em 0 -1px #c9d1d9, 0.28em -0.28em 0 0 #8c97a3;
+  pointer-events: none;
+}
+
+/* ---------- 白板便签 ---------- */
+.note-cad {
+  --note-bg: var(--cad-panel);
+  --note-text: var(--cad-ink);
+  --note-bar: var(--cad-blue);
+  --note-line: var(--cad-ink);
+  background-color: var(--cad-panel);
+  background-image:
+    linear-gradient(var(--note-bar), var(--note-bar)),
+    linear-gradient(rgba(28, 125, 216, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 125, 216, 0.09) 1px, transparent 1px);
+  background-size: calc(100% - 1.6em) 0.32em, 1.1em 1.1em, 1.1em 1.1em;
+  background-position: 0.8em 0.5em, 0 0, 0 0;
+  background-repeat: no-repeat, repeat, repeat;
+}
+.note-cad .note-top {
+  font-family: var(--font-sans);
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4a5562;
+}
+/* 相框 = Onshape 视口：白底细边，下沿是“Part Studio 1”标签页 */
+.note-cad .note-photo {
+  position: relative;
+  transform: none;
+  padding: 0.35em 0.35em 1.5em;
+  background: #fff;
+  border: 1.5px solid var(--cad-line);
+  box-shadow: 0.25em 0.25em 0 var(--cad-ink);
+}
+.note-cad .note-photo img {
+  background: #fff;
+}
+.note-cad .note-photo::before {
+  top: 0.7em;
+  right: 0.8em;
+  font-size: 0.75em;
+}
+.note-cad .note-photo::after {
+  content: "Part Studio 1";
+  position: absolute;
+  left: 0.35em;
+  bottom: 0.25em;
+  padding: 0.05em 0.6em 0.05em 1.4em;
+  border-top: 2px solid var(--cad-blue);
+  background: var(--cad-select) linear-gradient(var(--cad-blue), var(--cad-blue)) 0.45em 50% / 0.55em 0.55em no-repeat;
+  font-family: var(--font-sans);
+  font-size: 0.68em;
+  font-weight: 700;
+  color: var(--cad-ink);
+}
+.note-cad h3 {
+  color: var(--cad-ink);
+}
+/* 标签 = 特征树里的条目 */
+.note-cad .tag-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  background: #fff;
+  border: 1.5px solid var(--cad-line);
+  color: var(--cad-ink);
+}
+.note-cad .tag-list li::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  background: var(--cad-blue);
+}
+
+/* ---------- 详情页 ---------- */
+.detail-cad .detail-no {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cad-blue);
+}
+/* 小标题：前面一个“草图”图标，像特征树的一行 */
+.detail-cad .detail-h {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  color: var(--cad-ink);
+  filter: none;
+}
+.detail-cad .detail-h::before {
+  content: "";
+  flex: none;
+  width: 0.85em;
+  height: 0.85em;
+  border: 3px solid var(--cad-blue);
+  background: linear-gradient(135deg, transparent 45%, var(--cad-blue) 45% 55%, transparent 55%), var(--cad-select);
+}
+/* 要点 = 特征列表面板 */
+.detail-cad .detail-points {
+  padding: 0.4rem 1rem 0.6rem 1.2rem;
+  background: #fff;
+  border: 1.5px solid var(--cad-line);
+  border-left: 4px solid var(--cad-blue);
+  box-shadow: 0.3rem 0.3rem 0 var(--cad-ink);
+  counter-reset: feat;
+}
+.detail-cad .detail-points li {
+  counter-increment: feat;
+  padding-left: 2.6rem;
+}
+.detail-cad .detail-points li::before {
+  content: counter(feat);
+  left: 0;
+  width: 1.7rem;
+  height: 1.2rem;
+  top: calc(var(--ruled-gap) / 2 - 0.6rem);
+  display: grid;
+  place-items: center;
+  background: var(--cad-select);
+  border: 1.5px solid var(--cad-blue);
+  color: var(--cad-blue);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 900;  line-height: 1;
+}
+/* 图片 = Onshape 视口：顶部工具条 + 右上视图方块 + 底部标签页 */
+.detail-cad .detail-fig {
+  position: relative;
+  padding: 2rem 0 0;
+  transform: none;
+  background:
+    linear-gradient(var(--cad-panel), var(--cad-panel)) 0 0 / 100% 2rem no-repeat,
+    #fff;
+  border: 1.5px solid var(--cad-line);
+  box-shadow: 0.35rem 0.35rem 0 var(--cad-ink);
+}
+/* 工具条上的一排小图标 */
+.detail-cad .detail-fig::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: 0.6rem;
+  width: 7.2rem;
+  height: 0.9rem;
+  background: repeating-linear-gradient(90deg, #8c97a3 0 0.9rem, transparent 0.9rem 1.35rem);
+  opacity: 0.55;
+}
+.detail-cad .detail-fig::after {
+  top: 2.6rem;
+  right: 0.9rem;
+  font-size: 0.85rem;
+}
+.detail-cad .detail-fig img {
+  background: #fff;
+  border-top: 1px solid var(--cad-line);
+}
+.detail-cad .detail-fig figcaption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  background: var(--cad-panel);
+  border-top: 1.5px solid var(--cad-line);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cad-ink);
+}
+.detail-cad .detail-fig figcaption::before {
+  content: "";
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--cad-blue);
+}

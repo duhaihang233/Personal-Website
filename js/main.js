@@ -107,6 +107,7 @@ const PROJECTS = [
   },
   {
     slug: "wood-bookmark",
+    style: "cad", // Onshape 风：浅灰网格、Onshape 蓝、视图方块和特征树
     title: "Wood Bookmark",
     subtitle: "学校职业日文创书签",
     label: "Graphics",
