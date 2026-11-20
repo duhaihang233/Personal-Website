@@ -2272,21 +2272,7 @@ html.fx-prep .site-header {
   isolation: isolate;
 }
 
-/* 页脚：小小的构成 */
-.footer-inner {
-  position: relative;
-}
-.footer-inner::after {
-  content: "";
-  position: absolute;
-  right: clamp(1rem, 4vw, 2rem);
-  top: -10px;
-  width: 92px;
-  height: 30px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 92 30'%3E%3Ccircle cx='15' cy='15' r='15' fill='%23e2361f'/%3E%3Crect x='36' y='0' width='26' height='30' fill='%23f6c21a'/%3E%3Cpolygon points='64,30 78,2 92,30' fill='%231f4fa8'/%3E%3C/svg%3E") no-repeat;
-}
 @media (max-width: 720px) {
-  .footer-inner::after { display: none; }
   .bh-strip .bar { display: none; }
 }
 /* 覆盖旧的技能标签配色 */
