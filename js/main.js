@@ -182,6 +182,7 @@ const PROJECTS = [
     color: "pink",
     year: "2026",
     field: "产品设计、全栈开发与 AI 应用",
+    role: "UI 设计 · 网站与 App 搭建 · AI 功能接入",
     description:
       "每到春天大家搬走，台灯、镜子、风扇被扔掉；每到秋天新生又重新买一遍。TroShare 让 USC 学生按学期互相租用宿舍用品：在宿舍地图上找到附近的东西，用 AR 先放进自己房间看看，上架时由 Claude 核对 USC 宿舍规定并生成 3D 模型。为 USC “Building for Trojans” 黑客松制作。",
     image: "assets/projects/troshare.jpg",
@@ -190,6 +191,7 @@ const PROJECTS = [
     en: {
       subtitle: "Peer-to-peer dorm rentals for USC students",
       field: "Product design, full-stack development & applied AI",
+      role: "UI design · Website & app build · AI integration",
       description:
         "Every spring a move, every fall another lamp. TroShare lets USC students rent dorm essentials from each other by the semester: find items near your hall on a campus map, preview them in your room in AR, and list your own with Claude checking USC Housing rules and building a 3D model. Built for USC's \"Building for Trojans\" hackathon.",
       tags: ["Product design", "Web app", "AR", "Claude API"],
@@ -262,6 +264,7 @@ const I18N = {
     metaYear: "年份",
     metaDuration: "时长",
     metaTeam: "合作",
+    metaRole: "我的分工",
     metaField: "领域",
     metaTools: "工具",
     prev: "上一个",
@@ -326,6 +329,7 @@ const I18N = {
     metaYear: "Year",
     metaDuration: "Duration",
     metaTeam: "Team",
+    metaRole: "My role",
     metaField: "Field",
     metaTools: "Tools",
     prev: "Previous",
@@ -662,6 +666,7 @@ function detailHTML(i, dims) {
     [t("metaYear"), p.year],
     [t("metaDuration"), field(p, "duration")],
     [t("metaTeam"), field(p, "team")],
+    [t("metaRole"), field(p, "role")],
     [t("metaField"), field(p, "field")],
     [t("metaTools"), (d.tools || []).join(", ")],
   ].filter(([, v]) => v);
