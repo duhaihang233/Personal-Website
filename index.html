@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Caveat:wght@500;700&family=Pixelify+Sans:wght@500;700&family=Permanent+Marker&family=ZCOOL+KuaiLe&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Noto+Serif+SC:wght@400;700&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=202611200230" />
+  <link rel="stylesheet" href="css/style.css?v=202611200300" />
 
   <!-- 在页面渲染前应用语言设置 -->
   <script>
@@ -158,14 +158,40 @@
           <p class="outline-latin" lang="en" aria-hidden="true">Toolbox</p>
           <h2 class="section-title rough" data-i18n="skillsTitle">技能</h2>
         </header>
-        <ul class="tag-list">
-          <li>HTML / CSS</li>
-          <li>JavaScript</li>
-          <li>React</li>
-          <li>Figma</li>
-          <li>Node.js</li>
-          <li>Git</li>
-        </ul>
+        <!-- 技能：按简历分三组，每组一种包豪斯几何形（圆 / 方 / 三角） -->
+        <div class="skill-groups">
+          <section class="skill-group sg-c">
+            <h3 class="skill-group-title" data-i18n="sgDesign">设计与原型</h3>
+            <ul class="tag-list">
+            <li>Figma</li>
+            <li>Figma Make</li>
+            <li>Vibe Coding</li>
+            <li data-i18n="skProto">交互原型</li>
+            <li data-i18n="skCad">CAD（Onshape）</li>
+            <li>Adobe Illustrator</li>
+            <li data-i18n="skPrint">3D 打印（Bambu Lab）</li>
+            <li data-i18n="skSketch">快速草图</li>
+            <li data-i18n="skCircuit">基础电路</li>
+            </ul>
+          </section>
+          <section class="skill-group sg-s">
+            <h3 class="skill-group-title" data-i18n="sgUx">产品探索与用户研究</h3>
+            <ul class="tag-list">
+            <li data-i18n="skFrame">问题定义</li>
+            <li data-i18n="skPersona">用户画像</li>
+            <li data-i18n="skThink">出声思维可用性测试</li>
+            <li data-i18n="skCard">卡片分类</li>
+            <li data-i18n="skDT">设计思维</li>
+            </ul>
+          </section>
+          <section class="skill-group sg-t">
+            <h3 class="skill-group-title" data-i18n="sgPm">研究与项目管理</h3>
+            <ul class="tag-list">
+            <li data-i18n="skAcad">学术研究与写作</li>
+            <li data-i18n="skGantt">甘特图</li>
+            </ul>
+          </section>
+        </div>
       </div>
     </section>
 
@@ -204,7 +230,7 @@
     </div>
   </footer>
 
-  <script src="js/details.js?v=202611200230" defer></script>
-  <script src="js/main.js?v=202611200230" defer></script>
+  <script src="js/details.js?v=202611200300" defer></script>
+  <script src="js/main.js?v=202611200300" defer></script>
 </body>
 </html>

@@ -3371,3 +3371,64 @@ html.fx-prep .site-header {
   .lc-cats { min-width: 34rem; }
   .bk-profile dt { font-size: 0.68rem; letter-spacing: 0.05em; }
 }
+
+/* =========================================================
+   20. 技能分组（来自简历）：三张卡片，每组一种几何形
+   ========================================================= */
+.skill-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+.skill-group {
+  --c: var(--bh-red);
+  padding: 1.3rem 1.3rem 1.5rem;
+  background: #fff;
+  border: 2px solid var(--bh-black);
+  border-top: 0.6rem solid var(--c);
+  box-shadow: 0.35rem 0.35rem 0 var(--bh-black);
+}
+.sg-s { --c: var(--bh-blue); }
+.sg-t { --c: var(--bh-yellow); }
+.skill-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.skill-group-title::before {
+  content: "";
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  background: var(--c);
+}
+.sg-c .skill-group-title::before { border-radius: 50%; }
+.sg-t .skill-group-title::before { clip-path: polygon(0 100%, 50% 0, 100% 100%); }
+#skills .skill-group .tag-list { gap: 0.5rem; }
+#skills .skill-group .tag-list li,
+#skills .skill-group .tag-list li:nth-child(n) {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.88rem;
+  background: var(--paper);
+  border-color: var(--bh-black);
+  color: var(--ink);
+}
+#skills .skill-group .tag-list li::before,
+#skills .skill-group .tag-list li:nth-child(n)::before {
+  width: 0.6em;
+  height: 0.6em;
+  background: var(--c);
+  border-radius: 0;
+  clip-path: none;
+}
+#skills .sg-c .tag-list li:nth-child(n)::before { border-radius: 50%; }
+#skills .sg-t .tag-list li:nth-child(n)::before { clip-path: polygon(0 100%, 50% 0, 100% 100%); }
+@media (max-width: 900px) {
+  .skill-groups { grid-template-columns: minmax(0, 1fr); }
+}
