@@ -226,7 +226,6 @@ const I18N = {
     menuClose: "关闭菜单",
     heroHello: "你好，我是",
     heroSub: "做<em>有用</em>又<em>有趣</em>的东西。",
-    heroLead: "一句话介绍自己，例如：前端开发者 / 设计师，专注于打造简洁、好用的数字产品。",
     heroContact: "联系我",
     toWork: "向下查看作品",
     photo: "Thomas Du 的照片",
@@ -291,7 +290,6 @@ const I18N = {
     menuClose: "Close menu",
     heroHello: "Hello, I'm",
     heroSub: "Making things that are <em>useful</em> and <em>fun</em>.",
-    heroLead: "One-line intro, e.g. a designer and maker who builds simple, useful things.",
     heroContact: "Get in touch",
     toWork: "Scroll to projects",
     photo: "Photo of Thomas Du",
@@ -346,7 +344,8 @@ function detectLang() {
     const saved = localStorage.getItem("lang");
     if (saved === "zh" || saved === "en") return saved;
   } catch (e) {}
-  return /^zh/i.test(navigator.language || "") ? "zh" : "en";
+  // 默认英文；访客点过切换按钮后记住他的选择
+  return "en";
 }
 let LANG = detectLang();
 const t = (key) => I18N[LANG][key];
